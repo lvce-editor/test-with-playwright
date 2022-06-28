@@ -1,17 +1,29 @@
 import { execa } from 'execa'
+import { readdir } from 'fs/promises'
+import { fork } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const exec = async (command) => {
+const exec = async (command, args, options) => {
   console.info(command)
-  await execa(command, {
+  await execa(command, args, {
     shell: true,
     stdio: 'inherit',
+    ...options,
   })
 }
 
-// prettier-ignore
-const main = async ()=>{
-  await exec(`cd test/fixtures/sample.completion-provider/e2e && npm ci --ignore-scripts && cd ../../../../`);
-  await exec(`cd test/fixtures/sample.hello-world/e2e && npm ci --ignore-scripts && cd ../../../../`);
+const main = async () => {
+  const __dirname = dirname(fileURLToPath(import.meta.url))
+  const root = join(__dirname, '..')
+  const fixturePath = join(root, 'test', 'fixtures')
+  const fixtureNames = await readdir(fixturePath)
+  for (const fixtureName of fixtureNames) {
+    await exec('npm ci', ['--ignore-scripts'], {
+      cwd: join(fixturePath, fixtureName),
+    })
+  }
 }
 
 main()
