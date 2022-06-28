@@ -1,19 +1,10 @@
 import { readdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { readPackageUp } from 'read-pkg-up'
-import { closeAll, runTest, startAll, state } from './main.js'
+import { closeAll, getRoot, runTest, startAll, state } from './main.js'
 
 const getTestFiles = async (root) => {
   return readdirSync(root).map((x) => join(root, x))
-}
-
-const getRoot = async () => {
-  const rootPackageJson = await readPackageUp()
-  if (!rootPackageJson) {
-    throw new Error('package json not found')
-  }
-  return dirname(rootPackageJson.path)
 }
 
 const main = async () => {
@@ -23,6 +14,7 @@ const main = async () => {
     await startAll()
     console.info('SETUP COMPLETE')
     const root = await getRoot()
+    state.root = root
     const testFiles = await getTestFiles(join(root, 'src'))
     console.log({ testFiles })
     for (const testFile of testFiles) {

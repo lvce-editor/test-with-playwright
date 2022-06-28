@@ -1,13 +1,13 @@
+import { chromium } from '@playwright/test'
+import assert from 'assert'
+import { fork } from 'child_process'
 import { mkdir, mkdtemp, writeFile } from 'fs/promises'
 import getPort from 'get-port'
 import { join } from 'node:path'
-import { tmpdir } from 'os'
-import { chromium } from '@playwright/test'
-import { fork } from 'child_process'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import assert from 'assert'
 import { performance } from 'node:perf_hooks'
+import { tmpdir } from 'os'
+import { dirname } from 'path'
+import { readPackageUp } from 'read-pkg-up'
 
 export const state = {
   /**
@@ -31,9 +31,21 @@ export const state = {
    */
   tests: [],
   port: 0,
+  root: undefined,
 }
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+export const getRoot = async () => {
+  const rootPackageJson = await readPackageUp()
+  if (!rootPackageJson) {
+    throw new Error('package json not found')
+  }
+  return dirname(rootPackageJson.path)
+}
+
+const getExtensionFolder = async () => {
+  const root = state.root || (await getRoot())
+  return join(root, '..', 'extension')
+}
 
 const getTmpDir = () => {
   return mkdtemp(join(tmpdir(), 'foo-'))
@@ -54,13 +66,14 @@ const launchServer = async ({ port, folder, env }) => {
       2
     )
   )
+  const extensionFolder = await getExtensionFolder()
   const childProcess = fork(serverPath, {
     stdio: 'inherit',
     env: {
       ...process.env,
       PORT: port,
       FOLDER: folder,
-      ONLY_EXTENSION: join(process.cwd(), '..', '..', 'extension'),
+      ONLY_EXTENSION: extensionFolder,
       XDG_CONFIG_HOME: configDir,
       ...env,
     },
