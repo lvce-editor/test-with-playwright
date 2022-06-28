@@ -1,6 +1,7 @@
 import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
+import { pathToFileURL } from 'node:url'
 import { closeAll, getRoot, runTest, startAll, state } from './main.js'
 
 const getTestFiles = async (root) => {
@@ -21,7 +22,8 @@ const main = async () => {
     console.log({ testFiles })
     for (const testFile of testFiles) {
       state.tests = []
-      await import(testFile)
+      const testUri = pathToFileURL(testFile).toString()
+      await import(testUri)
       for (const test of state.tests) {
         if (test.status === 'skipped') {
           skipped++
