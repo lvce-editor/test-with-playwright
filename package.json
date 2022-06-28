@@ -27,7 +27,6 @@
     "@lvce-editor/server": "^0.0.21",
     "@types/jest": "^28.1.3",
     "@types/node": "^18.0.0",
-    "execa": "^6.1.0",
     "jest": "^28.1.1",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
