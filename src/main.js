@@ -47,8 +47,8 @@ const getExtensionFolder = async () => {
   return join(root, '..', 'extension')
 }
 
-const getTmpDir = () => {
-  return mkdtemp(join(tmpdir(), 'foo-'))
+export const getTmpDir = (prefix='foo-') => {
+  return mkdtemp(join(tmpdir(), prefix))
 }
 
 const launchServer = async ({ port, folder, env }) => {
