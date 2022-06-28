@@ -1,15 +1,10 @@
-import { mkdtemp, writeFile } from 'fs/promises'
-import { join } from 'node:path'
-import { tmpdir } from 'os'
 import {
+  expect,
+  getTmpDir,
   runWithExtension,
   test,
-  expect,
 } from '@lvce-editor/test-with-playwright'
-
-const getTmpDir = () => {
-  return mkdtemp(join(tmpdir(), 'foo-'))
-}
+import { writeFile } from 'fs/promises'
 
 test('sample.completion-provider', async () => {
   const tmpDir = await getTmpDir()

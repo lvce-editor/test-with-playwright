@@ -14,3 +14,5 @@ export const test: {
 }
 
 export { expect } from '@playwright/test'
+
+export const getTmpDir: (prefix = 'foo-') => Promise<string>
