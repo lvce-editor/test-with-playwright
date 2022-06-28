@@ -9,6 +9,8 @@ const getTestFiles = async (root) => {
 
 const main = async () => {
   try {
+    let skipped = 0
+    let passed = 0
     const start = performance.now()
     state.runImmediately = false
     await startAll()
@@ -21,17 +23,29 @@ const main = async () => {
       state.tests = []
       await import(testFile)
       for (const test of state.tests) {
-        await runTest(test)
+        if (test.status === 'skipped') {
+          skipped++
+        } else {
+          await runTest(test)
+          passed++
+        }
       }
     }
-    await closeAll()
     const end = performance.now()
     const duration = end - start
-    console.info(`${testFiles.length} tests passed in ${duration}ms`)
+    if (skipped) {
+      console.info(
+        `${passed} tests passed, ${skipped} tests skipped in ${duration}ms`
+      )
+    } else {
+      console.info(`${passed} tests passed in ${duration}ms`)
+    }
   } catch (error) {
     console.info('tests failed')
     console.error(error)
     process.exit(1)
+  } finally {
+    await closeAll()
   }
 }
 

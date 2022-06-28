@@ -1,4 +1,5 @@
 import { fork } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -6,9 +7,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const root = join(__dirname, '..')
 
+/**
+ * @param {string} name
+ */
 export const runFixture = async (name) => {
   const binaryPath = join(root, 'src', 'all.js')
   const cwd = join(root, 'test', 'fixtures', name, 'e2e', 'src')
+  if (!existsSync(cwd)) {
+    throw new Error('cwd does not exist')
+  }
   let stdout = ''
   let stderr = ''
   const child = fork(binaryPath, ['--headless'], { cwd, stdio: 'pipe' })

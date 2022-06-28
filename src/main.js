@@ -148,6 +148,10 @@ export const test = async (name, fn) => {
   }
 }
 
+test.skip = (name, fn) => {
+  state.tests.push({ name, fn, status: 'skipped' })
+}
+
 export const startAll = async () => {
   const port = await getPort()
   await launchServer({
@@ -163,7 +167,7 @@ export const startAll = async () => {
 
 export const closeAll = async () => {
   if (state.childProcess) {
-    state.childProcess.kill('SIGINT')
+    state.childProcess.kill('SIGTERM')
     state.childProcess = undefined
   }
   if (state.page) {

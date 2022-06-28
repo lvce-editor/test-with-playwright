@@ -8,6 +8,9 @@ export const runWithExtension: ({
   env?: any
 }) => Promise<Page>
 
-export const test: (name: string, fn: () => Promise<void>) => void
+export const test: {
+  (name: string, fn: () => Promise<void>): void
+  skip: (name: string, fn: () => Promise<void>) => void
+}
 
 export { expect } from '@playwright/test'
