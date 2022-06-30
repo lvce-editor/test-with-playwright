@@ -1,3 +1,4 @@
+import { execSync } from 'child_process'
 import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path, { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
@@ -8,13 +9,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')
 
 const getVersion = () => {
-  if (process.env.RG_VERSION) {
-    if (process.env.RG_VERSION.startsWith('v')) {
-      return process.env.RG_VERSION.slice(1)
-    }
-    return process.env.RG_VERSION
+  const stdout = execSync('git describe --exact-match --tags').toString().trim()
+  if (stdout.startsWith('v')) {
+    return stdout.slice(1)
   }
-  return '0.0.0-dev'
+  return stdout
 }
 
 const createDist = () => {
