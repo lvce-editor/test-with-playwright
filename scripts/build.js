@@ -25,6 +25,10 @@ const copyPackageJson = () => {
     readFileSync(join(root, 'package.json'), 'utf-8')
   )
   packageJson.version = getVersion()
+  delete packageJson.scripts
+  delete packageJson.prettier
+  delete packageJson.jest
+
   writeFileSync(
     join(root, 'dist', 'package.json'),
     JSON.stringify(packageJson, null, 2) + '\n'
