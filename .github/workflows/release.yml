@@ -58,6 +58,8 @@ jobs:
         run: npm test
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
+      - run: node scripts/build.js
       - run: npm publish --access public
+        working-directory: ./dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
