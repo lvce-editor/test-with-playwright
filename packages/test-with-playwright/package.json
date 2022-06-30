@@ -1,0 +1,20 @@
+{
+  "name": "@lvce-editor/test-with-playwright",
+  "version": "0.0.0-dev",
+  "description": "",
+  "main": "src/main.js",
+  "types": "src/main.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lvce-editor/test-with-playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "^1.23.0",
+    "get-port": "^6.1.2",
+    "read-pkg-up": "^9.1.0"
+  }
+}

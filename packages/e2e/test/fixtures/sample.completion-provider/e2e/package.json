@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@lvce-editor/test-with-playwright": "file:../../../../../test-with-playwright"
+  }
+}

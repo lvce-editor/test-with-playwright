@@ -30,6 +30,7 @@ jobs:
         run: npm ci
         if: steps.npm-cache.outputs.cache-hit != 'true'
       - name: install playwright dependencies
+        working-directory: ./packages/test-with-playwright
         run: npx playwright install chromium
         if: steps.npm-cache.outputs.cache-hit != 'true'
         env:

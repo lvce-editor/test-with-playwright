@@ -3,10 +3,9 @@ import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path, { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
-const FILES = ['src', 'README.md']
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')
+const packagePath = join(root, 'packages', 'test-with-playwright')
 
 const getVersion = () => {
   const stdout = execSync('git describe --exact-match --tags').toString().trim()
@@ -22,7 +21,7 @@ const createDist = () => {
 
 const copyPackageJson = () => {
   const packageJson = JSON.parse(
-    readFileSync(join(root, 'package.json'), 'utf-8')
+    readFileSync(join(packagePath, 'package.json'), 'utf-8')
   )
   packageJson.version = getVersion()
   delete packageJson.scripts
@@ -36,12 +35,14 @@ const copyPackageJson = () => {
 }
 
 const copyFiles = () => {
-  for (const file of FILES) {
-    cpSync(join(root, file), join(root, 'dist', file), {
-      recursive: true,
-      force: true,
-    })
-  }
+  cpSync(join(packagePath, 'src'), join(root, 'dist', 'src'), {
+    recursive: true,
+    force: true,
+  })
+  cpSync(join(root, 'README.md'), join(root, 'dist', 'README.md'), {
+    recursive: true,
+    force: true,
+  })
 }
 
 const main = () => {
