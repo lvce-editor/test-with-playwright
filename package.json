@@ -23,7 +23,7 @@
     "lerna": "^5.1.6",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4",
-    "@lvce-editor/server": "^0.0.22"
+    "@lvce-editor/server": "^0.0.25"
   },
   "jest": {
     "testTimeout": 15000
