@@ -1,0 +1,10 @@
+{
+  "main": "main.js",
+  "activation": ["onCommand:test-command"],
+  "commands": [
+    {
+      "id": "test-command",
+      "label": "Test Command"
+    }
+  ]
+}

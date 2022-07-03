@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test'
 import assert from 'assert'
 import { fork } from 'child_process'
-import { mkdir, mkdtemp, writeFile } from 'fs/promises'
+import { chmod, mkdir, mkdtemp, writeFile } from 'fs/promises'
 import getPort from 'get-port'
 import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
@@ -47,7 +47,7 @@ const getExtensionFolder = async () => {
   return join(root, '..', 'extension')
 }
 
-export const getTmpDir = (prefix='foo-') => {
+export const getTmpDir = (prefix = 'foo-') => {
   return mkdtemp(join(tmpdir(), prefix))
 }
 
@@ -181,3 +181,32 @@ export const closeAll = async () => {
 }
 
 export { expect } from '@playwright/test'
+
+/**
+ * @param {string} content
+ */
+export const createFakeBinary = async (content) => {
+  const nodePath = process.argv[0]
+  const tmpDir = await getTmpDir()
+  const binaryPath = await join(tmpDir, 'fake-binary')
+  await writeFile(
+    binaryPath,
+    `#!${nodePath}
+${content}`
+  )
+  await chmod(binaryPath, '755')
+  return binaryPath
+}
+
+/**
+ * @param {any} settings
+ */
+export const writeSettings = async (settings) => {
+  const configDir = await getTmpDir()
+  await mkdir(join(configDir, 'lvce-oss'))
+  await writeFile(
+    join(configDir, 'lvce-oss', 'settings.json'),
+    JSON.stringify(settings)
+  )
+  return configDir
+}

@@ -16,3 +16,7 @@ export const test: {
 export { expect } from '@playwright/test'
 
 export const getTmpDir: (prefix = 'foo-') => Promise<string>
+
+export const createFakeBinary: (content: string) => Promise<string>
+
+export const writeSettings: (settings: any) => Promise<string>
