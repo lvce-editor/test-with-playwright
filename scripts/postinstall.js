@@ -18,7 +18,7 @@ const main = async () => {
   const fixturePath = join(root, 'packages', 'e2e', 'test', 'fixtures')
   const fixtureNames = await readdir(fixturePath)
   for (const fixtureName of fixtureNames) {
-    await exec('npm ci', ['--ignore-scripts'], {
+    await exec('npm', ['ci', '--ignore-scripts'], {
       cwd: join(fixturePath, fixtureName, 'e2e'),
     })
   }
