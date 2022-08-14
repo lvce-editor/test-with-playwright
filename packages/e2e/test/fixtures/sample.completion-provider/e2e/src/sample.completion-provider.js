@@ -19,7 +19,10 @@ test('sample.completion-provider', async () => {
   await testTxt.click()
   const tokenText = page.locator('.Token.Text').nth(1)
   await tokenText.click()
+  const cursor = page.locator('.EditorCursor')
+  await expect(cursor).toHaveCSS('left', '45px')
   await page.keyboard.press('End')
+  await expect(cursor).toHaveCSS('left', '90px')
 
   await page.keyboard.press('Control+Space')
 
