@@ -1,6 +1,6 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "ONLY_EXTENSION=. TEST_PATH=../e2e node ../../../../../node_modules/@lvce-editor/server/bin/server.js"
+    "dev": "node ../../../../../node_modules/@lvce-editor/server/bin/server.js --only-extension=. --test-path=../e2e"
   }
 }
