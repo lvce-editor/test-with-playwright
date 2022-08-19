@@ -6,10 +6,19 @@ import { closeAll, getRoot, runTest, startAll, state } from './main.js'
 import parseArgv from 'minimist'
 
 /**
+ * @param {string} name
+ */
+const isTestFile = (name) => {
+  return !name.startsWith('_')
+}
+
+/**
  * @param {string} root
  */
 const getTestFiles = async (root) => {
-  return readdirSync(root).map((x) => join(root, x))
+  return readdirSync(root)
+    .filter(isTestFile)
+    .map((x) => join(root, x))
 }
 
 /**
