@@ -39,6 +39,10 @@ const copyFiles = () => {
     recursive: true,
     force: true,
   })
+  cpSync(join(packagePath, 'bin'), join(root, 'dist', 'bin'), {
+    recursive: true,
+    force: true,
+  })
   cpSync(join(root, 'README.md'), join(root, 'dist', 'README.md'), {
     recursive: true,
     force: true,
