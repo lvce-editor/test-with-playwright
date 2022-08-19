@@ -111,11 +111,11 @@ export const runTest = async ({ name, fn }) => {
   console.info(`[test] passed ${name} in ${duration}ms`)
 }
 
-export const startAll = async () => {
+export const startAll = async (env) => {
   const port = await getPort()
   await launchServer({
     port,
-    env: {},
+    env,
     folder: '',
   })
   state.port = port
