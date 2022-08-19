@@ -18,22 +18,21 @@ export const runFixture = async (name) => {
     'src',
     'all.js'
   )
-  const cwd = join(
-    root,
-    'packages',
-    'e2e',
-    'test',
-    'fixtures',
-    name,
-    'e2e',
-    'src'
-  )
+  const cwd = join(root, 'packages', 'e2e', 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
   let stdout = ''
   let stderr = ''
-  const child = fork(binaryPath, ['--headless'], { cwd, stdio: 'pipe' })
+  const child = fork(binaryPath, ['--headless'], {
+    cwd,
+    stdio: 'pipe',
+    env: {
+      ...process.env,
+      ONLY_EXTENSION: '../extension',
+      TEST_PATH: '.',
+    },
+  })
   // @ts-ignore
   child.stdout.on('data', (data) => {
     console.info({ stdout: data.toString() })

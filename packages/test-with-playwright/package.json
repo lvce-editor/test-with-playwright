@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "types": "src/main.d.ts",
   "type": "module",
+  "bin": "bin/test-with-playwright.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:lvce-editor/test-with-playwright.git"

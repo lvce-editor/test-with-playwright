@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "lib": ["esnext"],
     "checkJs": true,
     "module": "esnext",
-    "target": "esnext",
-    "types": ["node", "jest"],
+    "types": [],
     "moduleResolution": "node",
+    "rootDir": ".",
+    "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "assumeChangesOnlyAffectDirectDependencies": true,
-    "strict": true
+    "strict": true,
+    "noImplicitAny": false
   },
-  "include": ["test"]
+  "include": ["src", "test", "typings/types.d.ts"]
 }

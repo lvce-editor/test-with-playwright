@@ -29,7 +29,6 @@ export const state = {
   /**
    * @type{any}
    */
-  tests: [],
   port: 0,
   root: undefined,
 }
@@ -47,7 +46,7 @@ const getExtensionFolder = async () => {
   return join(root, '..', 'extension')
 }
 
-export const getTmpDir = (prefix='foo-') => {
+export const getTmpDir = (prefix = 'foo-') => {
   return mkdtemp(join(tmpdir(), prefix))
 }
 
@@ -103,34 +102,6 @@ const startBrowser = async ({ port, headless = false }) => {
   return page
 }
 
-export const runWithExtension = async ({ folder = '', env = {} }) => {
-  folder ||= await getTmpDir()
-  if (state.page && state.childProcess) {
-    console.info('recycle page')
-    state.childProcess.send({
-      jsonrpc: '2.0',
-      method: 'Platform.setEnvironmentVariables',
-      params: [
-        {
-          FOLDER: folder,
-          ...env,
-        },
-      ],
-      id: 999999999999,
-    })
-    await state.page.goto(`http://localhost:${state.port}`)
-    return state.page
-  }
-  const port = await getPort()
-  const server = await launchServer({ port, folder, env })
-  const page = await startBrowser({
-    headless: false,
-    port,
-  })
-  await page.goto(`http://localhost:${port}`)
-  return page
-}
-
 export const runTest = async ({ name, fn }) => {
   const start = performance.now()
   console.info(`[test] running ${name}`)
@@ -138,18 +109,6 @@ export const runTest = async ({ name, fn }) => {
   const end = performance.now()
   const duration = end - start
   console.info(`[test] passed ${name} in ${duration}ms`)
-}
-
-export const test = async (name, fn) => {
-  if (state.runImmediately) {
-    await runTest({ name, fn })
-  } else {
-    state.tests.push({ name, fn })
-  }
-}
-
-test.skip = (name, fn) => {
-  state.tests.push({ name, fn, status: 'skipped' })
 }
 
 export const startAll = async () => {
@@ -162,7 +121,7 @@ export const startAll = async () => {
   state.port = port
   const headless = process.argv.includes('--headless')
   const page = await startBrowser({ port, headless })
-  return page
+  return { page, port }
 }
 
 export const closeAll = async () => {
@@ -179,5 +138,3 @@ export const closeAll = async () => {
     state.browser = undefined
   }
 }
-
-export { expect } from '@playwright/test'
