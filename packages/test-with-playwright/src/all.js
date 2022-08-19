@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { closeAll, getRoot, runTest, startAll, state } from './main.js'
+import parseArgv from 'minimist'
 
 /**
  * @param {string} root
@@ -51,13 +52,30 @@ const executeSingleTest = async (page, url) => {
   }
 }
 
+/**
+ *
+ * @param {any} options
+ */
+const getEnv = (options) => {
+  const env = Object.create(null)
+  if (options['only-extension']) {
+    env['ONLY_EXTENSION'] = options['only-extension']
+  }
+  if (options['test-path']) {
+    env['TEST_PATH'] = options['test-path']
+  }
+  return env
+}
+
 const main = async () => {
   try {
+    const argv = process.argv.slice(2)
+    const options = parseArgv(argv)
     let skipped = 0
     let passed = 0
+    const env = getEnv(options)
     const start = performance.now()
-    const { page, port } = await startAll()
-    console.info('SETUP COMPLETE')
+    const { page, port } = await startAll(env)
     const root = await getRoot()
     const testFiles = await getTestFiles(join(root, 'src'))
     console.log({ testFiles })
