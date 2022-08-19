@@ -27,7 +27,7 @@ const getTestFiles = async (root) => {
  */
 const getUrlFromTestFile = (absolutePath, port) => {
   const baseName = basename(absolutePath)
-  const htmlFileName = baseName.replace('.js', '.html')
+  const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
   return `http://localhost:${port}/tests/${htmlFileName}`
 }
 
