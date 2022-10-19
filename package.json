@@ -1,7 +1,7 @@
 {
   "name": "test-with-playwright-monorepo",
   "version": "0.0.0-dev",
-  "description": "",
+  "description": "Utility package for creating e2e test for LVCE Editor extensions",
   "type": "module",
   "files": [
     "src"
