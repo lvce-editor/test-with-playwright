@@ -1,4 +1,4 @@
 {
-  "main": "main.js",
+  "browser": "main.js",
   "activation": ["onCompletion:plaintext"]
 }
