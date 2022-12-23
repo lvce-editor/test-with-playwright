@@ -1,10 +1,7 @@
 {
   "type": "module",
-  "dependencies": {
-    "@lvce-editor/test-with-playwright": "file:../../../../test-with-playwright"
-  },
   "scripts": {
-    "e2e": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=.",
-    "e2e:headless": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js  --only-extension=../extension --test-path=. --headless"
+    "e2e": "node ../../../../test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=.",
+    "e2e:headless": "node ../../../../test-with-playwright/bin/test-with-playwright.js  --only-extension=../extension --test-path=. --headless"
   }
 }
