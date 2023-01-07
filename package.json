@@ -18,12 +18,12 @@
     "singleQuote": true
   },
   "devDependencies": {
-    "@types/node": "^18.11.17",
+    "@types/node": "^18.11.18",
     "execa": "^6.1.0",
-    "lerna": "^6.1.0",
+    "lerna": "^6.4.0",
     "prettier": "^2.8.1",
     "typescript": "^4.9.4",
-    "@lvce-editor/server": "^0.11.8"
+    "@lvce-editor/server": "^0.11.10"
   },
   "jest": {
     "testTimeout": 15000
