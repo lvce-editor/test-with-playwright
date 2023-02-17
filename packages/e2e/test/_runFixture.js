@@ -18,7 +18,7 @@ export const runFixture = async (name) => {
     'src',
     'all.js'
   )
-  const cwd = join(root, 'packages', 'e2e', 'fixtures', name, 'e2e')
+  const cwd = join(root, 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }

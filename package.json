@@ -7,7 +7,7 @@
     "src"
   ],
   "scripts": {
-    "postinstall": "lerna bootstrap --ci && node scripts/postinstall.js",
+    "postinstall": "lerna bootstrap --ci",
     "test": "cd packages/e2e && npm test"
   },
   "keywords": [],
