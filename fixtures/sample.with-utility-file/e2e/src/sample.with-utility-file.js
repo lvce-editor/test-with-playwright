@@ -5,12 +5,9 @@ export const name = 'sample.with-utility-file'
 export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
-  await FileSystem.writeFile(
-    `${tmpDir}/test.txt`,
-    ['   line   ', '   line   ', '   line   '].join('\n')
-  )
+  await FileSystem.writeFile(`${tmpDir}/test.txt`, `Option`)
   await Main.openUri(`${tmpDir}/test.txt`)
-  await Editor.setCursor(0, 7)
+  await Editor.setCursor(0, 6)
 
   // act
   await Editor.openCompletion()
