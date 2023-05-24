@@ -1,4 +1,6 @@
-test('sample.completion-provider', async () => {
+export const name = 'sample.completion-provider'
+
+export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(
@@ -19,4 +21,4 @@ test('sample.completion-provider', async () => {
   await expect(completionItems.nth(0)).toHaveText('Option A')
   await expect(completionItems.nth(1)).toHaveText('Option B')
   await expect(completionItems.nth(2)).toHaveText('Option C')
-})
+}
