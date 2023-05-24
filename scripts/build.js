@@ -1,7 +1,7 @@
-import { execSync } from 'child_process'
-import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import path, { dirname, join } from 'path'
-import { fileURLToPath } from 'url'
+import { execSync } from 'node:child_process'
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import path, { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')

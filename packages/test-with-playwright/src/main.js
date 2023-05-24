@@ -1,12 +1,12 @@
 import { chromium } from '@playwright/test'
-import assert from 'assert'
-import { fork } from 'child_process'
-import { mkdir, mkdtemp, writeFile } from 'fs/promises'
+import assert from 'node:assert'
+import { fork } from 'node:child_process'
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import getPort from 'get-port'
 import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { tmpdir } from 'os'
-import { dirname } from 'path'
+import { tmpdir } from 'node:os'
+import { dirname } from 'node:path'
 import { readPackageUp } from 'read-pkg-up'
 
 export const state = {
