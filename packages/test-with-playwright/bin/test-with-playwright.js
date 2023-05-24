@@ -1,1 +1,1 @@
-import '../src/all.js'
+import '../src/parts/RunAllTests/RunAllTests.js'

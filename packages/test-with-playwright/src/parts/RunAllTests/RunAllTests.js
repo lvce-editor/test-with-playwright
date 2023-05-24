@@ -1,25 +1,12 @@
 import { expect } from '@playwright/test'
 import parseArgv from 'minimist'
-import { readdirSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { closeAll, getRoot, startAll } from './main.js'
-
-/**
- * @param {string} name
- */
-const isTestFile = (name) => {
-  return !name.startsWith('_')
-}
-
-/**
- * @param {string} root
- */
-const getTestFiles = async (root) => {
-  return readdirSync(root)
-    .filter(isTestFile)
-    .map((x) => join(root, x))
-}
+import * as CloseAll from '../CloseAll/CloseAll.js'
+import * as GetRoot from '../GetRoot/GetRoot.js'
+import * as GetTestFiles from '../GetTestFiles/GetTestFiles.js'
+import * as StartAll from '../StartAll/StartAll.js'
+import * as TestOverlayTimeout from '../TestOverlayTimeout/TestOverlayTimeout.js'
 
 /**
  * @param {string} absolutePath
@@ -39,7 +26,9 @@ const getUrlFromTestFile = (absolutePath, port) => {
 const executeSingleTest = async (page, url) => {
   await page.goto(url)
   const testOverlay = page.locator('#TestOverlay')
-  await expect(testOverlay).toBeVisible({ timeout: 25_000 })
+  await expect(testOverlay).toBeVisible({
+    timeout: TestOverlayTimeout.testOverlayTimeout,
+  })
   const text = await testOverlay.textContent()
   const state = await testOverlay.getAttribute('data-state')
   switch (state) {
@@ -84,9 +73,9 @@ const main = async () => {
     let passed = 0
     const env = getEnv(options)
     const start = performance.now()
-    const { page, port } = await startAll(env)
-    const root = await getRoot()
-    const testFiles = await getTestFiles(join(root, 'src'))
+    const { page, port } = await StartAll.startAll(env)
+    const root = await GetRoot.getRoot()
+    const testFiles = await GetTestFiles.getTestFiles(join(root, 'src'))
     console.log({ testFiles })
     for (const testFile of testFiles) {
       const url = getUrlFromTestFile(testFile, port)
@@ -119,7 +108,7 @@ const main = async () => {
     console.error(error)
     process.exit(1)
   } finally {
-    await closeAll()
+    await CloseAll.closeAll()
   }
 }
 

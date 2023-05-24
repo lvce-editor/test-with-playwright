@@ -70,8 +70,8 @@ export const runFixture = async (name) => {
     root,
     'packages',
     'test-with-playwright',
-    'src',
-    'all.js'
+    'bin',
+    'test-with-playwright.js'
   )
   const cwd = join(root, 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
