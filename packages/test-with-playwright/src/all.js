@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
+import parseArgv from 'minimist'
 import { readdirSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { closeAll, getRoot, runTest, startAll, state } from './main.js'
-import parseArgv from 'minimist'
+import { closeAll, getRoot, startAll } from './main.js'
 
 /**
  * @param {string} name
