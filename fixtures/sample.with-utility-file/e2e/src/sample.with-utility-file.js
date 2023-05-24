@@ -1,6 +1,8 @@
 import { completionCount } from './_util.js'
 
-test('sample.with-utility-file', async () => {
+export const name = 'sample.with-utility-file'
+
+export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(
@@ -18,4 +20,4 @@ test('sample.with-utility-file', async () => {
   await expect(completions).toBeVisible()
   const completionItems = completions.locator('.EditorCompletionItem')
   await expect(completionItems).toHaveCount(completionCount)
-})
+}
