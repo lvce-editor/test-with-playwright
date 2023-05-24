@@ -42,7 +42,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Compute node modules cache key
         id: nodeModulesCacheKey
-        run: echo "::set-output name=value::$(node scripts/computeNodeModulesCacheKey.js)"
+        run: echo "value=$(node scripts/computeNodeModulesCacheKey.js)" >> $GITHUB_OUTPUT
+        shell: bash
       - uses: actions/cache@v3
         id: npm-cache
         with:
