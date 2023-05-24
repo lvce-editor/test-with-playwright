@@ -1,4 +1,10 @@
 {
   "browser": "main.js",
-  "activation": ["onCompletion:plaintext"]
+  "activation": ["onCompletion:xyz"],
+  "languages": [
+    {
+      "id": "xyz",
+      "extensions": [".xyz"]
+    }
+  ]
 }
