@@ -8,6 +8,39 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..', '..', '..')
 
 /**
+ *
+ * @param {any} childProcess
+ */
+const waitForChildProcessToExit = async (childProcess) => {
+  const code = await new Promise((resolve, reject) => {
+    /**
+     *
+     * @param {any} value
+     */
+    const cleanup = (value) => {
+      childProcess.off('exit', handleExit)
+      resolve(value)
+    }
+    /**
+     *
+     * @param {number} code
+     */
+    const handleExit = (code) => {
+      cleanup(code)
+      if (code === 0) {
+        resolve(undefined)
+      } else {
+        reject()
+      }
+    }
+    childProcess.on('exit', handleExit)
+  })
+  if (code !== 0) {
+    throw new Error(`child exited with code ${code}`)
+  }
+}
+
+/**
  * @param {string} name
  */
 export const runFixture = async (name) => {
@@ -43,16 +76,7 @@ export const runFixture = async (name) => {
     console.info({ stderr: data.toString() })
     stderr += data
   })
-
-  await new Promise((resolve, reject) => {
-    child.on('exit', (code) => {
-      if (code === 0) {
-        resolve(undefined)
-      } else {
-        reject()
-      }
-    })
-  })
+  await waitForChildProcessToExit(child)
   return {
     stdout,
     stderr,
