@@ -3,12 +3,9 @@ export const name = 'sample.completion-provider'
 export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
-  await FileSystem.writeFile(
-    `${tmpDir}/test.txt`,
-    ['   line   ', '   line   ', '   line   '].join('\n')
-  )
-  await Main.openUri(`${tmpDir}/test.txt`)
-  await Editor.setCursor(0, 7)
+  await FileSystem.writeFile(`${tmpDir}/test.xyz`, `Option`)
+  await Main.openUri(`${tmpDir}/test.xyz`)
+  await Editor.setCursor(0, 6)
 
   // act
   await Editor.openCompletion()

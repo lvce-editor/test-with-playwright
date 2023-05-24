@@ -19,7 +19,7 @@ const getCompletions = (text, offset) => {
 }
 
 const completionProvider = {
-  languageId: 'plaintext',
+  languageId: 'xyz',
   provideCompletions(textDocument, offset) {
     const text = vscode.getTextFromTextDocument(textDocument)
     return getCompletions(text, offset)
