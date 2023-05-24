@@ -6,6 +6,7 @@ import * as GetRoot from '../GetRoot/GetRoot.js'
 import * as GetTestFiles from '../GetTestFiles/GetTestFiles.js'
 import * as Process from '../Process/Process.js'
 import * as RunTests from '../RunTests/RunTests.js'
+import * as ShouldLogErrorWithStack from '../ShouldLogErrorWithStack/ShouldLogErrorWithStack.js'
 import * as StartAll from '../StartAll/StartAll.js'
 
 /**
@@ -40,7 +41,12 @@ const main = async () => {
     })
   } catch (error) {
     console.info('tests failed')
-    console.error(error)
+    if (ShouldLogErrorWithStack.shouldLogErrorWithStack(error)) {
+      console.error(error)
+    } else {
+      // @ts-ignore
+      console.error(error.message)
+    }
     Process.exit(ExitCode.Error)
   } finally {
     await CloseAll.closeAll()
