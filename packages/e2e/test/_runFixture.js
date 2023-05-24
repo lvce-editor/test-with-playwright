@@ -12,12 +12,16 @@ const root = join(__dirname, '..', '..', '..')
  * @param {any} childProcess
  */
 const waitForChildProcessToExit = async (childProcess) => {
-  const code = await new Promise((resolve, reject) => {
+  const { code, stdout, stderr } = await new Promise((resolve) => {
+    let stdout = ''
+    let stderr = ''
     /**
      *
      * @param {any} value
      */
     const cleanup = (value) => {
+      childProcess.stdout.off('data', handleStdoutData)
+      childProcess.stderr.off('data', handleStderrData)
       childProcess.off('exit', handleExit)
       resolve(value)
     }
@@ -26,17 +30,35 @@ const waitForChildProcessToExit = async (childProcess) => {
      * @param {number} code
      */
     const handleExit = (code) => {
-      cleanup(code)
-      if (code === 0) {
-        resolve(undefined)
-      } else {
-        reject()
-      }
+      cleanup({ code, stdout, stderr })
     }
+
+    /**
+     * @param {any} data
+     */
+    const handleStdoutData = (data) => {
+      console.info({ stdout: data.toString() })
+      stdout += data
+    }
+
+    /**
+     * @param {any} data
+     */
+    const handleStderrData = (data) => {
+      console.info({ stderr: data.toString() })
+      stderr += data
+    }
+    // @ts-ignore
+    childProcess.stdout.on('data', handleStdoutData)
+    // @ts-ignore
+    childProcess.stderr.on('data', handleStderrData)
     childProcess.on('exit', handleExit)
   })
-  if (code !== 0) {
-    throw new Error(`child exited with code ${code}`)
+
+  return {
+    code,
+    stdout,
+    stderr,
   }
 }
 
@@ -55,8 +77,6 @@ export const runFixture = async (name) => {
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
-  let stdout = ''
-  let stderr = ''
   const child = fork(binaryPath, ['--headless'], {
     cwd,
     stdio: 'pipe',
@@ -66,17 +86,10 @@ export const runFixture = async (name) => {
       TEST_PATH: '.',
     },
   })
-  // @ts-ignore
-  child.stdout.on('data', (data) => {
-    console.info({ stdout: data.toString() })
-    stdout += data
-  })
-  // @ts-ignore
-  child.stderr.on('data', (data) => {
-    console.info({ stderr: data.toString() })
-    stderr += data
-  })
-  await waitForChildProcessToExit(child)
+  const { code, stdout, stderr } = await waitForChildProcessToExit(child)
+  if (code !== 0) {
+    throw new Error(`child exited with code ${code}`)
+  }
   return {
     stdout,
     stderr,
