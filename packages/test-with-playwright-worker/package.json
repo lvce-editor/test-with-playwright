@@ -1,0 +1,25 @@
+{
+  "name": "@lvce-editor/test-with-playwright-worker",
+  "version": "0.0.0-dev",
+  "description": "",
+  "main": "src/parts/RunAllTests/RunAllTests.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lvce-editor/test-with-playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "^1.34.2",
+    "get-port": "^6.1.2",
+    "minimist": "^1.2.8",
+    "read-pkg-up": "^9.1.0",
+    "verror": "^1.10.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "@types/verror": "^1.10.6"
+  }
+}
