@@ -1,15 +1,21 @@
 import { chromium } from '@playwright/test'
-import assert from 'node:assert'
-import * as TestState from '../TestState/TestState.js'
 
-export const startBrowser = async ({ headless = false }) => {
-  assert(!TestState.state.browser, 'Browser should not be defined')
-  console.info('START BROWSER')
+/**
+ *
+ * @param {{signal:AbortSignal, headless:boolean}} options
+ * @returns
+ */
+export const startBrowser = async ({ signal, headless }) => {
   const browser = await chromium.launch({
     headless,
   })
-  TestState.state.browser = browser
-  const page = await browser.newPage({})
-  TestState.state.page = page
-  return page
+  const page = await browser.newPage()
+  signal.addEventListener('abort', async () => {
+    await page.close()
+    await browser.close()
+  })
+  return {
+    browser,
+    page,
+  }
 }

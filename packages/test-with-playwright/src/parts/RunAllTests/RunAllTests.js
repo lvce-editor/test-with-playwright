@@ -1,56 +1,17 @@
-import parseArgv from 'minimist'
-import { join } from 'node:path'
-import * as CloseAll from '../CloseAll/CloseAll.js'
-import * as ExitCode from '../ExitCode/ExitCode.js'
-import * as GetRoot from '../GetRoot/GetRoot.js'
-import * as GetTestFiles from '../GetTestFiles/GetTestFiles.js'
+import { join } from 'path'
+import { getTests } from '../GetTests/GetTests.js'
 import * as Process from '../Process/Process.js'
-import * as RunTests from '../RunTests/RunTests.js'
-import * as ShouldLogErrorWithStack from '../ShouldLogErrorWithStack/ShouldLogErrorWithStack.js'
-import * as StartAll from '../StartAll/StartAll.js'
+import * as ProcessListeners from '../ProcessListeners/ProcessListeners.js'
+import { runTests } from '../RunTests/RunTests.js'
 
 /**
  *
- * @param {any} options
+ * @param {{extensionPath:string, testPath:string, cwd:string, headless:boolean}} param0
  */
-const getEnv = (options) => {
-  const env = Object.create(null)
-  if (options['only-extension']) {
-    env['ONLY_EXTENSION'] = options['only-extension']
-  }
-  if (options['test-path']) {
-    env['TEST_PATH'] = options['test-path']
-  }
-  return env
+export const runAllTests = async ({ extensionPath, testPath, cwd, headless }) => {
+  Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
+  const testSrc = join(testPath, 'src')
+  const tests = await getTests(testSrc)
+  await runTests({ testSrc, tests, headless })
+  console.log({ extensionPath, testPath, tests })
 }
-
-const main = async () => {
-  try {
-    const argv = Process.argv.slice(2)
-    const options = parseArgv(argv)
-    const env = getEnv(options)
-    const { page, port } = await StartAll.startAll(env)
-    const root = await GetRoot.getRoot()
-    const testFiles = await GetTestFiles.getTestFiles(join(root, 'src'))
-    console.log({ testFiles })
-    await RunTests.runTests({
-      testFiles,
-      options,
-      page,
-      port,
-    })
-  } catch (error) {
-    console.info('tests failed')
-    if (ShouldLogErrorWithStack.shouldLogErrorWithStack(error)) {
-      console.error(error)
-    } else {
-      // @ts-ignore
-      console.error(error.message)
-    }
-    Process.exit(ExitCode.Error)
-  } finally {
-    await CloseAll.closeAll()
-  }
-}
-
-main()

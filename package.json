@@ -15,7 +15,8 @@
   "license": "MIT",
   "prettier": {
     "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "printWidth": 150
   },
   "devDependencies": {
     "@types/node": "^20.2.3",

@@ -1,3 +1,5 @@
-import getPort from 'get-port'
+import _getPort from 'get-port'
 
-export { getPort }
+export const getPort = () => {
+  return _getPort()
+}
