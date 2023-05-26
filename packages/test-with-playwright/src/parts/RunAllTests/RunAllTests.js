@@ -18,11 +18,9 @@ export const runAllTests = async ({ extensionPath, testPath, cwd, headless }) =>
     path,
     argv: [],
   })
-  console.log('got ipc')
   await new Promise((r) => {
     setTimeout(r, 100)
   })
-  console.log('dispose worker')
   ipc.dispose()
   // Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
   // const testSrc = join(testPath, 'src')
