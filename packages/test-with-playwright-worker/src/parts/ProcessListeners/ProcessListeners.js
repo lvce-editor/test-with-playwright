@@ -1,3 +1,3 @@
 export const handleUncaughtExceptionMonitor = (error) => {
-  console.log(`[test] uncaught exception ${error}`)
+  console.log(`[test-worker] uncaught exception ${error}`)
 }

@@ -1,15 +1,20 @@
 import { join } from 'path'
 import { getTests } from '../GetTests/GetTests.js'
-import * as Process from '../Process/Process.js'
-import * as ProcessListeners from '../ProcessListeners/ProcessListeners.js'
 import { runTests } from '../RunTests/RunTests.js'
+import * as Assert from '../Assert/Assert.js'
 
 /**
  *
- * @param {{extensionPath:string, testPath:string, cwd:string, headless:boolean}} param0
+ * @param {string} extensionPath
+ * @param {string} testPath
+ * @param {string} cwd
+ * @param {boolean} headless
  */
-export const runAllTests = async ({ extensionPath, testPath, cwd, headless }) => {
-  Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
+export const runAllTests = async (extensionPath, testPath, cwd, headless) => {
+  Assert.string(extensionPath)
+  Assert.string(testPath)
+  Assert.string(cwd)
+  Assert.boolean(headless)
   const testSrc = join(testPath, 'src')
   const tests = await getTests(testSrc)
   await runTests({ testSrc, tests, headless })

@@ -6,6 +6,8 @@ import { runTests } from '../RunTests/RunTests.js'
 import * as IpcParent from '../IpcParent/IpcParent.js'
 import * as IpcParentType from '../IpcParentType/IpcParentType.js'
 import * as GetTestWorkerPath from '../GetTestWorkerPath/GetTestWorkerPath.js'
+import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.js'
 
 /**
  *
@@ -18,9 +20,7 @@ export const runAllTests = async ({ extensionPath, testPath, cwd, headless }) =>
     path,
     argv: [],
   })
-  await new Promise((r) => {
-    setTimeout(r, 100)
-  })
+  await JsonRpc.invoke(ipc, TestWorkerCommandType.RunAllTests, extensionPath, testPath, cwd, headless)
   ipc.dispose()
   // Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
   // const testSrc = join(testPath, 'src')
