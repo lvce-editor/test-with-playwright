@@ -3,6 +3,7 @@ import * as IpcParent from '../IpcParent/IpcParent.js'
 import * as IpcParentType from '../IpcParentType/IpcParentType.js'
 import * as JsonRpc from '../JsonRpc/JsonRpc.js'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.js'
 
 /**
  *
@@ -15,6 +16,9 @@ export const runAllTests = async ({ extensionPath, testPath, cwd, headless }) =>
     path,
     argv: [],
   })
+  HandleIpc.handleIpc(ipc)
+  console.time('run tests')
   await JsonRpc.invoke(ipc, TestWorkerCommandType.RunAllTests, extensionPath, testPath, cwd, headless)
+  console.timeEnd('run tests')
   ipc.dispose()
 }

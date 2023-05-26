@@ -13,5 +13,4 @@ export const main = async () => {
     method: IpcChildType.Auto(),
   })
   HandleIpc.handleIpc(ipc)
-  console.log('hello from test worker')
 }

@@ -7,7 +7,6 @@ import { fork } from 'child_process'
  */
 export const startServer = async ({ signal, port }) => {
   const { serverPath } = await import('@lvce-editor/server')
-  console.log({ serverPath })
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
