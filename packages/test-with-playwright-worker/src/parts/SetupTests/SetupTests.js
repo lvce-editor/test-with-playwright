@@ -1,6 +1,7 @@
 import * as StartBrowser from '../StartBrowser/StartBrowser.js'
 import * as StartServer from '../StartServer/StartServer.js'
 import * as GetPort from '../GetPort/GetPort.js'
+import * as GetServerPath from '../GetServerPath/GetServerPath.js'
 
 /**
  *
@@ -13,7 +14,8 @@ export const setupTests = async ({ signal, headless }) => {
     signal,
     headless,
   })
-  const child = await StartServer.startServer({ signal, port })
+  const serverPath = await GetServerPath.getServerPath()
+  const child = await StartServer.startServer({ signal, port, serverPath })
   return {
     port,
     browser,

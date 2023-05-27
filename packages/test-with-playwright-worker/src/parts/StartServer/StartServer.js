@@ -2,11 +2,10 @@ import { fork } from 'child_process'
 
 /**
  *
- * @param {{signal:AbortSignal, port:number}} param0
+ * @param {{signal:AbortSignal, port:number, serverPath:string}} param0
  * @returns
  */
-export const startServer = async ({ signal, port }) => {
-  const { serverPath } = await import('@lvce-editor/server')
+export const startServer = async ({ signal, port, serverPath }) => {
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
@@ -21,8 +20,8 @@ export const startServer = async ({ signal, port }) => {
     }
     console.log('child error', x)
   })
-  await new Promise((r) => {
-    child.on('message', r)
+  await new Promise((resolve) => {
+    child.on('message', resolve)
   })
   return child
 }
