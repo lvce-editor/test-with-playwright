@@ -65,6 +65,10 @@ jobs:
           PLAYWRIGHT_BROWSERS_PATH: 0
       - run: node scripts/build.js
       - run: npm publish --access public
-        working-directory: ./dist
+        working-directory: ./dist/test-with-playwright-worker
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: npm publish --access public
+        working-directory: ./dist/test-with-playwright
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
