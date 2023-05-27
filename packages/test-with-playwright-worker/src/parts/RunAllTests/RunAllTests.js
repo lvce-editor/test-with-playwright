@@ -1,6 +1,6 @@
 import { join } from 'path'
 import * as Assert from '../Assert/Assert.js'
-import { getTests } from '../GetTests/GetTests.js'
+import * as GetTests from '../GetTests/GetTests.js'
 import * as RunTests from '../RunTests/RunTests.js'
 import * as SetupTests from '../SetupTests/SetupTests.js'
 import * as TearDownTests from '../TearDownTests/TearDownTests.js'
@@ -28,7 +28,7 @@ export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, t
     headless,
   })
   const testSrc = join(testPath, 'src')
-  const tests = await getTests(testSrc)
+  const tests = await GetTests.getTests(testSrc)
   const onResult = (result) => {
     JsonRpc.send(ipc, CliCommandType.HandleResult, result)
   }
