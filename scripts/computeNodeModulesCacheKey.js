@@ -8,6 +8,7 @@ const locations = [
   'package-lock.json',
   'packages/e2e/package-lock.json',
   'packages/test-with-playwright/package-lock.json',
+  'packages/test-with-playwright-worker/package-lock.json',
   'scripts/computeNodeModulesCacheKey.js',
 ]
 

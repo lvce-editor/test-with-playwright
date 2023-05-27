@@ -1,56 +1,22 @@
-import parseArgv from 'minimist'
-import { join } from 'node:path'
-import * as CloseAll from '../CloseAll/CloseAll.js'
-import * as ExitCode from '../ExitCode/ExitCode.js'
-import * as GetRoot from '../GetRoot/GetRoot.js'
-import * as GetTestFiles from '../GetTestFiles/GetTestFiles.js'
-import * as Process from '../Process/Process.js'
-import * as RunTests from '../RunTests/RunTests.js'
-import * as ShouldLogErrorWithStack from '../ShouldLogErrorWithStack/ShouldLogErrorWithStack.js'
-import * as StartAll from '../StartAll/StartAll.js'
+import * as GetTestWorkerPath from '../GetTestWorkerPath/GetTestWorkerPath.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.js'
+import * as IpcParent from '../IpcParent/IpcParent.js'
+import * as IpcParentType from '../IpcParentType/IpcParentType.js'
+import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.js'
 
 /**
  *
- * @param {any} options
+ * @param {{onlyExtension:string, testPath:string, cwd:string, headless:boolean, timeout:number}} param0
  */
-const getEnv = (options) => {
-  const env = Object.create(null)
-  if (options['only-extension']) {
-    env['ONLY_EXTENSION'] = options['only-extension']
-  }
-  if (options['test-path']) {
-    env['TEST_PATH'] = options['test-path']
-  }
-  return env
+export const runAllTests = async ({ onlyExtension, testPath, cwd, headless, timeout }) => {
+  const path = GetTestWorkerPath.getTestWorkerPath()
+  const ipc = await IpcParent.create({
+    method: IpcParentType.NodeWorker,
+    path,
+    argv: [],
+  })
+  HandleIpc.handleIpc(ipc)
+  await JsonRpc.invoke(ipc, TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout)
+  ipc.dispose()
 }
-
-const main = async () => {
-  try {
-    const argv = Process.argv.slice(2)
-    const options = parseArgv(argv)
-    const env = getEnv(options)
-    const { page, port } = await StartAll.startAll(env)
-    const root = await GetRoot.getRoot()
-    const testFiles = await GetTestFiles.getTestFiles(join(root, 'src'))
-    console.log({ testFiles })
-    await RunTests.runTests({
-      testFiles,
-      options,
-      page,
-      port,
-    })
-  } catch (error) {
-    console.info('tests failed')
-    if (ShouldLogErrorWithStack.shouldLogErrorWithStack(error)) {
-      console.error(error)
-    } else {
-      // @ts-ignore
-      console.error(error.message)
-    }
-    Process.exit(ExitCode.Error)
-  } finally {
-    await CloseAll.closeAll()
-  }
-}
-
-main()
