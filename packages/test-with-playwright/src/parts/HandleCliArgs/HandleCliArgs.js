@@ -8,14 +8,14 @@ import * as RunAllTests from '../RunAllTests/RunAllTests.js'
 export const handleCliArgs = async ({ argv, env }) => {
   const cwd = process.cwd()
   const options = GetOptions.getOptions({ argv, env })
-  const extensionPath = options.extensionPath
+  const onlyExtension = options.onlyExtension
   const testPath = options.testPath
   const headless = options.headless
   const timeout = 30_000
   // TODO
   // console.log({ argv, env })
   await RunAllTests.runAllTests({
-    extensionPath,
+    onlyExtension,
     testPath,
     cwd,
     headless,
