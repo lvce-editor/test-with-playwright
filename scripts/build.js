@@ -49,6 +49,7 @@ const copyPackageJson = (version) => {
 
 const copyWorkerPackageJson = (version) => {
   const packageJson = readJson(join(packageWorkerPath, 'package.json'))
+  packageJson.version = version
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
