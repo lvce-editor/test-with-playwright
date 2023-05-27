@@ -53,9 +53,10 @@ const copyWorkerPackageJson = () => {
   delete packageJson.jest
   mkdirSync(join(root, 'dist', 'test-with-playwright-worker'))
   writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
+  packageJson.main = 'index.js'
 }
 
-const copyFiles = () => {
+const copyFiles = async () => {
   cpSync(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
     recursive: true,
     force: true,
@@ -68,6 +69,15 @@ const copyFiles = () => {
     recursive: true,
     force: true,
   })
+  await writeFileSync(
+    join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
+    `import { testWorkerPath } from '@lvce-editor/test-with-playwright-worker'
+
+export const getTestWorkerPath = () => {
+  return testWorkerPath
+}
+`
+  )
 }
 
 const copyWorkerFiles = () => {
@@ -75,6 +85,16 @@ const copyWorkerFiles = () => {
     recursive: true,
     force: true,
   })
+  writeFileSync(
+    join(root, 'dist', 'test-with-playwright-worker', 'index.js'),
+    `import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export const testWorkerPath = join(__dirname, 'src', 'workerMain.js')
+`
+  )
 }
 
 const cleanDist = () => {
