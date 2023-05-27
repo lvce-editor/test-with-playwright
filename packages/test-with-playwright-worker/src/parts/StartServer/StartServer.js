@@ -2,16 +2,19 @@ import { fork } from 'child_process'
 
 /**
  *
- * @param {{signal:AbortSignal, port:number, serverPath:string}} param0
+ * @param {{signal:AbortSignal, port:number, serverPath:string, onlyExtension:string, testPath:string}} param0
  * @returns
  */
-export const startServer = async ({ signal, port, serverPath }) => {
+export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }) => {
+  console.log({ onlyExtension, testPath })
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
     env: {
       ...process.env,
       PORT: String(port),
+      ONLY_EXTENSION: onlyExtension,
+      TEST_PATH: testPath,
     },
   })
   child.on('error', (x) => {

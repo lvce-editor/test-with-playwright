@@ -25,7 +25,6 @@ export const runTest = async ({ test, page, testSrc, port, timeout }) => {
   })
   const text = await testOverlay.textContent()
   const testOverlayState = await testOverlay.getAttribute('data-state')
-  const absolutePath = join(testSrc, test)
   const testState = GetTestState.getTestState(testOverlayState)
   const end = performance.now()
   return {
@@ -33,5 +32,6 @@ export const runTest = async ({ test, page, testSrc, port, timeout }) => {
     name: test,
     start,
     end,
+    error: text,
   }
 }

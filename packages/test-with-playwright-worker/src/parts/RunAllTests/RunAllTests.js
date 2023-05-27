@@ -26,6 +26,8 @@ export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, t
   const { browser, page, child, port } = await SetupTests.setupTests({
     signal,
     headless,
+    onlyExtension: extensionPath,
+    testPath,
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
