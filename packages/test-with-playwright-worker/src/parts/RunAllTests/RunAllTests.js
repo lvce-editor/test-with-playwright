@@ -32,7 +32,10 @@ export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, t
   const onResult = (result) => {
     JsonRpc.send(ipc, CliCommandType.HandleResult, result)
   }
-  await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult })
+  const onFinalResult = (finalResult) => {
+    JsonRpc.send(ipc, CliCommandType.HandleFinalResult, finalResult)
+  }
+  await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult, onFinalResult })
   await TearDownTests.tearDownTests({
     controller,
     child,
