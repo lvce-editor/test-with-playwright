@@ -4,7 +4,7 @@ import * as GetResponse from '../GetResponse/GetResponse.js'
 export const handleIpc = (ipc) => {
   Assert.object(ipc)
   const handleMessage = async (message) => {
-    const response = await GetResponse.getResponse(message)
+    const response = await GetResponse.getResponse(message, ipc)
     if (response) {
       ipc.send(response)
     }

@@ -9,11 +9,13 @@ export const handleCliArgs = async ({ argv, env }) => {
   const extensionPath = env.ONLY_EXTENSION
   const testPath = env.TEST_PATH || ''
   const headless = argv.includes('--headless')
+  const timeout = 30_000
   // TODO
   await RunAllTests.runAllTests({
     extensionPath,
     testPath,
     cwd,
     headless,
+    timeout,
   })
 }
