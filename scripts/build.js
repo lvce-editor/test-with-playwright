@@ -35,19 +35,20 @@ const writeJson = (path, value) => {
   writeFileSync(path, JSON.stringify(value, null, 2) + '\n')
 }
 
-const copyPackageJson = () => {
+const copyPackageJson = (version) => {
   const packageJson = readJson(join(packagePath, 'package.json'))
-  packageJson.version = getVersion()
+  packageJson.version = version
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
+  packageJson.dependencies = packageJson.dependencies || {}
+  packageJson.dependencies['@lvce-editor/test-with-playwright-worker'] = `${version}`
   mkdirSync(join(root, 'dist', 'test-with-playwright'))
   writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
 }
 
-const copyWorkerPackageJson = () => {
+const copyWorkerPackageJson = (version) => {
   const packageJson = readJson(join(packageWorkerPath, 'package.json'))
-  packageJson.version = getVersion()
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
@@ -102,11 +103,12 @@ const cleanDist = () => {
 }
 
 const main = () => {
+  const version = getVersion()
   cleanDist()
   createDist()
-  copyPackageJson()
+  copyPackageJson(version)
   copyFiles()
-  copyWorkerPackageJson()
+  copyWorkerPackageJson(version)
   copyWorkerFiles()
 }
 
