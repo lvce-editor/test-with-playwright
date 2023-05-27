@@ -4,7 +4,6 @@ export const listen = async () => {
   if (!parentPort) {
     throw new Error('parentPort is required')
   }
-  console.log('post ready')
   parentPort.postMessage('ready')
   return parentPort
 }
