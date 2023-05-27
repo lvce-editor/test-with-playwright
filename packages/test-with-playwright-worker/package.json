@@ -6,7 +6,8 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git@github.com:lvce-editor/test-with-playwright.git"
+    "url": "git@github.com:lvce-editor/test-with-playwright.git",
+    "directory": "packages/test-with-playwright-worker"
   },
   "keywords": [],
   "author": "",
