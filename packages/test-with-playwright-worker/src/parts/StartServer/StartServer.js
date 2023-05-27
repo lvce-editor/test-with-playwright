@@ -6,7 +6,6 @@ import { fork } from 'child_process'
  * @returns
  */
 export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }) => {
-  console.log({ onlyExtension, testPath })
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
