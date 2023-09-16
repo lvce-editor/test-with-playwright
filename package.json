@@ -19,6 +19,7 @@
     "printWidth": 150
   },
   "devDependencies": {
+    "@lerna/legacy-package-management": "^7.3.0",
     "@types/node": "^20.6.2",
     "execa": "^8.0.1",
     "lerna": "^7.3.0",
