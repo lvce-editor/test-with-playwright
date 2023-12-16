@@ -19,13 +19,13 @@
     "printWidth": 150
   },
   "devDependencies": {
-    "@lerna/legacy-package-management": "^8.0.0",
-    "@types/node": "^20.9.4",
+    "@lerna/legacy-package-management": "^8.0.1",
+    "@types/node": "^20.10.4",
     "execa": "^8.0.1",
-    "lerna": "^8.0.0",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2",
-    "@lvce-editor/server": "^0.20.9"
+    "lerna": "^8.0.1",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "@lvce-editor/server": "^0.21.3"
   },
   "jest": {
     "testTimeout": 15000
