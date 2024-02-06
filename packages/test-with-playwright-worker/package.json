@@ -13,7 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.41.2",
     "get-port": "^7.0.0",
     "minimist": "^1.2.8",
     "read-pkg-up": "^10.1.0",
