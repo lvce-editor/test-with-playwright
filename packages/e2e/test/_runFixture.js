@@ -66,13 +66,7 @@ const waitForChildProcessToExit = async (childProcess) => {
  * @param {string} name
  */
 export const runFixture = async (name) => {
-  const binaryPath = join(
-    root,
-    'packages',
-    'test-with-playwright',
-    'bin',
-    'test-with-playwright.js'
-  )
+  const binaryPath = join(root, 'packages', 'test-with-playwright', 'bin', 'test-with-playwright.js')
   const cwd = join(root, 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
@@ -87,12 +81,9 @@ export const runFixture = async (name) => {
     },
   })
   const { code, stdout, stderr } = await waitForChildProcessToExit(child)
-  if (code !== 0) {
-    throw new Error(`child exited with code ${code}`)
-  }
   return {
     stdout,
     stderr,
-    exitCode: 0, // TODO
+    exitCode: code,
   }
 }

@@ -3,7 +3,7 @@ export const getFinalResultMessage = (passed, skipped, failed, duration) => {
     return `no tests found`
   }
   if (passed === 0 && skipped === 0 && failed === 1) {
-    return `${passed} test failed in ${duration}ms`
+    return `${failed} test failed in ${duration}ms`
   }
   if (passed === 0 && skipped === 1 && failed === 0) {
     return `${skipped} test skipped in ${duration}ms`

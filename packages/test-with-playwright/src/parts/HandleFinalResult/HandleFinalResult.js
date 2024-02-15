@@ -5,4 +5,7 @@ export const handleFinalResult = (finalResult) => {
   const duration = end - start
   const message = GetFinalResultMessage.getFinalResultMessage(passed, skipped, failed, duration)
   console.info(message)
+  if (failed > 0) {
+    process.exitCode = 1
+  }
 }
