@@ -5,6 +5,10 @@
   "main": "src/parts/RunAllTests/RunAllTests.js",
   "type": "module",
   "bin": "bin/test-with-playwright.js",
+  "scripts": {
+    "test": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
+    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit --watch"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:lvce-editor/test-with-playwright.git"
@@ -14,5 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0"
   }
 }

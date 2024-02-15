@@ -19,6 +19,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
       timeout,
     })
     onResult(result)
+    console.log(result)
     switch (result.status) {
       case TestState.Fail:
         failed++
