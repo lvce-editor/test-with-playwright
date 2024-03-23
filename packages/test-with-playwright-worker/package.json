@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@playwright/test": "^1.42.1",
-    "get-port": "^7.0.0",
+    "get-port": "^7.1.0",
     "minimist": "^1.2.8",
     "read-pkg-up": "^10.1.0",
     "verror": "^1.10.1"
