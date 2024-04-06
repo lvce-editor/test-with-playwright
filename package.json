@@ -16,7 +16,7 @@
   "prettier": {
     "semi": false,
     "singleQuote": true,
-    "printWidth": 150
+    "printWidth": 120
   },
   "devDependencies": {
     "@lerna/legacy-package-management": "^8.1.2",

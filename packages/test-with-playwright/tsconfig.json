@@ -3,7 +3,7 @@
     "lib": ["esnext"],
     "target": "esnext",
     "checkJs": true,
-    "module": "esnext",
+    "module": "NodeNext",
     "types": ["node", "jest"],
     "moduleResolution": "nodenext",
     "isolatedModules": true,
@@ -13,7 +13,11 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "assumeChangesOnlyAffectDirectDependencies": true,
-    "strict": true
+    "strict": true,
+    "composite": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true
   },
   "include": ["src", "test"]
 }
