@@ -10,6 +10,8 @@ const locations = [
   'packages/test-with-playwright/package-lock.json',
   'packages/test-with-playwright-worker/package-lock.json',
   'scripts/computeNodeModulesCacheKey.js',
+  '.github/workflows/ci.yml',
+  '.github/workflows/release.yml',
 ]
 
 const __dirname = dirname(fileURLToPath(import.meta.url))

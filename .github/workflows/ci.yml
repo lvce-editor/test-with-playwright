@@ -12,7 +12,7 @@ jobs:
   ci:
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13, windows-2022]
+        os: [ubuntu-24.04, macos-13, windows-2022]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
@@ -24,7 +24,7 @@ jobs:
         id: nodeModulesCacheKey
         run: echo "value=$(node scripts/computeNodeModulesCacheKey.js)" >> $GITHUB_OUTPUT
         shell: bash
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: npm-cache
         with:
           path: '**/node_modules'
