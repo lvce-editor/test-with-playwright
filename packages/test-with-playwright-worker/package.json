@@ -13,10 +13,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@playwright/test": "^1.43.0",
+    "@playwright/test": "^1.46.1",
     "get-port": "^7.1.0",
     "minimist": "^1.2.8",
-    "read-pkg-up": "^10.1.0",
+    "read-pkg-up": "^11.0.0",
     "verror": "^1.10.1"
   },
   "devDependencies": {
