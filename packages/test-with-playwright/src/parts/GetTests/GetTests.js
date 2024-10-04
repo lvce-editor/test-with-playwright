@@ -1,5 +1,4 @@
 import { readdir } from 'fs/promises'
-import { join } from 'path'
 
 /**
  * @param {string} testSrc
