@@ -9,6 +9,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap --ci",
     "test": "lerna run test",
+    "build": "node packages/build/src/build.js",
     "type-check": "tsc -b"
   },
   "keywords": [],
