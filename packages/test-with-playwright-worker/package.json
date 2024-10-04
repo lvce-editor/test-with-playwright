@@ -13,6 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@lvce-editor/verror": "^1.4.0",
     "@playwright/test": "^1.47.2",
     "get-port": "^7.1.0",
     "minimist": "^1.2.8",

@@ -1,8 +1,8 @@
 import { readdir } from 'fs/promises'
-import VError from 'verror'
 import * as ErrorCodes from '../ErrorCodes/ErrorCodes.js'
 import * as IsTestFile from '../IsTestFile/IsTestFile.js'
 import { NoTestFilesFoundError } from '../NoTestFilesFoundError/NoTestFilesFoundError.js'
+import { VError } from '@lvce-editor/verror'
 
 /**
  * @param {string} testSrc
@@ -16,7 +16,6 @@ export const getTests = async (testSrc) => {
     if (error && error.code === ErrorCodes.ENOENT) {
       throw new NoTestFilesFoundError(testSrc)
     }
-    // @ts-ignore
     throw new VError(error, `Failed to get test files`)
   }
 }
