@@ -10,6 +10,7 @@ export const handleCliArgs = async ({ argv, env }) => {
   const testPath = env.TEST_PATH || ''
   const headless = argv.includes('--headless')
   // TODO
+  // @ts-ignore
   await RunAllTests.runAllTests({
     extensionPath,
     testPath,

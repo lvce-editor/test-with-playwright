@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test'
 import { basename } from 'node:path'
-import { join } from 'path'
 import * as GetTestState from '../GetTestState/GetTestState.js'
 
 /**

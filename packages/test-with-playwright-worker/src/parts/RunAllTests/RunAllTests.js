@@ -23,7 +23,7 @@ export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, t
   Assert.number(timeout)
   const controller = new AbortController()
   const signal = controller.signal
-  const { browser, page, child, port } = await SetupTests.setupTests({
+  const { page, child, port } = await SetupTests.setupTests({
     signal,
     headless,
     onlyExtension: extensionPath,
