@@ -39,6 +39,7 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
+      - run: npm run type-check
       - name: Run headless test
         run: npm test
         env:
