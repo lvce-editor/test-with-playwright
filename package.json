@@ -21,12 +21,12 @@
   },
   "devDependencies": {
     "@lerna/legacy-package-management": "^8.1.8",
-    "@lvce-editor/server": "^0.32.0",
-    "@types/node": "^22.4.0",
-    "execa": "^9.3.1",
+    "@lvce-editor/server": "^0.35.2",
+    "@types/node": "^22.7.4",
+    "execa": "^9.4.0",
     "lerna": "^8.1.8",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   },
   "jest": {
     "testTimeout": 15000
