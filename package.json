@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "postinstall": "lerna bootstrap --ci",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "type-check": "tsc -b"
   },
   "keywords": [],
   "author": "",
