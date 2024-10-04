@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "postinstall": "lerna bootstrap --ci",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "build": "node packages/build/src/build.js"
   },
   "keywords": [],
   "author": "",

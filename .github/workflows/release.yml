@@ -63,7 +63,7 @@ jobs:
         run: npm test
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - run: node scripts/build.js
+      - run: npm run build
       - run: npm publish --access public
         working-directory: ./dist/test-with-playwright-worker
         env:
