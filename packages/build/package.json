@@ -8,6 +8,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "execa": "^9.4.0"
+  }
 }
