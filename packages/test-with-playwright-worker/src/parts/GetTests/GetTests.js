@@ -1,6 +1,6 @@
 import { readdir } from 'fs/promises'
 import VError from 'verror'
-import * as ErrorCodes from '../ErrorCodes/ErrorCodes.js'
+import * as IsEnoentError from '../IsEnoentError/IsEnoentError.js'
 import * as IsTestFile from '../IsTestFile/IsTestFile.js'
 import { NoTestFilesFoundError } from '../NoTestFilesFoundError/NoTestFilesFoundError.js'
 
@@ -12,8 +12,7 @@ export const getTests = async (testSrc) => {
     const dirents = await readdir(testSrc)
     return dirents.filter(IsTestFile.isTestFile)
   } catch (error) {
-    // @ts-ignore
-    if (error && error.code === ErrorCodes.ENOENT) {
+    if (IsEnoentError.isEnoentError(error)) {
       throw new NoTestFilesFoundError(testSrc)
     }
     // @ts-ignore
