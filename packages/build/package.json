@@ -1,0 +1,13 @@
+{
+  "name": "@lvce-editor/test-with-playwright-build",
+  "version": "0.0.0-dev",
+  "description": "",
+  "main": "",
+  "type": "module",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

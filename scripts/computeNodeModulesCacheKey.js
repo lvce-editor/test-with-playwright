@@ -9,6 +9,7 @@ const locations = [
   'packages/e2e/package-lock.json',
   'packages/test-with-playwright/package-lock.json',
   'packages/test-with-playwright-worker/package-lock.json',
+  'packages/build/package-lock.json',
   'scripts/computeNodeModulesCacheKey.js',
   '.github/workflows/ci.yml',
   '.github/workflows/release.yml',
