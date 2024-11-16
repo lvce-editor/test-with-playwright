@@ -1,1 +1,3 @@
-import '../src/parts/Cli/Cli.js'
+#!/usr/bin/env node
+
+import '../src/main.js'
