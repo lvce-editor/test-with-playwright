@@ -1,9 +1,10 @@
-import { join } from 'path'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 export const getServerPath = async () => {
   const toTry = [
     '@lvce-editor/server',
-    join(process.cwd(), '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js'),
+    pathToFileURL(join(process.cwd(), '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),
   ]
 
   for (const path of toTry) {
