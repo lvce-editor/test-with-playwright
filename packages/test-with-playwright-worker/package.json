@@ -2,7 +2,7 @@
   "name": "@lvce-editor/test-with-playwright-worker",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/parts/RunAllTests/RunAllTests.js",
+  "main": "src/workerMain.js",
   "type": "module",
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@lvce-editor/assert": "^1.3.0",
+    "@lvce-editor/command": "^1.2.0",
     "@lvce-editor/ipc": "^11.1.0",
     "@lvce-editor/json-rpc": "^5.0.0",
     "@lvce-editor/verror": "^1.5.0",
