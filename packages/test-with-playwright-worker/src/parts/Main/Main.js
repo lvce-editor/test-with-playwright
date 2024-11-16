@@ -1,5 +1,5 @@
+import * as Command from '@lvce-editor/command'
 import * as CommandMap from '../CommandMap/CommandMap.js'
-import * as CommandState from '../CommandState/CommandState.js'
 import * as HandleIpc from '../HandleIpc/HandleIpc.js'
 import * as IpcChild from '../IpcChild/IpcChild.js'
 import * as IpcChildType from '../IpcChildType/IpcChildType.js'
@@ -28,7 +28,7 @@ export const main = async () => {
   Process.on('SIGINT', handleSigint)
   Process.on('SIGTERM', handleSigTerm)
   Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
-  CommandState.registerCommands(CommandMap.commandMap)
+  Command.register(CommandMap.commandMap)
   const ipc = await IpcChild.listen({
     method: IpcChildType.Auto(),
   })
