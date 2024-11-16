@@ -18,7 +18,7 @@ fi
 
 function updateDependencies {
   echo "updating dependencies..."
-  OUTPUT=`ncu -u -x @types/jest`
+  OUTPUT=`ncu -u -x @types/jest -x eslint -x @eslint/js`
   SUB='All dependencies match the latest package versions'
   if [[ "$OUTPUT" == *"$SUB"* ]]; then
     echo "$OUTPUT"
@@ -30,6 +30,7 @@ function updateDependencies {
 
                                                        updateDependencies             &&
 cd packages/e2e                                     && updateDependencies && cd ../.. &&
+cd packages/build                                   && updateDependencies && cd ../.. &&
 cd packages/test-with-playwright                    && updateDependencies && cd ../.. &&
 cd packages/test-with-playwright-worker             && updateDependencies && cd ../.. &&
 
