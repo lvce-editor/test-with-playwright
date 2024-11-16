@@ -21,7 +21,7 @@
     "@lvce-editor/command": "^1.2.0",
     "@lvce-editor/ipc": "^11.1.0",
     "@lvce-editor/json-rpc": "^5.0.0",
-    "@lvce-editor/verror": "^1.5.0",
+    "@lvce-editor/verror": "^1.6.0",
     "minimist": "^1.2.8"
   },
   "devDependencies": {
