@@ -19,9 +19,7 @@
     "@lvce-editor/json-rpc": "^5.0.0",
     "@lvce-editor/verror": "^1.5.0",
     "@playwright/test": "^1.48.2",
-    "get-port": "^7.1.0",
-    "minimist": "^1.2.8",
-    "read-pkg-up": "^11.0.0"
+    "get-port": "^7.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10"
