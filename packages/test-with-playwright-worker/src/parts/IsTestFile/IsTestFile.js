@@ -1,6 +1,8 @@
+import { Dirent } from 'node:fs'
+
 /**
- * @param {string} name
+ * @param {Dirent} dirent
  */
-export const isTestFile = (name) => {
-  return !name.startsWith('_')
+export const isTestFile = (dirent) => {
+  return dirent.isFile() && !dirent.name.startsWith('_')
 }
