@@ -6,6 +6,10 @@ const prepare = (error) => {
 }
 
 const requiresSocket = (method) => {
+  if (method === 'RunAllTests') {
+    return true
+  }
+  console.log({ method })
   return false
 }
 
