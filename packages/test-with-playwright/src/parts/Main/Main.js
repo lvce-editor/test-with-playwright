@@ -9,5 +9,3 @@ export const main = () => {
   CommandState.registerCommands(CommandMap.commandMap)
   HandleCliArgs.handleCliArgs({ argv: Process.argv, env: Process.env })
 }
-
-main()
