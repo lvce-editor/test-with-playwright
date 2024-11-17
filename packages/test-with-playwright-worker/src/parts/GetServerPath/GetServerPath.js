@@ -1,12 +1,7 @@
-import { join } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleServerPaths.js'
 
 export const getServerPath = async () => {
-  const toTry = [
-    '@lvce-editor/server',
-    pathToFileURL(join(process.cwd(), '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),
-  ]
-
+  const toTry = GetPossibleServerPaths.getPossibleServerPaths()
   for (const path of toTry) {
     try {
       const { serverPath } = await import(path)
