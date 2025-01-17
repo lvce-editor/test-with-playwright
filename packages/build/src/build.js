@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process'
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { root } from './root.js'
+import { generateApiTypes } from './generateApiTypes.js'
 
 const packagePath = join(root, 'packages', 'test-with-playwright')
 const packageWorkerPath = join(root, 'packages', 'test-with-playwright-worker')
@@ -40,6 +41,7 @@ const copyPackageJson = (version) => {
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
+  packageJson.types = 'api.d.ts'
   packageJson.dependencies = packageJson.dependencies || {}
   packageJson.dependencies['@lvce-editor/test-with-playwright-worker'] = `${version}`
   mkdirSync(join(root, 'dist', 'test-with-playwright'))
@@ -103,7 +105,7 @@ const cleanDist = () => {
   rmSync(join(root, 'dist'), { recursive: true, force: true })
 }
 
-const main = () => {
+const main = async () => {
   const version = getVersion()
   cleanDist()
   createDist()
@@ -111,6 +113,7 @@ const main = () => {
   copyFiles()
   copyWorkerPackageJson(version)
   copyWorkerFiles()
+  await generateApiTypes()
 }
 
 main()
