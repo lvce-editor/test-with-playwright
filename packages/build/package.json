@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "execa": "^9.5.2",
-    "@lvce-editor/test-worker": "^3.10.0"
+    "@lvce-editor/test-worker": "^3.11.0"
 
   }
 }
