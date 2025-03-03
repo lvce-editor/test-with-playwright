@@ -23,15 +23,15 @@
   },
   "devDependencies": {
     "@eslint/js": "9.14.0",
-    "@lerna/legacy-package-management": "^8.2.0",
-    "@lvce-editor/server": "^0.45.25",
+    "@lerna/legacy-package-management": "^8.2.1",
+    "@lvce-editor/server": "^0.46.5",
     "@types/eslint__js": "^9.14.0",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.9",
     "eslint": "9.14.0",
-    "lerna": "^8.2.0",
-    "prettier": "^3.5.1",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1"
+    "lerna": "^8.2.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   },
   "jest": {
     "testTimeout": 15000
