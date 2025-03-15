@@ -31,7 +31,7 @@
     "lerna": "^8.2.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.0"
+    "typescript-eslint": "^8.26.1"
   },
   "jest": {
     "testTimeout": 15000
