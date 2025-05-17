@@ -22,16 +22,16 @@
     "printWidth": 120
   },
   "devDependencies": {
-    "@eslint/js": "9.26.0",
+    "@eslint/js": "9.27.0",
     "@lerna/legacy-package-management": "^8.2.2",
-    "@lvce-editor/server": "^0.52.0",
+    "@lvce-editor/server": "^0.52.3",
     "@types/eslint__js": "^9.14.0",
-    "@types/node": "^22.15.17",
-    "eslint": "9.26.0",
+    "@types/node": "^22.15.18",
+    "eslint": "9.27.0",
     "lerna": "^8.2.2",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.0"
+    "typescript-eslint": "^8.32.1"
   },
   "jest": {
     "testTimeout": 15000
