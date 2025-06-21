@@ -12,8 +12,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "jest": "^30.0.0"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.2"
   },
   "jest": {
     "testTimeout": 15000
