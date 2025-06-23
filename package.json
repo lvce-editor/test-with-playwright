@@ -24,7 +24,7 @@
   "devDependencies": {
     "@eslint/js": "9.29.0",
     "@lerna/legacy-package-management": "^8.2.2",
-    "@lvce-editor/server": "0.53.6",
+    "@lvce-editor/server": "0.53.7",
     "@types/eslint__js": "^9.14.0",
     "@types/node": "^24.0.3",
     "eslint": "9.29.0",
