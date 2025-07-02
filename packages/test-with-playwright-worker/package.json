@@ -18,7 +18,7 @@
     "@lvce-editor/ipc": "^14.3.0",
     "@lvce-editor/json-rpc": "^6.2.0",
     "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "^1.53.1",
+    "@playwright/test": "^1.53.2",
     "get-port": "^7.1.0"
   },
   "devDependencies": {
