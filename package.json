@@ -22,12 +22,12 @@
     "printWidth": 120
   },
   "devDependencies": {
-    "@eslint/js": "9.31.0",
+    "@eslint/js": "9.32.0",
     "@lerna/legacy-package-management": "^8.2.3",
-    "@lvce-editor/server": "0.56.5",
+    "@lvce-editor/server": "0.56.6",
     "@types/eslint__js": "^9.14.0",
     "@types/node": "^24.1.0",
-    "eslint": "9.31.0",
+    "eslint": "9.32.0",
     "lerna": "^8.2.3",
     "prettier": "^3.6.2",
     "typescript": "^5.8.3",
