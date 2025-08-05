@@ -1,9 +1,9 @@
-import { cp } from 'node:fs/promises'
+import { cp, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { root } from './root.js'
 
 export const generateApiTypes = async () => {
-  const typesPath = join(root, 'packages', 'build', 'node_modules', '@lvce-editor', 'test-worker', 'dist', 'api.d.ts')
+  const typesContent = `export * from '@lvce-editor/test-worker'`
   const outPath = join(root, 'dist', 'test-with-playwright', 'api.d.ts')
-  await cp(typesPath, outPath)
+  await writeFile(outPath, typesContent)
 }
