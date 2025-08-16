@@ -22,8 +22,7 @@
     "@lvce-editor/ipc": "^14.3.0",
     "@lvce-editor/json-rpc": "^6.2.0",
     "@lvce-editor/verror": "^1.7.0",
-    "minimist": "^1.2.8",
-    "@lvce-editor/test-worker": "^4.31.0"
+    "minimist": "^1.2.8"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
