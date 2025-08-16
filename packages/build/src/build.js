@@ -35,7 +35,7 @@ const writeJson = (path, value) => {
   writeFileSync(path, JSON.stringify(value, null, 2) + '\n')
 }
 
-const copyPackageJson = (version) => {
+const copyPackageJson = (version, testWorkerVersion) => {
   const packageJson = readJson(join(packagePath, 'package.json'))
   packageJson.version = version
   delete packageJson.scripts
@@ -44,6 +44,7 @@ const copyPackageJson = (version) => {
   packageJson.types = 'api.d.ts'
   packageJson.dependencies = packageJson.dependencies || {}
   packageJson.dependencies['@lvce-editor/test-with-playwright-worker'] = `${version}`
+  packageJson.dependencies['@lvce-editor/test-worker'] = testWorkerVersion
   mkdirSync(join(root, 'dist', 'test-with-playwright'))
   writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
 }
@@ -107,9 +108,11 @@ const cleanDist = () => {
 
 const main = async () => {
   const version = getVersion()
+  const buildPackageJson = readJson(join(root, 'packages', 'build', 'package.json'))
+  const testWorkerVersion = buildPackageJson.dependencies['@lvce-editor/test-worker']
   cleanDist()
   createDist()
-  copyPackageJson(version)
+  copyPackageJson(version, testWorkerVersion)
   copyFiles()
   copyWorkerPackageJson(version)
   copyWorkerFiles()
