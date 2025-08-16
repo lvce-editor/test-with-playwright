@@ -1,4 +1,4 @@
-import { cp, writeFile } from 'node:fs/promises'
+import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { root } from './root.js'
 
