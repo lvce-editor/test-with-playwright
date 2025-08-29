@@ -15,10 +15,10 @@
   "dependencies": {
     "@lvce-editor/assert": "^1.4.0",
     "@lvce-editor/command": "^2.0.0",
-    "@lvce-editor/ipc": "^14.4.0",
+    "@lvce-editor/ipc": "^14.5.0",
     "@lvce-editor/json-rpc": "^7.0.0",
     "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "^1.54.2",
+    "@playwright/test": "^1.55.0",
     "get-port": "^7.1.0"
   },
   "devDependencies": {

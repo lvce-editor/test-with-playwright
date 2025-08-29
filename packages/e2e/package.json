@@ -13,7 +13,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "jest": "^30.0.5"
+    "jest": "^30.1.1"
   },
   "jest": {
     "testTimeout": 15000
