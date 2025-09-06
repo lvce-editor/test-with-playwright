@@ -74,8 +74,12 @@ const copyFiles = async () => {
   })
   await writeFileSync(
     join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
-    `export const getTestWorkerPath = () => {
-  return import.meta.resolve('@lvce-editor/test-with-playwright-worker')
+    `import { fileURLToPath } from 'node:url'
+
+export const getTestWorkerPath = () => {
+  const url = import.meta.resolve('@lvce-editor/test-with-playwright-worker')
+  const path = fileURLToPath(url)
+  return path
 }
 `,
   )
