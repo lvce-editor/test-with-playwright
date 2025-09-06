@@ -18,7 +18,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
       port,
       timeout,
     })
-    onResult(result)
+    await onResult(result)
     switch (result.status) {
       case TestState.Fail:
         failed++
@@ -34,7 +34,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
     }
   }
   const end = performance.now()
-  onFinalResult({
+  await onFinalResult({
     passed,
     failed,
     skipped,
