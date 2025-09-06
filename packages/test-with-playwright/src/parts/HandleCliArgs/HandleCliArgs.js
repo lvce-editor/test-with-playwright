@@ -1,5 +1,6 @@
 import * as GetOptions from '../GetOptions/GetOptions.js'
 import * as RunAllTests from '../RunAllTests/RunAllTests.js'
+import * as GetTestWorkerPath from '../GetTestWorkerPath/GetTestWorkerPath.js'
 
 /**
  *
@@ -12,6 +13,8 @@ export const handleCliArgs = async ({ argv, env, commandMap }) => {
   const testPath = options.testPath
   const headless = options.headless
   const timeout = 30_000
+  const testWorkerPath = GetTestWorkerPath.getTestWorkerPath()
+
   // TODO
   // console.log({ argv, env })
   await RunAllTests.runAllTests({
@@ -21,5 +24,6 @@ export const handleCliArgs = async ({ argv, env, commandMap }) => {
     headless,
     timeout,
     commandMap,
+    testWorkerPath,
   })
 }
