@@ -25,7 +25,7 @@ export const main = async () => {
   Process.on('SIGINT', handleSigint)
   Process.on('SIGTERM', handleSigTerm)
   Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
-  NodeWorkerRpcClient.create({
+  await NodeWorkerRpcClient.create({
     commandMap: CommandMap.commandMap,
   })
 }
