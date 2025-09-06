@@ -17,6 +17,7 @@
     "@lvce-editor/command": "^2.0.0",
     "@lvce-editor/ipc": "^14.5.0",
     "@lvce-editor/json-rpc": "^7.0.0",
+    "@lvce-editor/rpc": "^4.18.0",
     "@lvce-editor/verror": "^1.7.0",
     "@playwright/test": "^1.55.0",
     "get-port": "^7.1.0"
