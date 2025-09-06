@@ -1,22 +1,19 @@
+import { NodeWorkerRpcParent } from '@lvce-editor/rpc'
 import * as GetTestWorkerPath from '../GetTestWorkerPath/GetTestWorkerPath.js'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcParent from '../IpcParent/IpcParent.js'
-import * as IpcParentType from '../IpcParentType/IpcParentType.js'
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.js'
 
 /**
  *
- * @param {{onlyExtension:string, testPath:string, cwd:string, headless:boolean, timeout:number}} param0
+ * @param {{onlyExtension:string, testPath:string, cwd:string, headless:boolean, timeout:number, commandMap:any}} param0
  */
-export const runAllTests = async ({ onlyExtension, testPath, cwd, headless, timeout }) => {
+export const runAllTests = async ({ onlyExtension, testPath, cwd, headless, timeout, commandMap }) => {
   const path = GetTestWorkerPath.getTestWorkerPath()
-  const ipc = await IpcParent.create({
-    method: IpcParentType.NodeWorker,
+  // TODO use `using` once supported
+  const rpc = await NodeWorkerRpcParent.create({
     path,
     argv: [],
+    commandMap,
   })
-  HandleIpc.handleIpc(ipc)
-  await JsonRpc.invoke(ipc, TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout)
-  ipc.dispose()
+  await rpc.invoke(TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout)
+  rpc.dispose()
 }
