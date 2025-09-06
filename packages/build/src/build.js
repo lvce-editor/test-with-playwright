@@ -52,13 +52,11 @@ const copyPackageJson = (version, testWorkerVersion) => {
 const copyWorkerPackageJson = (version) => {
   const packageJson = readJson(join(packageWorkerPath, 'package.json'))
   packageJson.version = version
-  packageJson.main = 'index.js'
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
   mkdirSync(join(root, 'dist', 'test-with-playwright-worker'))
   writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
-  packageJson.main = 'index.js'
 }
 
 const copyFiles = async () => {
@@ -76,10 +74,8 @@ const copyFiles = async () => {
   })
   await writeFileSync(
     join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
-    `import { testWorkerPath } from '@lvce-editor/test-with-playwright-worker'
-
-export const getTestWorkerPath = () => {
-  return testWorkerPath
+    `export const getTestWorkerPath = () => {
+  return import.meta.resolve('@lvce-editor/test-with-playwright-worker')
 }
 `,
   )
@@ -90,16 +86,6 @@ const copyWorkerFiles = () => {
     recursive: true,
     force: true,
   })
-  writeFileSync(
-    join(root, 'dist', 'test-with-playwright-worker', 'index.js'),
-    `import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-export const testWorkerPath = join(__dirname, 'src', 'workerMain.js')
-`,
-  )
 }
 
 const cleanDist = () => {
