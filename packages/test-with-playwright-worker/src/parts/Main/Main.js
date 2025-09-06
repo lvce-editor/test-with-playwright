@@ -2,6 +2,8 @@ import { NodeWorkerRpcClient } from '@lvce-editor/rpc'
 import * as CommandMap from '../CommandMap/CommandMap.js'
 import * as Process from '../Process/Process.js'
 import * as ProcessListeners from '../ProcessListeners/ProcessListeners.js'
+import { set } from '@lvce-editor/rpc-registry'
+import { Cli } from '../RpcId/RpcId.js'
 
 const handleDisconnect = () => {
   console.log('[test-worker] disconnected')
@@ -25,7 +27,8 @@ export const main = async () => {
   Process.on('SIGINT', handleSigint)
   Process.on('SIGTERM', handleSigTerm)
   Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
-  await NodeWorkerRpcClient.create({
+  const rpc = await NodeWorkerRpcClient.create({
     commandMap: CommandMap.commandMap,
   })
+  set(Cli, rpc)
 }

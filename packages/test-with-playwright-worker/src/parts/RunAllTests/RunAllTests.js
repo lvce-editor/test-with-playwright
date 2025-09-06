@@ -1,26 +1,27 @@
+import { get } from '@lvce-editor/rpc-registry'
 import { join } from 'path'
 import * as Assert from '../Assert/Assert.js'
+import * as CliCommandType from '../CliCommandType/CliCommandType.js'
 import * as GetTests from '../GetTests/GetTests.js'
+import { Cli } from '../RpcId/RpcId.js'
 import * as RunTests from '../RunTests/RunTests.js'
 import * as SetupTests from '../SetupTests/SetupTests.js'
 import * as TearDownTests from '../TearDownTests/TearDownTests.js'
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
-import * as CliCommandType from '../CliCommandType/CliCommandType.js'
 
 /**
- * @param {any} ipc
  * @param {string} extensionPath
  * @param {string} testPath
  * @param {string} cwd
  * @param {boolean} headless
  * @param {number} headless
  */
-export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, timeout) => {
+export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout) => {
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)
   Assert.boolean(headless)
   Assert.number(timeout)
+  const rpc = get(Cli)
   const controller = new AbortController()
   const signal = controller.signal
   const { page, child, port } = await SetupTests.setupTests({
@@ -31,11 +32,11 @@ export const runAllTests = async (ipc, extensionPath, testPath, cwd, headless, t
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
-  const onResult = (result) => {
-    JsonRpc.send(ipc, CliCommandType.HandleResult, result)
+  const onResult = async (result) => {
+    await rpc.invoke(CliCommandType.HandleResult, result)
   }
   const onFinalResult = (finalResult) => {
-    JsonRpc.send(ipc, CliCommandType.HandleFinalResult, finalResult)
+    rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult, onFinalResult })
   await TearDownTests.tearDownTests({
