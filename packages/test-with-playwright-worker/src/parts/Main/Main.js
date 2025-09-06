@@ -1,10 +1,9 @@
-import * as Command from '@lvce-editor/command'
+import { NodeWorkerRpcClient } from '@lvce-editor/rpc'
 import * as CommandMap from '../CommandMap/CommandMap.js'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcChild from '../IpcChild/IpcChild.js'
-import * as IpcChildType from '../IpcChildType/IpcChildType.js'
 import * as Process from '../Process/Process.js'
 import * as ProcessListeners from '../ProcessListeners/ProcessListeners.js'
+import { set } from '@lvce-editor/rpc-registry'
+import { Cli } from '../RpcId/RpcId.js'
 
 const handleDisconnect = () => {
   console.log('[test-worker] disconnected')
@@ -28,9 +27,8 @@ export const main = async () => {
   Process.on('SIGINT', handleSigint)
   Process.on('SIGTERM', handleSigTerm)
   Process.on('uncaughtExceptionMonitor', ProcessListeners.handleUncaughtExceptionMonitor)
-  Command.register(CommandMap.commandMap)
-  const ipc = await IpcChild.listen({
-    method: IpcChildType.Auto(),
+  const rpc = await NodeWorkerRpcClient.create({
+    commandMap: CommandMap.commandMap,
   })
-  HandleIpc.handleIpc(ipc)
+  set(Cli, rpc)
 }
