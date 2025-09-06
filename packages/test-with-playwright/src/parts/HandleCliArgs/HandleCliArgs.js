@@ -3,9 +3,9 @@ import * as RunAllTests from '../RunAllTests/RunAllTests.js'
 
 /**
  *
- * @param {{argv:string[], env:any}} param0
+ * @param {{argv:string[], env:any, commandMap:any}} param0
  */
-export const handleCliArgs = async ({ argv, env }) => {
+export const handleCliArgs = async ({ argv, env, commandMap }) => {
   const cwd = process.cwd()
   const options = GetOptions.getOptions({ argv, env })
   const onlyExtension = options.onlyExtension
@@ -20,5 +20,6 @@ export const handleCliArgs = async ({ argv, env }) => {
     cwd,
     headless,
     timeout,
+    commandMap,
   })
 }
