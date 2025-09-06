@@ -14,7 +14,7 @@
     "url": "git@github.com:lvce-editor/test-with-playwright.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lvce Editor",
   "license": "MIT",
   "dependencies": {
     "@lvce-editor/assert": "^1.4.0",

@@ -10,7 +10,7 @@
     "directory": "packages/test-with-playwright-worker"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lvce Editor",
   "license": "MIT",
   "dependencies": {
     "@lvce-editor/assert": "^1.4.0",
