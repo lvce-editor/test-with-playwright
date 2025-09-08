@@ -2,7 +2,7 @@
   "name": "@lvce-editor/test-with-playwright-worker",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/workerMain.js",
+  "main": "src/workerMain.ts",
   "type": "module",
   "repository": {
     "type": "git",
