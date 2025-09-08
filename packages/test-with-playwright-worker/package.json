@@ -2,28 +2,16 @@
   "name": "@lvce-editor/test-with-playwright-worker",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/workerMain.ts",
-  "type": "module",
+  "keywords": [],
   "repository": {
     "type": "git",
     "url": "git@github.com:lvce-editor/test-with-playwright.git",
     "directory": "packages/test-with-playwright-worker"
   },
-  "keywords": [],
-  "author": "Lvce Editor",
   "license": "MIT",
-  "dependencies": {
-    "@lvce-editor/assert": "^1.4.0",
-    "@lvce-editor/rpc": "^4.19.0",
-    "@lvce-editor/rpc-registry": "^3.6.0",
-    "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "1.55.0",
-    "get-port": "^7.1.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "ts-jest": "^29.4.1"
-  },
+  "author": "Lvce Editor",
+  "type": "module",
+  "main": "src/workerMain.ts",
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -36,5 +24,17 @@
       }
     },
     "testTimeout": 15000
+  },
+  "dependencies": {
+    "@lvce-editor/assert": "^1.4.0",
+    "@lvce-editor/rpc": "^4.19.0",
+    "@lvce-editor/rpc-registry": "^3.6.0",
+    "@lvce-editor/verror": "^1.7.0",
+    "@playwright/test": "1.55.0",
+    "get-port": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "ts-jest": "^29.4.1"
   }
 }
