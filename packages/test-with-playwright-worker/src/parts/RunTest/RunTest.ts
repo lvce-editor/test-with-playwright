@@ -6,13 +6,13 @@ import * as GetTestState from '../GetTestState/GetTestState.ts'
  * @param {string} absolutePath
  * @param {number} port
  */
-const getUrlFromTestFile = (absolutePath, port) => {
+const getUrlFromTestFile = (absolutePath: string, port: number): string => {
   const baseName = basename(absolutePath)
   const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
   return `http://localhost:${port}/tests/${htmlFileName}`
 }
 
-export const runTest = async ({ test, page, testSrc, port, timeout }): Promise<void> => {
+export const runTest = async ({ test, page, testSrc, port, timeout }: Readonly<{ test: string; page: any; testSrc: string; port: number; timeout: number }>): Promise<any> => {
   const start = performance.now()
   const url = getUrlFromTestFile(test, port)
   await page.goto(url, {

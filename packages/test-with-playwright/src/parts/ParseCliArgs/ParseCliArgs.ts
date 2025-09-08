@@ -6,7 +6,7 @@ interface ParsedCliArgs {
   testPath?: string
 }
 
-export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
+export const parseCliArgs = (argv: readonly string[]): ParsedCliArgs => {
   const parsed = parseArgv(argv)
   const result: ParsedCliArgs = Object.create(null)
   if (parsed.headless) {

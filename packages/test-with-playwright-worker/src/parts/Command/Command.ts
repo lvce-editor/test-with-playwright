@@ -1,1 +1,4 @@
-export * from '@lvce-editor/command'
+// Command types and utilities
+export interface Command {
+  // Add command interface if needed
+}

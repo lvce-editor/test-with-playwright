@@ -6,19 +6,19 @@ import * as ProcessListeners from '../ProcessListeners/ProcessListeners.ts'
 import { Cli } from '../RpcId/RpcId.ts'
 
 const handleDisconnect = (): void => {
-  console.log('[test-worker] disconnected')
+  console.warn('[test-worker] disconnected')
 }
 
 const handleExit = (): void => {
-  console.log('[test-worker] exiting')
+  console.warn('[test-worker] exiting')
 }
 
 const handleSigint = (): void => {
-  console.log('[test-worker] sigint')
+  console.warn('[test-worker] sigint')
 }
 
 const handleSigTerm = (): void => {
-  console.log('[test-worker] sigterm')
+  console.warn('[test-worker] sigterm')
 }
 
 export const main = async (): Promise<void> => {

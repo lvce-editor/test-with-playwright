@@ -19,7 +19,7 @@ interface GetOptionsParams {
   env: NodeJS.ProcessEnv
 }
 
-export const getOptions = ({ argv, env }: GetOptionsParams): Options => {
+export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options => {
   const parsedEnv = ParseEnv.parseEnv(env)
   const parsedArgs = ParseCliArgs.parseCliArgs(argv)
   return {

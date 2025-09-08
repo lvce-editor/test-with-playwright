@@ -1,3 +1,3 @@
 import * as Main from './parts/Main/Main.ts'
 
-Main.main()
+void Main.main()

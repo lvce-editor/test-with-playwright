@@ -5,7 +5,7 @@ import * as TestState from '../TestState/TestState.ts'
  *
  * @param {{testSrc:string, tests:string[], headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
  */
-export const runTests = async ({ testSrc, tests, headless, page, port, timeout, onResult, onFinalResult }): Promise<void> => {
+export const runTests = async ({ testSrc, tests, headless, page, port, timeout, onResult, onFinalResult }: Readonly<{ testSrc: string; tests: string[]; headless: boolean; page: any; port: number; timeout: number; onResult: (result: any) => Promise<void>; onFinalResult: (result: any) => void }>): Promise<void> => {
   let failed = 0
   let skipped = 0
   let passed = 0
@@ -35,7 +35,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
     }
   }
   const end = performance.now()
-  await onFinalResult({
+  onFinalResult({
     passed,
     failed,
     skipped,

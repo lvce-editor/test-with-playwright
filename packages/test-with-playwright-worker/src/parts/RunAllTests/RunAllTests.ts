@@ -15,7 +15,7 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {boolean} headless
  * @param {number} headless
  */
-export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout): Promise<void> => {
+export const runAllTests = async (extensionPath: string, testPath: string, cwd: string, headless: boolean, timeout: number): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)
@@ -24,7 +24,6 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   const rpc = get(Cli)
   const controller = new AbortController()
   const {signal} = controller
-  // @ts-ignore
   const { page, child, port } = await SetupTests.setupTests({
     signal,
     headless,
@@ -33,11 +32,11 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
-  const onResult = async (result) => {
+  const onResult = async (result: any): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleResult, result)
   }
-  const onFinalResult = (finalResult) => {
-    rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
+  const onFinalResult = (finalResult: any): void => {
+    void rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult, onFinalResult })
   await TearDownTests.tearDownTests({
