@@ -6,10 +6,10 @@ interface HandleCliArgsParams {
   argv: string[]
   env: NodeJS.ProcessEnv
   commandMap: any
+  cwd: string
 }
 
-export const handleCliArgs = async ({ argv, env, commandMap }: HandleCliArgsParams): Promise<void> => {
-  const cwd = process.cwd()
+export const handleCliArgs = async ({ argv, env, commandMap, cwd }: HandleCliArgsParams): Promise<void> => {
   const options = GetOptions.getOptions({ argv, env })
   const onlyExtension = options.onlyExtension
   const testPath = options.testPath
