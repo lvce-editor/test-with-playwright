@@ -33,8 +33,5 @@
     "@playwright/test": "1.55.0",
     "get-port": "^7.1.0"
   },
-  "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "ts-jest": "^29.4.1"
-  }
+  "devDependencies": {}
 }
