@@ -95,6 +95,10 @@ const copyCliFiles = async (): Promise<void> => {
     recursive: true,
     force: true,
   })
+  await cp(join(root, 'LICENSE'), join(root, 'dist', 'test-with-playwright', 'LICENSE'), {
+    recursive: true,
+    force: true,
+  })
   await writeFile(
     join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
     `import { fileURLToPath } from 'node:url'
@@ -115,6 +119,10 @@ export const getTestWorkerPath = () => {
 
 const copyWorkerFiles = async (): Promise<void> => {
   await cp(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
+    recursive: true,
+    force: true,
+  })
+  await cp(join(root, 'LICENSE'), join(root, 'dist', 'test-with-playwright-worker', 'LICENSE'), {
     recursive: true,
     force: true,
   })
