@@ -1,7 +1,7 @@
-import * as TestOverlayState from '../TestOverlayState/TestOverlayState.js'
-import * as TestState from '../TestState/TestState.js'
+import * as TestOverlayState from '../TestOverlayState/TestOverlayState.ts'
+import * as TestState from '../TestState/TestState.ts'
 
-export const getTestState = (testOverlayState, text) => {
+export const getTestState = (testOverlayState, text): void => {
   switch (testOverlayState) {
     case TestOverlayState.Pass:
       return {

@@ -1,6 +1,6 @@
-import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleServerPaths.js'
+import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleServerPaths.ts'
 
-export const getServerPath = async () => {
+export const getServerPath = async (): Promise<void> => {
   const toTry = GetPossibleServerPaths.getPossibleServerPaths()
   for (const path of toTry) {
     try {

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { basename } from 'node:path'
-import * as GetTestState from '../GetTestState/GetTestState.js'
+import * as GetTestState from '../GetTestState/GetTestState.ts'
 
 /**
  * @param {string} absolutePath
@@ -12,7 +12,7 @@ const getUrlFromTestFile = (absolutePath, port) => {
   return `http://localhost:${port}/tests/${htmlFileName}`
 }
 
-export const runTest = async ({ test, page, testSrc, port, timeout }) => {
+export const runTest = async ({ test, page, testSrc, port, timeout }): Promise<void> => {
   const start = performance.now()
   const url = getUrlFromTestFile(test, port)
   await page.goto(url, {

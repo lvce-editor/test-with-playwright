@@ -1,4 +1,4 @@
-import * as ErrorCodes from '../ErrorCodes/ErrorCodes.js'
+import * as ErrorCodes from '../ErrorCodes/ErrorCodes.ts'
 
 export class NoTestFilesFoundError extends Error {
   constructor(root) {

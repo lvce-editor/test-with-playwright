@@ -5,7 +5,7 @@ import { chromium } from '@playwright/test'
  * @param {{signal:AbortSignal, headless:boolean}} options
  * @returns
  */
-export const startBrowser = async ({ signal, headless }) => {
+export const startBrowser = async ({ signal, headless }): Promise<void> => {
   const browser = await chromium.launch({
     headless,
   })

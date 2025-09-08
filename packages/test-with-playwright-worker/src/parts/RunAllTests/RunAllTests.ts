@@ -1,12 +1,12 @@
 import { get } from '@lvce-editor/rpc-registry'
 import { join } from 'path'
-import * as Assert from '../Assert/Assert.js'
-import * as CliCommandType from '../CliCommandType/CliCommandType.js'
-import * as GetTests from '../GetTests/GetTests.js'
-import { Cli } from '../RpcId/RpcId.js'
-import * as RunTests from '../RunTests/RunTests.js'
-import * as SetupTests from '../SetupTests/SetupTests.js'
-import * as TearDownTests from '../TearDownTests/TearDownTests.js'
+import * as Assert from '../Assert/Assert.ts'
+import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
+import * as GetTests from '../GetTests/GetTests.ts'
+import { Cli } from '../RpcId/RpcId.ts'
+import * as RunTests from '../RunTests/RunTests.ts'
+import * as SetupTests from '../SetupTests/SetupTests.ts'
+import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
 
 /**
  * @param {string} extensionPath
@@ -15,7 +15,7 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.js'
  * @param {boolean} headless
  * @param {number} headless
  */
-export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout) => {
+export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)

@@ -5,7 +5,7 @@ import { fork } from 'child_process'
  * @param {{signal:AbortSignal, port:number, serverPath:string, onlyExtension:string, testPath:string}} param0
  * @returns
  */
-export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }) => {
+export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }): Promise<void> => {
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
