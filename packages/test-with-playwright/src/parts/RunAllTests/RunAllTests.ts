@@ -1,5 +1,6 @@
 import { NodeWorkerRpcParent } from '@lvce-editor/rpc'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
+import { fileURLToPath } from 'node:url'
 
 interface RunAllTestsParams {
   onlyExtension: string
@@ -8,7 +9,7 @@ interface RunAllTestsParams {
   headless: boolean
   timeout: number
   commandMap: any
-  testWorkerPath: string
+  testWorkerUri: string
 }
 
 export const runAllTests = async ({
@@ -18,11 +19,12 @@ export const runAllTests = async ({
   headless,
   timeout,
   commandMap,
-  testWorkerPath,
+  testWorkerUri,
 }: RunAllTestsParams): Promise<void> => {
   // TODO use `using` once supported
+  const path = fileURLToPath(testWorkerUri)
   const rpc = await NodeWorkerRpcParent.create({
-    path: testWorkerPath,
+    path,
     argv: [],
     commandMap,
     stdio: 'inherit',
