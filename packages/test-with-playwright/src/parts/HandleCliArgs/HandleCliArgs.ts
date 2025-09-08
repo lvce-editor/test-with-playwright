@@ -20,6 +20,7 @@ export const handleCliArgs = async ({ argv, env, commandMap }: HandleCliArgsPara
   // TODO
   // console.log({ argv, env })
   await RunAllTests.runAllTests({
+    // @ts-ignore
     onlyExtension,
     testPath,
     cwd,

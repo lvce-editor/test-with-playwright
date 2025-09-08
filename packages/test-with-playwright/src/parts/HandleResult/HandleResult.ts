@@ -31,12 +31,15 @@ const handleResultFailed = (result: TestResult): void => {
 export const handleResult = (result: TestResult): void => {
   const { status } = result
   switch (status) {
+    // @ts-ignore
     case TestState.Pass:
       handleResultPassed(result)
       break
+    // @ts-ignore
     case TestState.Skip:
       handleResultSkipped(result)
       break
+    // @ts-ignore
     case TestState.Fail:
       handleResultFailed(result)
       break
