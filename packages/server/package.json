@@ -1,0 +1,13 @@
+{
+  "name": "@lvce-editor/test-with-playwright-server",
+  "version": "0.0.0-dev",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@lvce-editor/server": "^0.59.3"
+  }
+}
