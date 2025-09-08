@@ -23,5 +23,18 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "ts-jest": "^29.2.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
+    "testTimeout": 15000
   }
 }
