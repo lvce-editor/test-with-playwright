@@ -1,6 +1,6 @@
 import * as GetOptions from '../GetOptions/GetOptions.ts'
-import * as RunAllTests from '../RunAllTests/RunAllTests.ts'
 import * as GetTestWorkerPath from '../GetTestWorkerPath/GetTestWorkerPath.ts'
+import * as RunAllTests from '../RunAllTests/RunAllTests.ts'
 
 interface HandleCliArgsParams {
   argv: string[]
@@ -11,9 +11,9 @@ interface HandleCliArgsParams {
 
 export const handleCliArgs = async ({ argv, env, commandMap, cwd }: HandleCliArgsParams): Promise<void> => {
   const options = GetOptions.getOptions({ argv, env })
-  const onlyExtension = options.onlyExtension
-  const testPath = options.testPath
-  const headless = options.headless
+  const {onlyExtension} = options
+  const {testPath} = options
+  const {headless} = options
   const timeout = 30_000
   const testWorkerPath = GetTestWorkerPath.getTestWorkerPath()
 

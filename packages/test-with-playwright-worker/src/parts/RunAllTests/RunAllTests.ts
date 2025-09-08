@@ -1,5 +1,5 @@
 import { get } from '@lvce-editor/rpc-registry'
-import { join } from 'path'
+import { join } from 'node:path'
 import * as Assert from '../Assert/Assert.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
@@ -23,7 +23,7 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   Assert.number(timeout)
   const rpc = get(Cli)
   const controller = new AbortController()
-  const signal = controller.signal
+  const {signal} = controller
   // @ts-ignore
   const { page, child, port } = await SetupTests.setupTests({
     signal,

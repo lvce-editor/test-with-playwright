@@ -1,8 +1,8 @@
 import { NodeWorkerRpcClient } from '@lvce-editor/rpc'
+import { set } from '@lvce-editor/rpc-registry'
 import * as CommandMap from '../CommandMap/CommandMap.ts'
 import * as Process from '../Process/Process.ts'
 import * as ProcessListeners from '../ProcessListeners/ProcessListeners.ts'
-import { set } from '@lvce-editor/rpc-registry'
 import { Cli } from '../RpcId/RpcId.ts'
 
 const handleDisconnect = (): void => {
