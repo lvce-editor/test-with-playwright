@@ -110,6 +110,7 @@ export const getTestWorkerPath = () => {
     inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'),
   })
+  await rm(join(root, 'dist', 'test-with-playwright', 'src'), { recursive: true, force: true })
 }
 
 const copyWorkerFiles = async (): Promise<void> => {
