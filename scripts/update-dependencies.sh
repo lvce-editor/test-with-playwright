@@ -31,6 +31,7 @@ function updateDependencies {
                                                        updateDependencies             &&
 cd packages/e2e                                     && updateDependencies && cd ../.. &&
 cd packages/build                                   && updateDependencies && cd ../.. &&
+cd packages/server                                  && updateDependencies && cd ../.. &&
 cd packages/test-with-playwright                    && updateDependencies && cd ../.. &&
 cd packages/test-with-playwright-worker             && updateDependencies && cd ../.. &&
 
