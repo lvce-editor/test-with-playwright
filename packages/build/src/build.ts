@@ -107,7 +107,7 @@ export const getTestWorkerPath = () => {
 `,
   )
   await bundleJs({
-    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.js'),
+    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'),
   })
 }
