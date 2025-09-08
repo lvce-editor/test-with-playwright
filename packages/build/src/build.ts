@@ -1,19 +1,23 @@
-import { execSync } from 'node:child_process'
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { exec } from 'node:child_process'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { promisify } from 'node:util'
 import { root } from './root.ts'
 import { generateApiTypes } from './generateApiTypes.ts'
+
+const execAsync = promisify(exec)
 
 const packagePath = join(root, 'packages', 'test-with-playwright')
 const packageWorkerPath = join(root, 'packages', 'test-with-playwright-worker')
 
-const getVersion = (): string => {
+const getVersion = async (): Promise<string> => {
   try {
-    const stdout = execSync('git describe --exact-match --tags', { stdio: 'pipe' }).toString().trim()
-    if (stdout.startsWith('v')) {
-      return stdout.slice(1)
+    const { stdout } = await execAsync('git describe --exact-match --tags')
+    const trimmed = stdout.trim()
+    if (trimmed.startsWith('v')) {
+      return trimmed.slice(1)
     }
-    return stdout
+    return trimmed
   } catch (error) {
     if (error && (error as Error).message.includes('no tag exactly matches')) {
       return '0.0.0-dev'
@@ -22,20 +26,21 @@ const getVersion = (): string => {
   }
 }
 
-const createDist = (): void => {
-  mkdirSync(join(root, 'dist'), { recursive: true })
+const createDist = async (): Promise<void> => {
+  await mkdir(join(root, 'dist'), { recursive: true })
 }
 
-const readJson = (path: string): any => {
-  return JSON.parse(readFileSync(join(path), 'utf-8'))
+const readJson = async (path: string): Promise<any> => {
+  const content = await readFile(join(path), 'utf-8')
+  return JSON.parse(content)
 }
 
-const writeJson = (path: string, value: any): void => {
-  writeFileSync(path, JSON.stringify(value, null, 2) + '\n')
+const writeJson = async (path: string, value: any): Promise<void> => {
+  await writeFile(path, JSON.stringify(value, null, 2) + '\n')
 }
 
-const copyPackageJson = (version: string, testWorkerVersion: string): void => {
-  const packageJson = readJson(join(packagePath, 'package.json'))
+const copyPackageJson = async (version: string, testWorkerVersion: string): Promise<void> => {
+  const packageJson = await readJson(join(packagePath, 'package.json'))
   packageJson.version = version
   delete packageJson.scripts
   delete packageJson.prettier
@@ -44,34 +49,34 @@ const copyPackageJson = (version: string, testWorkerVersion: string): void => {
   packageJson.dependencies = packageJson.dependencies || {}
   packageJson.dependencies['@lvce-editor/test-with-playwright-worker'] = `${version}`
   packageJson.dependencies['@lvce-editor/test-worker'] = testWorkerVersion
-  mkdirSync(join(root, 'dist', 'test-with-playwright'))
-  writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
+  await mkdir(join(root, 'dist', 'test-with-playwright'), { recursive: true })
+  await writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
 }
 
-const copyWorkerPackageJson = (version: string): void => {
-  const packageJson = readJson(join(packageWorkerPath, 'package.json'))
+const copyWorkerPackageJson = async (version: string): Promise<void> => {
+  const packageJson = await readJson(join(packageWorkerPath, 'package.json'))
   packageJson.version = version
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
-  mkdirSync(join(root, 'dist', 'test-with-playwright-worker'))
-  writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
+  await mkdir(join(root, 'dist', 'test-with-playwright-worker'), { recursive: true })
+  await writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
 }
 
 const copyFiles = async (): Promise<void> => {
-  cpSync(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
+  await cp(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
     recursive: true,
     force: true,
   })
-  cpSync(join(packagePath, 'bin'), join(root, 'dist', 'test-with-playwright', 'bin'), {
+  await cp(join(packagePath, 'bin'), join(root, 'dist', 'test-with-playwright', 'bin'), {
     recursive: true,
     force: true,
   })
-  cpSync(join(root, 'README.md'), join(root, 'dist', 'test-with-playwright', 'README.md'), {
+  await cp(join(root, 'README.md'), join(root, 'dist', 'test-with-playwright', 'README.md'), {
     recursive: true,
     force: true,
   })
-  await writeFileSync(
+  await writeFile(
     join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
     `import { fileURLToPath } from 'node:url'
 
@@ -84,27 +89,27 @@ export const getTestWorkerPath = () => {
   )
 }
 
-const copyWorkerFiles = (): void => {
-  cpSync(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
+const copyWorkerFiles = async (): Promise<void> => {
+  await cp(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
     recursive: true,
     force: true,
   })
 }
 
-const cleanDist = (): void => {
-  rmSync(join(root, 'dist'), { recursive: true, force: true })
+const cleanDist = async (): Promise<void> => {
+  await rm(join(root, 'dist'), { recursive: true, force: true })
 }
 
 const main = async (): Promise<void> => {
-  const version = getVersion()
-  const buildPackageJson = readJson(join(root, 'packages', 'build', 'package.json'))
+  const version = await getVersion()
+  const buildPackageJson = await readJson(join(root, 'packages', 'build', 'package.json'))
   const testWorkerVersion = buildPackageJson.dependencies['@lvce-editor/test-worker']
-  cleanDist()
-  createDist()
-  copyPackageJson(version, testWorkerVersion)
-  copyFiles()
-  copyWorkerPackageJson(version)
-  copyWorkerFiles()
+  await cleanDist()
+  await createDist()
+  await copyPackageJson(version, testWorkerVersion)
+  await copyFiles()
+  await copyWorkerPackageJson(version)
+  await copyWorkerFiles()
   await generateApiTypes()
 }
 
