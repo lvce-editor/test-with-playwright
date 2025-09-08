@@ -16,9 +16,10 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "allowImportingTsExtensions": true,
     "noImplicitAny": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["test"]
 }
