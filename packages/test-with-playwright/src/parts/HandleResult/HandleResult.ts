@@ -1,34 +1,45 @@
-import * as TestState from '../TestState/TestState.js'
+import * as TestState from '../TestState/TestState.ts'
 
-const getDuration = (start, end) => {
+interface TestResult {
+  name: string
+  start: number
+  end: number
+  status: string
+  error?: string
+}
+
+const getDuration = (start: number, end: number): number => {
   return end - start
 }
 
-const handleResultPassed = (result) => {
+const handleResultPassed = (result: TestResult): void => {
   const { name, start, end } = result
   const duration = getDuration(start, end)
   console.info(`test passed ${name} in ${duration}ms`)
 }
 
-const handleResultSkipped = (result) => {
+const handleResultSkipped = (result: TestResult): void => {
   const { name } = result
   console.info(`test skipped ${name}`)
 }
 
-const handleResultFailed = (result) => {
+const handleResultFailed = (result: TestResult): void => {
   const { name, error } = result
   console.error(`Test Failed ${name}: ${error}`)
 }
 
-export const handleResult = (result) => {
+export const handleResult = (result: TestResult): void => {
   const { status } = result
   switch (status) {
+    // @ts-ignore
     case TestState.Pass:
       handleResultPassed(result)
       break
+    // @ts-ignore
     case TestState.Skip:
       handleResultSkipped(result)
       break
+    // @ts-ignore
     case TestState.Fail:
       handleResultFailed(result)
       break

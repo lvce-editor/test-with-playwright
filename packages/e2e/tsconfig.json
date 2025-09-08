@@ -2,12 +2,10 @@
   "compilerOptions": {
     "lib": ["esnext"],
     "target": "esnext",
-    "checkJs": true,
     "module": "NodeNext",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "moduleResolution": "nodenext",
     "isolatedModules": true,
-    "noImplicitAny": false,
     "skipLibCheck": true,
     "rootDir": ".",
     "noEmit": true,
@@ -17,7 +15,11 @@
     "composite": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "exactOptionalPropertyTypes": true,
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "test"]
+  "include": ["test"]
 }
