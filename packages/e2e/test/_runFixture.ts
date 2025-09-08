@@ -1,9 +1,8 @@
-import { fork, ChildProcess } from 'node:child_process'
+import { ChildProcess, fork } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = import.meta.dirname
 
 const root = join(__dirname, '..', '..', '..')
 
@@ -17,14 +16,14 @@ const waitForChildProcessToExit = async (childProcess: ChildProcess): Promise<Pr
   const { code, stdout, stderr } = await new Promise<ProcessResult>((resolve) => {
     let stdout = ''
     let stderr = ''
-    
+
     const cleanup = (value: ProcessResult): void => {
       childProcess.stdout?.off('data', handleStdoutData)
       childProcess.stderr?.off('data', handleStderrData)
       childProcess.off('exit', handleExit)
       resolve(value)
     }
-    
+
     const handleExit = (code: number | null): void => {
       cleanup({ code, stdout, stderr })
     }
@@ -38,7 +37,7 @@ const waitForChildProcessToExit = async (childProcess: ChildProcess): Promise<Pr
       console.info({ stderr: data.toString() })
       stderr += data
     }
-    
+
     childProcess.stdout?.on('data', handleStdoutData)
     childProcess.stderr?.on('data', handleStderrData)
     childProcess.on('exit', handleExit)
