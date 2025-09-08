@@ -1,13 +1,13 @@
 import { execSync } from 'node:child_process'
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { root } from './root.js'
-import { generateApiTypes } from './generateApiTypes.js'
+import { root } from './root.ts'
+import { generateApiTypes } from './generateApiTypes.ts'
 
 const packagePath = join(root, 'packages', 'test-with-playwright')
 const packageWorkerPath = join(root, 'packages', 'test-with-playwright-worker')
 
-const getVersion = () => {
+const getVersion = (): string => {
   try {
     const stdout = execSync('git describe --exact-match --tags', { stdio: 'pipe' }).toString().trim()
     if (stdout.startsWith('v')) {
@@ -15,27 +15,26 @@ const getVersion = () => {
     }
     return stdout
   } catch (error) {
-    // @ts-ignore
-    if (error && error.message.includes('no tag exactly matches')) {
+    if (error && (error as Error).message.includes('no tag exactly matches')) {
       return '0.0.0-dev'
     }
     throw error
   }
 }
 
-const createDist = () => {
+const createDist = (): void => {
   mkdirSync(join(root, 'dist'), { recursive: true })
 }
 
-const readJson = (path) => {
+const readJson = (path: string): any => {
   return JSON.parse(readFileSync(join(path), 'utf-8'))
 }
 
-const writeJson = (path, value) => {
+const writeJson = (path: string, value: any): void => {
   writeFileSync(path, JSON.stringify(value, null, 2) + '\n')
 }
 
-const copyPackageJson = (version, testWorkerVersion) => {
+const copyPackageJson = (version: string, testWorkerVersion: string): void => {
   const packageJson = readJson(join(packagePath, 'package.json'))
   packageJson.version = version
   delete packageJson.scripts
@@ -49,7 +48,7 @@ const copyPackageJson = (version, testWorkerVersion) => {
   writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
 }
 
-const copyWorkerPackageJson = (version) => {
+const copyWorkerPackageJson = (version: string): void => {
   const packageJson = readJson(join(packageWorkerPath, 'package.json'))
   packageJson.version = version
   delete packageJson.scripts
@@ -59,7 +58,7 @@ const copyWorkerPackageJson = (version) => {
   writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
 }
 
-const copyFiles = async () => {
+const copyFiles = async (): Promise<void> => {
   cpSync(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
     recursive: true,
     force: true,
@@ -85,18 +84,18 @@ export const getTestWorkerPath = () => {
   )
 }
 
-const copyWorkerFiles = () => {
+const copyWorkerFiles = (): void => {
   cpSync(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
     recursive: true,
     force: true,
   })
 }
 
-const cleanDist = () => {
+const cleanDist = (): void => {
   rmSync(join(root, 'dist'), { recursive: true, force: true })
 }
 
-const main = async () => {
+const main = async (): Promise<void> => {
   const version = getVersion()
   const buildPackageJson = readJson(join(root, 'packages', 'build', 'package.json'))
   const testWorkerVersion = buildPackageJson.dependencies['@lvce-editor/test-worker']
