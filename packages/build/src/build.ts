@@ -102,7 +102,7 @@ const copyCliFiles = async (): Promise<void> => {
   const oldContent = await readFile(join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'), 'utf8')
   const newContent2 = oldContent.replace(
     `const path = join(root, 'packages', 'test-with-playwright-worker', 'src', 'workerMain.ts');
-  return fileURLToPath(path);`,
+  return pathToFileURL(path).toString()`,
     `return import.meta.resolve('@lvce-editor/test-with-playwright-worker');`,
   )
   await writeFile(join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'), newContent2)
