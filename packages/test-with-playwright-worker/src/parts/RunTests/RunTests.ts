@@ -19,6 +19,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
       timeout,
     })
     await onResult(result)
+    // @ts-ignore
     switch (result.status) {
       case TestState.Fail:
         failed++

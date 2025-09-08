@@ -14,6 +14,7 @@ export const startBrowser = async ({ signal, headless }): Promise<void> => {
     await page.close()
     await browser.close()
   })
+  // @ts-ignore
   return {
     browser,
     page,

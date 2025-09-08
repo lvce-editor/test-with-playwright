@@ -25,5 +25,6 @@ export const startServer = async ({ signal, port, serverPath, onlyExtension, tes
   await new Promise((resolve) => {
     child.on('message', resolve)
   })
+  // @ts-ignore
   return child
 }

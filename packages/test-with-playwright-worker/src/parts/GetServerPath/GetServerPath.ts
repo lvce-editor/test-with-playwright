@@ -2,6 +2,7 @@ import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleSe
 
 export const getServerPath = async (): Promise<void> => {
   const toTry = GetPossibleServerPaths.getPossibleServerPaths()
+  // @ts-ignore
   for (const path of toTry) {
     try {
       const { serverPath } = await import(path)

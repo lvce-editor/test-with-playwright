@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Dirent } from 'node:fs'
 
 /**

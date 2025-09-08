@@ -24,9 +24,11 @@ export const runTest = async ({ test, page, testSrc, port, timeout }): Promise<v
   })
   const text = await testOverlay.textContent()
   const testOverlayState = await testOverlay.getAttribute('data-state')
+  // @ts-ignore
   const testState = GetTestState.getTestState(testOverlayState)
   const end = performance.now()
   return {
+    // @ts-ignore
     ...testState,
     name: test,
     start,

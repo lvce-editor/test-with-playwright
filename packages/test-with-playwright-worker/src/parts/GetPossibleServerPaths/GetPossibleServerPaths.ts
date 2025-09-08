@@ -7,5 +7,6 @@ export const getPossibleServerPaths = (): void => {
     pathToFileURL(join(process.cwd(), '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),
     pathToFileURL(join(process.cwd(), '..', 'build', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),
   ]
+  // @ts-ignore
   return toTry
 }

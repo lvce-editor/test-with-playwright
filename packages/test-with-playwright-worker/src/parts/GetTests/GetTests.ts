@@ -16,8 +16,10 @@ export const getTests = async (testSrc): Promise<void> => {
     const dirents = await readdir(testSrc, {
       withFileTypes: true,
     })
+    // @ts-ignore
     return dirents.filter(IsTestFile.isTestFile).map(getName)
   } catch (error) {
+    // @ts-ignore
     if (IsEnoentError.isEnoentError(error)) {
       throw new NoTestFilesFoundError(testSrc)
     }

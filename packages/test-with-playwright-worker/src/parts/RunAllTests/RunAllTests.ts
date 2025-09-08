@@ -24,6 +24,7 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   const rpc = get(Cli)
   const controller = new AbortController()
   const signal = controller.signal
+  // @ts-ignore
   const { page, child, port } = await SetupTests.setupTests({
     signal,
     headless,
