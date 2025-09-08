@@ -1,11 +1,11 @@
-import * as RunTest from '../RunTest/RunTest.js'
-import * as TestState from '../TestState/TestState.js'
+import * as RunTest from '../RunTest/RunTest.ts'
+import * as TestState from '../TestState/TestState.ts'
 
 /**
  *
  * @param {{testSrc:string, tests:string[], headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
  */
-export const runTests = async ({ testSrc, tests, headless, page, port, timeout, onResult, onFinalResult }) => {
+export const runTests = async ({ testSrc, tests, headless, page, port, timeout, onResult, onFinalResult }): Promise<void> => {
   let failed = 0
   let skipped = 0
   let passed = 0
@@ -19,6 +19,7 @@ export const runTests = async ({ testSrc, tests, headless, page, port, timeout, 
       timeout,
     })
     await onResult(result)
+    // @ts-ignore
     switch (result.status) {
       case TestState.Fail:
         failed++

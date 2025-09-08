@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { basename } from 'node:path'
-import * as GetTestState from '../GetTestState/GetTestState.js'
+import * as GetTestState from '../GetTestState/GetTestState.ts'
 
 /**
  * @param {string} absolutePath
@@ -12,7 +12,7 @@ const getUrlFromTestFile = (absolutePath, port) => {
   return `http://localhost:${port}/tests/${htmlFileName}`
 }
 
-export const runTest = async ({ test, page, testSrc, port, timeout }) => {
+export const runTest = async ({ test, page, testSrc, port, timeout }): Promise<void> => {
   const start = performance.now()
   const url = getUrlFromTestFile(test, port)
   await page.goto(url, {
@@ -24,9 +24,11 @@ export const runTest = async ({ test, page, testSrc, port, timeout }) => {
   })
   const text = await testOverlay.textContent()
   const testOverlayState = await testOverlay.getAttribute('data-state')
+  // @ts-ignore
   const testState = GetTestState.getTestState(testOverlayState)
   const end = performance.now()
   return {
+    // @ts-ignore
     ...testState,
     name: test,
     start,

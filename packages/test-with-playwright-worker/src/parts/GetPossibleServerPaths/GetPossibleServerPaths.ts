@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-export const getPossibleServerPaths = () => {
+export const getPossibleServerPaths = (): void => {
   const toTry = [
     '@lvce-editor/server',
     pathToFileURL(join(process.cwd(), '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),
@@ -10,5 +10,6 @@ export const getPossibleServerPaths = () => {
       join(process.cwd(), '..', '..', '..', 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js'),
     ).toString(),
   ]
+  // @ts-ignore
   return toTry
 }

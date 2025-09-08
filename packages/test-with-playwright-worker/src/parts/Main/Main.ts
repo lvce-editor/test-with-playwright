@@ -1,27 +1,27 @@
 import { NodeWorkerRpcClient } from '@lvce-editor/rpc'
-import * as CommandMap from '../CommandMap/CommandMap.js'
-import * as Process from '../Process/Process.js'
-import * as ProcessListeners from '../ProcessListeners/ProcessListeners.js'
+import * as CommandMap from '../CommandMap/CommandMap.ts'
+import * as Process from '../Process/Process.ts'
+import * as ProcessListeners from '../ProcessListeners/ProcessListeners.ts'
 import { set } from '@lvce-editor/rpc-registry'
-import { Cli } from '../RpcId/RpcId.js'
+import { Cli } from '../RpcId/RpcId.ts'
 
-const handleDisconnect = () => {
+const handleDisconnect = (): void => {
   console.log('[test-worker] disconnected')
 }
 
-const handleExit = () => {
+const handleExit = (): void => {
   console.log('[test-worker] exiting')
 }
 
-const handleSigint = () => {
+const handleSigint = (): void => {
   console.log('[test-worker] sigint')
 }
 
-const handleSigTerm = () => {
+const handleSigTerm = (): void => {
   console.log('[test-worker] sigterm')
 }
 
-export const main = async () => {
+export const main = async (): Promise<void> => {
   Process.on('disconnect', handleDisconnect)
   Process.on('exit', handleExit)
   Process.on('SIGINT', handleSigint)

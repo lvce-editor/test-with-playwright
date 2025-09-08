@@ -127,7 +127,7 @@ const copyWorkerFiles = async (): Promise<void> => {
     force: true,
   })
   await bundleJs({
-    inputFile: join(root, 'dist', 'test-with-playwright-worker', 'src', 'workerMain.js'),
+    inputFile: join(root, 'dist', 'test-with-playwright-worker', 'src', 'workerMain.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright-worker', 'dist', 'workerMain.js'),
   })
 }

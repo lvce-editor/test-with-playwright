@@ -2,7 +2,7 @@
   "name": "@lvce-editor/test-with-playwright-worker",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/workerMain.js",
+  "main": "src/workerMain.ts",
   "type": "module",
   "repository": {
     "type": "git",
@@ -23,5 +23,18 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "ts-jest": "^29.4.1"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
+    "testTimeout": 15000
   }
 }
