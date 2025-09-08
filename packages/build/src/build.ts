@@ -89,7 +89,7 @@ const copyCliFiles = async (): Promise<void> => {
     join(root, 'dist', 'test-with-playwright', 'bin', 'test-with-playwright.js'),
     'utf8',
   )
-  const newContent = originalBin.replace('../src/main.js', '../dist/main.js')
+  const newContent = originalBin.replace('../src/main.ts', '../dist/main.js')
   await writeFile(join(root, 'dist', 'test-with-playwright', 'bin', 'test-with-playwright.js'), newContent)
   await cp(join(root, 'README.md'), join(root, 'dist', 'test-with-playwright', 'README.md'), {
     recursive: true,
