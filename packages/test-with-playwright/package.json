@@ -1,8 +1,7 @@
 {
   "name": "@lvce-editor/test-with-playwright",
   "version": "0.0.0-dev",
-  "description": "",
-  "keywords": [],
+  "description": "CLI tool for running Playwright tests",
   "repository": {
     "type": "git",
     "url": "git@github.com:lvce-editor/test-with-playwright.git"

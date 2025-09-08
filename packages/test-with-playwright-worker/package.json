@@ -1,8 +1,7 @@
 {
   "name": "@lvce-editor/test-with-playwright-worker",
   "version": "0.0.0-dev",
-  "description": "",
-  "keywords": [],
+  "description": "Worker package for test-with-playwright",
   "repository": {
     "type": "git",
     "url": "git@github.com:lvce-editor/test-with-playwright.git",
