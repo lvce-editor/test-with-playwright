@@ -2,7 +2,6 @@
   "compilerOptions": {
     "lib": ["esnext"],
     "target": "esnext",
-    "checkJs": true,
     "module": "NodeNext",
     "types": ["node"],
     "moduleResolution": "nodenext",
@@ -17,7 +16,8 @@
     "composite": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["src", "test"]
 }
