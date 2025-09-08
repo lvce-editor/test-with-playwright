@@ -34,5 +34,8 @@
     "@lvce-editor/verror": "^1.7.0",
     "minimist": "^1.2.8"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "engines": {
+    "node": ">=22"
+  }
 }
