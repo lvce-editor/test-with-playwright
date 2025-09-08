@@ -1,4 +1,4 @@
-import { fork } from 'node:child_process'
+import { fork, ChildProcess } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -7,51 +7,40 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const root = join(__dirname, '..', '..', '..')
 
-/**
- *
- * @param {any} childProcess
- */
-const waitForChildProcessToExit = async (childProcess) => {
-  const { code, stdout, stderr } = await new Promise((resolve) => {
+interface ProcessResult {
+  code: number | null
+  stdout: string
+  stderr: string
+}
+
+const waitForChildProcessToExit = async (childProcess: ChildProcess): Promise<ProcessResult> => {
+  const { code, stdout, stderr } = await new Promise<ProcessResult>((resolve) => {
     let stdout = ''
     let stderr = ''
-    /**
-     *
-     * @param {any} value
-     */
-    const cleanup = (value) => {
-      childProcess.stdout.off('data', handleStdoutData)
-      childProcess.stderr.off('data', handleStderrData)
+    
+    const cleanup = (value: ProcessResult): void => {
+      childProcess.stdout?.off('data', handleStdoutData)
+      childProcess.stderr?.off('data', handleStderrData)
       childProcess.off('exit', handleExit)
       resolve(value)
     }
-    /**
-     *
-     * @param {number} code
-     */
-    const handleExit = (code) => {
+    
+    const handleExit = (code: number | null): void => {
       cleanup({ code, stdout, stderr })
     }
 
-    /**
-     * @param {any} data
-     */
-    const handleStdoutData = (data) => {
+    const handleStdoutData = (data: Buffer): void => {
       console.info({ stdout: data.toString() })
       stdout += data
     }
 
-    /**
-     * @param {any} data
-     */
-    const handleStderrData = (data) => {
+    const handleStderrData = (data: Buffer): void => {
       console.info({ stderr: data.toString() })
       stderr += data
     }
-    // @ts-ignore
-    childProcess.stdout.on('data', handleStdoutData)
-    // @ts-ignore
-    childProcess.stderr.on('data', handleStderrData)
+    
+    childProcess.stdout?.on('data', handleStdoutData)
+    childProcess.stderr?.on('data', handleStderrData)
     childProcess.on('exit', handleExit)
   })
 
@@ -62,10 +51,13 @@ const waitForChildProcessToExit = async (childProcess) => {
   }
 }
 
-/**
- * @param {string} name
- */
-export const runFixture = async (name) => {
+interface FixtureResult {
+  stdout: string
+  stderr: string
+  exitCode: number | null
+}
+
+export const runFixture = async (name: string): Promise<FixtureResult> => {
   const binaryPath = join(root, 'packages', 'test-with-playwright', 'bin', 'test-with-playwright.js')
   const cwd = join(root, 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
