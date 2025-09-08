@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { root } from './root.ts'
 import { generateApiTypes } from './generateApiTypes.ts'
+import { bundleJs } from './bundleJs.ts'
 
 const execAsync = promisify(exec)
 
@@ -49,6 +50,12 @@ const copyPackageJson = async (version: string, testWorkerVersion: string): Prom
   packageJson.dependencies = packageJson.dependencies || {}
   packageJson.dependencies['@lvce-editor/test-with-playwright-worker'] = `${version}`
   packageJson.dependencies['@lvce-editor/test-worker'] = testWorkerVersion
+  delete packageJson.dependencies['@lvce-editor/assert']
+  delete packageJson.dependencies['@lvce-editor/rpc']
+  delete packageJson.dependencies['@lvce-editor/verror']
+  delete packageJson.dependencies['minimist']
+  delete packageJson.dependencies['get-port']
+  packageJson.main = packageJson.main = 'dist/main.js'
   await mkdir(join(root, 'dist', 'test-with-playwright'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
 }
@@ -59,11 +66,17 @@ const copyWorkerPackageJson = async (version: string): Promise<void> => {
   delete packageJson.scripts
   delete packageJson.prettier
   delete packageJson.jest
+  delete packageJson.dependencies['@lvce-editor/assert']
+  delete packageJson.dependencies['@lvce-editor/rpc']
+  delete packageJson.dependencies['@lvce-editor/rpc-registry']
+  delete packageJson.dependencies['@lvce-editor/verror']
+  delete packageJson.dependencies['get-port']
+  packageJson.main = packageJson.main = 'dist/workerMain.js'
   await mkdir(join(root, 'dist', 'test-with-playwright-worker'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
 }
 
-const copyFiles = async (): Promise<void> => {
+const copyCliFiles = async (): Promise<void> => {
   await cp(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
     recursive: true,
     force: true,
@@ -87,12 +100,20 @@ export const getTestWorkerPath = () => {
 }
 `,
   )
+  await bundleJs({
+    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.js'),
+    outputFile: join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'),
+  })
 }
 
 const copyWorkerFiles = async (): Promise<void> => {
   await cp(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
     recursive: true,
     force: true,
+  })
+  await bundleJs({
+    inputFile: join(root, 'dist', 'test-with-playwright-worker', 'src', 'workerMain.js'),
+    outputFile: join(root, 'dist', 'test-with-playwright-worker', 'dist', 'workerMain.js'),
   })
 }
 
@@ -107,7 +128,7 @@ const main = async (): Promise<void> => {
   await cleanDist()
   await createDist()
   await copyPackageJson(version, testWorkerVersion)
-  await copyFiles()
+  await copyCliFiles()
   await copyWorkerPackageJson(version)
   await copyWorkerFiles()
   await generateApiTypes()
