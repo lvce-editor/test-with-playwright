@@ -77,10 +77,6 @@ const copyWorkerPackageJson = async (version: string): Promise<void> => {
 }
 
 const copyCliFiles = async (): Promise<void> => {
-  await cp(join(packagePath, 'src'), join(root, 'dist', 'test-with-playwright', 'src'), {
-    recursive: true,
-    force: true,
-  })
   await cp(join(packagePath, 'bin'), join(root, 'dist', 'test-with-playwright', 'bin'), {
     recursive: true,
     force: true,
@@ -99,35 +95,20 @@ const copyCliFiles = async (): Promise<void> => {
     recursive: true,
     force: true,
   })
-  await writeFile(
-    join(root, 'dist', 'test-with-playwright', 'src', 'parts', 'GetTestWorkerPath', 'GetTestWorkerPath.js'),
-    `import { fileURLToPath } from 'node:url'
-
-export const getTestWorkerPath = () => {
-  const url = import.meta.resolve('@lvce-editor/test-with-playwright-worker')
-  const path = fileURLToPath(url)
-  return path
-}
-`,
-  )
   await bundleJs({
-    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.ts'),
+    inputFile: join(root, 'packages', 'test-with-playwright', 'src', 'main.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'),
   })
-  await rm(join(root, 'dist', 'test-with-playwright', 'src'), { recursive: true, force: true })
+  // TODO adjust build file test worker path
 }
 
 const copyWorkerFiles = async (): Promise<void> => {
-  await cp(join(packageWorkerPath, 'src'), join(root, 'dist', 'test-with-playwright-worker', 'src'), {
-    recursive: true,
-    force: true,
-  })
   await cp(join(root, 'LICENSE'), join(root, 'dist', 'test-with-playwright-worker', 'LICENSE'), {
     recursive: true,
     force: true,
   })
   await bundleJs({
-    inputFile: join(root, 'dist', 'test-with-playwright-worker', 'src', 'workerMain.ts'),
+    inputFile: join(root, 'packages', 'test-with-playwright-worker', 'src', 'workerMain.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright-worker', 'dist', 'workerMain.js'),
   })
 }
