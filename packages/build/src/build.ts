@@ -85,6 +85,12 @@ const copyCliFiles = async (): Promise<void> => {
     recursive: true,
     force: true,
   })
+  const originalBin = await readFile(
+    join(root, 'dist', 'test-with-playwright', 'bin', 'test-with-playwright.js'),
+    'utf8',
+  )
+  const newContent = originalBin.replace('../src/main.ts', '../dist/main.js')
+  await writeFile(join(root, 'dist', 'test-with-playwright', 'bin', 'test-with-playwright.js'), newContent)
   await cp(join(root, 'README.md'), join(root, 'dist', 'test-with-playwright', 'README.md'), {
     recursive: true,
     force: true,
@@ -101,9 +107,10 @@ export const getTestWorkerPath = () => {
 `,
   )
   await bundleJs({
-    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.js'),
+    inputFile: join(root, 'dist', 'test-with-playwright', 'src', 'main.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright', 'dist', 'main.js'),
   })
+  await rm(join(root, 'dist', 'test-with-playwright', 'src'), { recursive: true, force: true })
 }
 
 const copyWorkerFiles = async (): Promise<void> => {

@@ -2,7 +2,7 @@
   "name": "@lvce-editor/test-with-playwright",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/main.js",
+  "main": "src/main.ts",
   "type": "module",
   "bin": "bin/test-with-playwright.js",
   "scripts": {
@@ -26,5 +26,18 @@
     "@types/jest": "^30.0.0",
     "jest": "^30.1.1",
     "ts-jest": "^29.2.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
+    "testTimeout": 15000
   }
 }

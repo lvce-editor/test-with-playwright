@@ -1,4 +1,4 @@
-export const getFinalResultMessage = (passed, skipped, failed, duration) => {
+export const getFinalResultMessage = (passed: number, skipped: number, failed: number, duration: number): string => {
   if (passed === 0 && skipped === 0 && failed === 0) {
     return `no tests found`
   }
