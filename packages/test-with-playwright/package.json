@@ -2,7 +2,7 @@
   "name": "@lvce-editor/test-with-playwright",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/main.js",
+  "main": "src/main.ts",
   "type": "module",
   "bin": "bin/test-with-playwright.js",
   "scripts": {
