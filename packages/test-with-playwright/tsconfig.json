@@ -17,6 +17,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true
   },
   "include": ["src", "test"]
