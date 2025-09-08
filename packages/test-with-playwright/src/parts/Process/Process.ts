@@ -1,6 +1,6 @@
-export const argv: string[] = process.argv
+export const { argv } = process
 
-export const env: NodeJS.ProcessEnv = process.env
+export const { env } = process
 
 export const exit = (code: number): void => {
   process.exit(code)

@@ -7,7 +7,7 @@ export const getServerPath = async (): Promise<void> => {
     try {
       const { serverPath } = await import(path)
       return serverPath
-    } catch (error) {
+    } catch {
       // ignore
     }
   }
