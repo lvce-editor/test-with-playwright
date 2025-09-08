@@ -1,8 +1,14 @@
 import parseArgv from 'minimist'
 
-export const parseCliArgs = (argv) => {
+interface ParsedCliArgs {
+  headless?: boolean
+  onlyExtension?: string
+  testPath?: string
+}
+
+export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   const parsed = parseArgv(argv)
-  const result = Object.create(null)
+  const result: ParsedCliArgs = Object.create(null)
   if (parsed.headless) {
     result.headless = true
   }

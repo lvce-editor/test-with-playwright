@@ -1,4 +1,5 @@
-import * as GetFinalResultMessage from '../src/parts/GetFinalResultMessage/GetFinalResultMessage.js'
+import { test, expect } from '@jest/globals'
+import * as GetFinalResultMessage from '../src/parts/GetFinalResultMessage/GetFinalResultMessage.ts'
 
 test('1 failing test', () => {
   const passed = 0
