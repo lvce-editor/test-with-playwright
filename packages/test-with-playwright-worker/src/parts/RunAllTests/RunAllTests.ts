@@ -23,7 +23,7 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   Assert.number(timeout)
   const rpc = get(Cli)
   const controller = new AbortController()
-  const {signal} = controller
+  const { signal } = controller
   // @ts-ignore
   const { page, child, port } = await SetupTests.setupTests({
     signal,
@@ -33,11 +33,11 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
-  const onResult = async (result) => {
+  const onResult = async (result): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleResult, result)
   }
-  const onFinalResult = (finalResult) => {
-    rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
+  const onFinalResult = async (finalResult): Promise<void> => {
+    await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult, onFinalResult })
   await TearDownTests.tearDownTests({
