@@ -1,6 +1,6 @@
 import { NodeWorkerRpcParent } from '@lvce-editor/rpc'
-import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
 import { fileURLToPath } from 'node:url'
+import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
 
 interface RunAllTestsParams {
   onlyExtension: string
