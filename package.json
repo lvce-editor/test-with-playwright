@@ -10,10 +10,10 @@
   ],
   "scripts": {
     "build": "node packages/build/src/build.ts",
+    "format": "prettier --write .",
     "postinstall": "lerna bootstrap --ci",
     "lint": "eslint . && prettier --check .",
     "test": "lerna run test",
-    "format": "prettier --write .",
     "type-check": "tsc -b"
   },
   "prettier": {
