@@ -8,7 +8,12 @@ import * as StartServer from '../StartServer/StartServer.ts'
  * @param {{signal:AbortSignal, headless: boolean, onlyExtension:string, testPath:string}} options
  * @returns
  */
-export const setupTests = async ({ signal, headless, onlyExtension, testPath }: {
+export const setupTests = async ({
+  signal,
+  headless,
+  onlyExtension,
+  testPath,
+}: {
   readonly signal: AbortSignal
   readonly headless: boolean
   readonly onlyExtension: string
