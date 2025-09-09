@@ -16,6 +16,7 @@ export const startBrowser = async ({
     headless,
   })
   const page = await browser.newPage()
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   signal.addEventListener('abort', async () => {
     await page.close()
     await browser.close()
