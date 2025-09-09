@@ -12,23 +12,23 @@ const getDuration = (start: number, end: number): number => {
   return end - start
 }
 
-const handleResultPassed = (result: TestResult): void => {
+const handleResultPassed = (result: Readonly<TestResult>): void => {
   const { name, start, end } = result
   const duration = getDuration(start, end)
   console.info(`test passed ${name} in ${duration}ms`)
 }
 
-const handleResultSkipped = (result: TestResult): void => {
+const handleResultSkipped = (result: Readonly<TestResult>): void => {
   const { name } = result
   console.info(`test skipped ${name}`)
 }
 
-const handleResultFailed = (result: TestResult): void => {
+const handleResultFailed = (result: Readonly<TestResult>): void => {
   const { name, error } = result
   console.error(`Test Failed ${name}: ${error}`)
 }
 
-export const handleResult = (result: TestResult): void => {
+export const handleResult = (result: Readonly<TestResult>): void => {
   const { status } = result
   switch (status) {
     // @ts-ignore

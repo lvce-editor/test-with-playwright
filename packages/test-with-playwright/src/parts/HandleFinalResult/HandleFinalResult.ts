@@ -8,7 +8,7 @@ interface FinalResult {
   end: number
 }
 
-export const handleFinalResult = (finalResult: FinalResult): void => {
+export const handleFinalResult = (finalResult: Readonly<FinalResult>): void => {
   const { passed, failed, skipped, start, end } = finalResult
   const duration = end - start
   const message = GetFinalResultMessage.getFinalResultMessage(passed, skipped, failed, duration)

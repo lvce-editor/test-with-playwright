@@ -9,7 +9,7 @@ interface HandleCliArgsParams {
   cwd: string
 }
 
-export const handleCliArgs = async ({ argv, env, commandMap, cwd }: HandleCliArgsParams): Promise<void> => {
+export const handleCliArgs = async ({ argv, env, commandMap, cwd }: Readonly<HandleCliArgsParams>): Promise<void> => {
   const options = GetOptions.getOptions({ argv, env })
   const { onlyExtension } = options
   const { testPath } = options

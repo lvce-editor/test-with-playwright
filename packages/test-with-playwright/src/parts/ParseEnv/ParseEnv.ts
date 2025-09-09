@@ -3,7 +3,7 @@ interface ParsedEnv {
   testPath?: string
 }
 
-export const parseEnv = (env: NodeJS.ProcessEnv): ParsedEnv => {
+export const parseEnv = (env: Readonly<NodeJS.ProcessEnv>): ParsedEnv => {
   const options: ParsedEnv = Object.create(null)
   if (env['ONLY_EXTENSION']) {
     options['onlyExtension'] = env['ONLY_EXTENSION']
