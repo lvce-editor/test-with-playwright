@@ -9,6 +9,7 @@ export default [
       'unicorn/no-process-exit': 'off',
       'no-console': 'off',
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+      'n/no-extraneous-import': 'off',
     },
   },
 ]
