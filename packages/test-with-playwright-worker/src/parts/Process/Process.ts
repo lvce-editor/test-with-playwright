@@ -1,3 +1,3 @@
-export const on = (event: string, listener: (...args: unknown[]) => void): void => {
+export const on = (event: string, listener: (...args: readonly any[]) => void): void => {
   process.on(event, listener)
 }
