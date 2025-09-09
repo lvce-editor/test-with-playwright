@@ -23,7 +23,7 @@ export const runTests = async ({
   readonly port: number
   readonly timeout: number
   readonly onResult: (result: any) => Promise<void>
-  readonly onFinalResult: (result: any) => void
+  readonly onFinalResult: (result: any) => Promise<void>
 }): Promise<void> => {
   let failed = 0
   let skipped = 0
@@ -54,7 +54,7 @@ export const runTests = async ({
     }
   }
   const end = performance.now()
-  onFinalResult({
+  await onFinalResult({
     passed,
     failed,
     skipped,
