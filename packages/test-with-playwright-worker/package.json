@@ -32,7 +32,6 @@
     "@playwright/test": "1.55.0",
     "get-port": "^7.1.0"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=22"
   }
