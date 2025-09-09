@@ -13,7 +13,13 @@ const getUrlFromTestFile = (absolutePath: string, port: number): string => {
   return `http://localhost:${port}/tests/${htmlFileName}`
 }
 
-export const runTest = async ({ test, page, testSrc, port, timeout }: {
+export const runTest = async ({
+  test,
+  page,
+  testSrc,
+  port,
+  timeout,
+}: {
   readonly test: string
   readonly page: Page
   readonly testSrc: string
