@@ -20,7 +20,7 @@ export const runAllTests = async ({
   timeout,
   commandMap,
   testWorkerUri,
-}: RunAllTestsParams): Promise<void> => {
+}: Readonly<RunAllTestsParams>): Promise<void> => {
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
   const rpc = await NodeWorkerRpcParent.create({
