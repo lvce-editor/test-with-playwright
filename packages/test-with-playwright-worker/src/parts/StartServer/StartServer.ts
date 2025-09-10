@@ -1,3 +1,4 @@
+/* eslint-disable n/no-unsupported-features/es-syntax */
 import { fork } from 'node:child_process'
 
 /**
@@ -5,7 +6,7 @@ import { fork } from 'node:child_process'
  * @param {{signal:AbortSignal, port:number, serverPath:string, onlyExtension:string, testPath:string}} param0
  * @returns
  */
-export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }): Promise<void> => {
+export const startServer = async ({ signal, port, serverPath, onlyExtension, testPath }): Promise<any> => {
   const child = fork(serverPath, {
     stdio: 'inherit',
     // signal,
@@ -22,9 +23,8 @@ export const startServer = async ({ signal, port, serverPath, onlyExtension, tes
     }
     console.log('child error', x)
   })
-  await new Promise((resolve) => {
-    child.on('message', resolve)
-  })
-  // @ts-ignore
+  const { resolve, promise } = Promise.withResolvers<void>()
+  child.on('message', resolve)
+  await promise
   return child
 }
