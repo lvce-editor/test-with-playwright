@@ -16,17 +16,32 @@
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit --watch"
   },
   "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
+    "injectGlobals": false,
     "extensionsToTreatAsEsm": [
       ".ts"
     ],
-    "globals": {
-      "ts-jest": {
-        "useESM": true
-      }
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
     },
-    "testTimeout": 15000
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    },
+    "testMatch": [
+      "**/test/**"
+    ],
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0
+      }
+    }
   },
   "dependencies": {
     "@lvce-editor/assert": "^1.4.0",
