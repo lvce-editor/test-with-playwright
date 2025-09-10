@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals'
-import { runFixture } from './_runFixture.ts'
+import { runFixture } from '../src/_runFixture.ts'
 
 test('sample.failing-test', async (): Promise<void> => {
   const { stdout, exitCode } = await runFixture('sample.failing-test')

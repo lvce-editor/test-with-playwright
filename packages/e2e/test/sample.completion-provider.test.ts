@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals'
-import { runFixture } from './_runFixture.ts'
+import { runFixture } from '../src/_runFixture.ts'
 
 const timeout = 30_000
 
