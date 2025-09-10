@@ -28,11 +28,17 @@ jobs:
         with:
           tag_name: ${{ env.RG_VERSION }}
           release_name: ${{ env.RG_VERSION }}
+          draft: true
 
   build-release:
     name: build-release
     needs: ['create-release']
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        os: [windows-2025, macos-15, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -49,22 +55,43 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-cacheNodeModules-${{ steps.nodeModulesCacheKey.outputs.value }}
-          restore-keys: ${{ runner.os }}-cacheNodeModules-
       - name: npm ci
         run: npm ci
         if: steps.npm-cache.outputs.cache-hit != 'true'
+      - run: npm run build
+      - run: npm test
+      - run: npm run type-check
+      - run: npm run lint
       - name: install playwright dependencies
         working-directory: ./packages/test-with-playwright-worker
         run: npx playwright install chromium
         if: steps.npm-cache.outputs.cache-hit != 'true'
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - run: npm run type-check
-      - name: Run headless test
-        run: npm test
+      - name: e2e
+        working-directory: ./packages/e2e
+        run: npm run e2e
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  publish-release:
+    name: publish-release
+    needs: ['build-release']
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm publish --access public
         working-directory: ./dist/test-with-playwright-worker
         env:
@@ -73,3 +100,9 @@ jobs:
         working-directory: ./dist/test-with-playwright
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Publish GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.create-release.outputs.rg_version }}"
+          gh release edit $VERSION --draft=false
