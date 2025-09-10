@@ -59,7 +59,7 @@ interface FixtureResult {
 
 export const runFixture = async (name: string): Promise<FixtureResult> => {
   const binaryPath = join(root, 'packages', 'test-with-playwright', 'bin', 'test-with-playwright.js')
-  const cwd = join(root, 'fixtures', name, 'e2e')
+  const cwd = join(root, 'packages', 'e2e', 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
