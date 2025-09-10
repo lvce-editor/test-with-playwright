@@ -45,3 +45,7 @@ jobs:
         run: npm test
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
+      - name: Run headless test
+        run: npm run e2e
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: 0
