@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "node packages/build/src/build.ts",
+    "e2e": "lerna run e2e",
     "format": "prettier --write .",
     "postinstall": "lerna bootstrap --ci",
     "lint": "eslint . && prettier --check .",
