@@ -40,7 +40,11 @@ jobs:
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
       - run: npm run type-check
-      - name: Run headless test
+      - name: Run test
         run: npm test
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: 0
+      - name: Run headless test
+        run: npm run e2e
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
