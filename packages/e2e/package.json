@@ -4,8 +4,8 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "e2e": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
-    "e2e:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit --watch"
+    "e2e": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
+    "e2e:watch": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit --watch"
   },
   "keywords": [],
   "author": "",
@@ -14,16 +14,24 @@
     "@types/node": "^24.3.1"
   },
   "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
+    "testTimeout": 15000,
+    "injectGlobals": false,
     "extensionsToTreatAsEsm": [
       ".ts"
     ],
-    "globals": {
-      "ts-jest": {
-        "useESM": true
-      }
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
     },
-    "testTimeout": 15000
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    },
+    "testMatch": [
+      "**/test/**"
+    ]
   }
 }

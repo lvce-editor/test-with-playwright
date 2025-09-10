@@ -1,3 +1,4 @@
+import * as TestPrefix from '../TestPrefix/TestPrefix.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 interface TestResult {
@@ -15,17 +16,17 @@ const getDuration = (start: number, end: number): number => {
 const handleResultPassed = (result: Readonly<TestResult>): void => {
   const { name, start, end } = result
   const duration = getDuration(start, end)
-  console.info(`test passed ${name} in ${duration}ms`)
+  console.info(`${TestPrefix.Pass} ${name} in ${duration}ms`)
 }
 
 const handleResultSkipped = (result: Readonly<TestResult>): void => {
   const { name } = result
-  console.info(`test skipped ${name}`)
+  console.info(`${TestPrefix.Skip} ${name}`)
 }
 
 const handleResultFailed = (result: Readonly<TestResult>): void => {
   const { name, error } = result
-  console.error(`Test Failed ${name}: ${error}`)
+  console.error(`${TestPrefix.Fail} ${name}: ${error}`)
 }
 
 export const handleResult = (result: Readonly<TestResult>): void => {
