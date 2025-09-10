@@ -82,7 +82,7 @@ jobs:
 
   publish-release:
     name: publish-release
-    needs: ['build-release']
+    needs: ['create-release', 'build-release']
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
