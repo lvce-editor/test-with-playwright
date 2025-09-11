@@ -1,6 +1,9 @@
 import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleServerPaths.ts'
 
-export const getServerPath = async (): Promise<void> => {
+export const getServerPath = async (serverPath?: string): Promise<string> => {
+  if (serverPath) {
+    return serverPath
+  }
   const toTry = GetPossibleServerPaths.getPossibleServerPaths()
   // @ts-ignore
   for (const path of toTry) {
