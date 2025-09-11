@@ -6,7 +6,7 @@ const __dirname = import.meta.dirname
 
 const root = join(__dirname, '..', '..', '..')
 
-const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')
+const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'src', 'server.js')
 
 interface ProcessResult {
   code: number | null
