@@ -1,8 +1,10 @@
+import { pathToFileURL } from 'node:url'
 import * as GetPossibleServerPaths from '../GetPossibleServerPaths/GetPossibleServerPaths.ts'
 
 export const getServerPath = async (serverPath?: string): Promise<string> => {
+  console.log({ serverPath })
   if (serverPath) {
-    return serverPath
+    return pathToFileURL(serverPath).toString()
   }
   const toTry = GetPossibleServerPaths.getPossibleServerPaths()
   // @ts-ignore
