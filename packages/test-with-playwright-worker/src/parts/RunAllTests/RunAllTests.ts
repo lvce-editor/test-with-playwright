@@ -30,6 +30,7 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
     headless,
     onlyExtension: extensionPath,
     testPath,
+    serverPath,
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
