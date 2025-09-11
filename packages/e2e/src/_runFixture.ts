@@ -6,6 +6,8 @@ const __dirname = import.meta.dirname
 
 const root = join(__dirname, '..', '..', '..')
 
+const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')
+
 interface ProcessResult {
   code: number | null
   stdout: string
@@ -63,7 +65,7 @@ export const runFixture = async (name: string): Promise<FixtureResult> => {
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
-  const child = fork(binaryPath, ['--headless'], {
+  const child = fork(binaryPath, ['--headless', '--server-path', serverPath], {
     cwd,
     stdio: 'pipe',
     env: {

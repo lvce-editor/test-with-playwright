@@ -11,9 +11,7 @@ interface HandleCliArgsParams {
 
 export const handleCliArgs = async ({ argv, env, commandMap, cwd }: Readonly<HandleCliArgsParams>): Promise<void> => {
   const options = GetOptions.getOptions({ argv, env })
-  const { onlyExtension } = options
-  const { testPath } = options
-  const { headless } = options
+  const { onlyExtension, testPath, headless, serverPath } = options
   const timeout = 30_000
   const testWorkerUri = GetTestWorkerUrl.getTestWorkerUrl()
 
@@ -26,5 +24,6 @@ export const handleCliArgs = async ({ argv, env, commandMap, cwd }: Readonly<Han
     timeout,
     commandMap,
     testWorkerUri,
+    serverPath,
   })
 }

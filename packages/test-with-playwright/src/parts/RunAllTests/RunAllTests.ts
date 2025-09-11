@@ -10,6 +10,7 @@ interface RunAllTestsParams {
   timeout: number
   commandMap: any
   testWorkerUri: string
+  serverPath?: string
 }
 
 export const runAllTests = async ({
@@ -20,6 +21,7 @@ export const runAllTests = async ({
   timeout,
   commandMap,
   testWorkerUri,
+  serverPath,
 }: Readonly<RunAllTestsParams>): Promise<void> => {
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
@@ -29,6 +31,6 @@ export const runAllTests = async ({
     commandMap,
     stdio: 'inherit',
   })
-  await rpc.invoke(TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout)
+  await rpc.invoke(TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout, serverPath)
   await rpc.dispose()
 }

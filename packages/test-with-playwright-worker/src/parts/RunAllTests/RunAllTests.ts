@@ -15,7 +15,7 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {boolean} headless
  * @param {number} headless
  */
-export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout): Promise<void> => {
+export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout, serverPath): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)

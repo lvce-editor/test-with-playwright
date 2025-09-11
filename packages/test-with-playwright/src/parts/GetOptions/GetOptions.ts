@@ -6,6 +6,7 @@ interface Options {
   extensionPath: string
   headless: boolean
   onlyExtension?: string
+  serverPath?: string
 }
 
 const defaultOptions: Options = {

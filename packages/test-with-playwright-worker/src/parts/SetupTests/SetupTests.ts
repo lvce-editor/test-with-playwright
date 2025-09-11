@@ -13,19 +13,21 @@ export const setupTests = async ({
   headless,
   onlyExtension,
   testPath,
+  serverPath,
 }: {
   readonly signal: AbortSignal
   readonly headless: boolean
   readonly onlyExtension: string
   readonly testPath: string
+  readonly serverPath?: string
 }): Promise<{ port: number; browser: any; page: any; child: any }> => {
   const port = await GetPort.getPort()
   const { browser, page } = await StartBrowser.startBrowser({
     signal,
     headless,
   })
-  const serverPath = await GetServerPath.getServerPath()
-  const child = await StartServer.startServer({ signal, port, serverPath, onlyExtension, testPath })
+  const resolvedServerPath = await GetServerPath.getServerPath(serverPath)
+  const child = await StartServer.startServer({ signal, port, serverPath: resolvedServerPath, onlyExtension, testPath })
   return {
     port,
     browser,

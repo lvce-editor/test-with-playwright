@@ -4,6 +4,7 @@ interface ParsedCliArgs {
   headless?: boolean
   onlyExtension?: string
   testPath?: string
+  serverPath?: string
 }
 
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
@@ -17,6 +18,9 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   if (parsed['test-path']) {
     result.testPath = parsed['test-path']
+  }
+  if (parsed['server-path']) {
+    result.serverPath = parsed['server-path']
   }
   return result
 }
