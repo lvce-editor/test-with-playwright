@@ -10,6 +10,7 @@ export default [
       'no-console': 'off',
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       'n/no-extraneous-import': 'off',
+      'n/no-unsupported-features/node-builtins': 'off',
     },
   },
 ]
