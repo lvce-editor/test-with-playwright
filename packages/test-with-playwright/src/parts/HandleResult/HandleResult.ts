@@ -16,7 +16,8 @@ const getDuration = (start: number, end: number): number => {
 const handleResultPassed = (result: Readonly<TestResult>): void => {
   const { name, start, end } = result
   const duration = getDuration(start, end)
-  console.info(`${TestPrefix.Pass} ${name} in ${duration}ms`)
+  const roundedDuration = Math.round(duration)
+  console.info(`${TestPrefix.Pass} ${name} in ${roundedDuration}ms`)
 }
 
 const handleResultSkipped = (result: Readonly<TestResult>): void => {
