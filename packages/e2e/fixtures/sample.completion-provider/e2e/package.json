@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "e2e": "node ../../../../../packages/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=.",
+    "e2e": "node ../../../../../packages/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=.  --server-path ../../../../../packages/server/node_modules/@lvce-editor/server/src/server.js",
     "e2e:headless": "node ../../../../../packages/test-with-playwright/bin/test-with-playwright.js  --only-extension=../extension --test-path=.  --server-path ../../../../../packages/server/node_modules/@lvce-editor/server/src/server.js --headless"
   }
 }
