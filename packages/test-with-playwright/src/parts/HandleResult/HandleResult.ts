@@ -1,3 +1,4 @@
+import { formatDuration } from '../FormatDuration/FormatDuration.ts'
 import * as TestPrefix from '../TestPrefix/TestPrefix.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -16,8 +17,8 @@ const getDuration = (start: number, end: number): number => {
 const handleResultPassed = (result: Readonly<TestResult>): void => {
   const { name, start, end } = result
   const duration = getDuration(start, end)
-  const roundedDuration = Math.round(duration)
-  console.info(`${TestPrefix.Pass} ${name} in ${roundedDuration}ms`)
+  const formattedDuration = formatDuration(duration)
+  console.info(`${TestPrefix.Pass} ${name} in ${formattedDuration}`)
 }
 
 const handleResultSkipped = (result: Readonly<TestResult>): void => {
