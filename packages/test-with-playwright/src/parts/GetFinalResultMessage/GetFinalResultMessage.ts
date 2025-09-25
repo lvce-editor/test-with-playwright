@@ -29,5 +29,5 @@ export const getFinalResultMessage = (passed: number, skipped: number, failed: n
   if (passed > 1 && skipped === 0 && failed === 0) {
     return `${passed} tests passed in ${formattedDuration}`
   }
-  return `${passed} tests passed, ${skipped} tests skipped, ${failed} tests failed in ${duration}ms`
+  return `${passed} tests passed, ${skipped} tests skipped, ${failed} tests failed in ${formattedDuration}ms`
 }
