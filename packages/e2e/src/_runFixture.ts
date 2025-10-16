@@ -2,10 +2,7 @@ import { fork } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { waitForChildProcessToExit } from './waitForChildProcessToExit.ts'
-
-const __dirname = import.meta.dirname
-
-const root = join(__dirname, '..', '..', '..')
+import { root } from './root.ts'
 
 const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'src', 'server.js')
 
