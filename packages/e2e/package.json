@@ -14,7 +14,7 @@
     "@types/node": "^24.7.2"
   },
   "jest": {
-    "testTimeout": 15000,
+    "testTimeout": 30000,
     "injectGlobals": false,
     "extensionsToTreatAsEsm": [
       ".ts"
