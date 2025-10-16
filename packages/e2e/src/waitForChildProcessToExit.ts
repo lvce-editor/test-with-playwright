@@ -1,9 +1,9 @@
 import type { ChildProcess } from 'node:child_process'
 
 interface ProcessResult {
-  code: number | null
-  stdout: string
-  stderr: string
+  readonly code: number | null
+  readonly stdout: string
+  readonly stderr: string
 }
 
 export const waitForChildProcessToExit = async (childProcess: ChildProcess): Promise<ProcessResult> => {
