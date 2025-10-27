@@ -9,16 +9,16 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@babel/preset-typescript": "^7.27.1",
+    "@babel/preset-typescript": "^7.28.5",
     "@lvce-editor/test-worker": "^9.0.0",
     "@lvce-editor/verror": "^1.7.0",
     "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.9.1",
     "esbuild": "^0.25.11",
     "execa": "^9.6.0",
-    "rollup": "^4.52.4",
-    "@rollup/plugin-commonjs": "^28.0.8"
+    "rollup": "^4.52.5",
+    "@rollup/plugin-commonjs": "^28.0.9"
   },
   "devDependencies": {}
 }
