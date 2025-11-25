@@ -13,12 +13,12 @@ export default [
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       'n/no-extraneous-import': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
+      'github-actions/ci-versions': 'off',
+      'n/no-unsupported-features/es-syntax': 'off',
     },
   },
   {
     ignores: ['**/fixtures/**'],
-    rules: {
-      'github-actions/ci-versions': 'off',
-    },
   },
 ]
