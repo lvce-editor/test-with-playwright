@@ -1,17 +1,11 @@
 {
   "name": "e2e",
   "version": "0.0.0-dev",
-  "description": "",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "e2e": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
     "e2e:watch": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit --watch"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^24.10.0"
   },
   "jest": {
     "testTimeout": 30000,
@@ -33,5 +27,8 @@
     "testMatch": [
       "**/test/**"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0"
   }
 }
