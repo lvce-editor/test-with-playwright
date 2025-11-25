@@ -27,12 +27,12 @@ jobs:
           echo "version is: ${{ env.RG_VERSION }}"
       - name: Create GitHub release
         id: release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.RG_VERSION }}
-          release_name: ${{ env.RG_VERSION }}
+          name: ${{ env.RG_VERSION }}
           draft: true
 
   build-release:
@@ -45,7 +45,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
@@ -78,7 +78,7 @@ jobs:
         run: npm test
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: matrix.os == 'ubuntu-24.04'
         with:
           name: dist
@@ -89,8 +89,8 @@ jobs:
     needs: ['create-release', 'build-release']
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: dist
           path: dist
