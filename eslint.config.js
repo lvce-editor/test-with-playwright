@@ -15,4 +15,10 @@ export default [
       'n/no-unsupported-features/node-builtins': 'off',
     },
   },
+  {
+    ignores: ['**/fixtures/**'],
+    rules: {
+      'github-actions/ci-versions': 'off',
+    },
+  },
 ]
