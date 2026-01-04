@@ -2,12 +2,12 @@ import type { ChildProcess } from 'node:child_process'
 
 interface ProcessResult {
   readonly code: number | null
-  readonly stdout: string
   readonly stderr: string
+  readonly stdout: string
 }
 
 export const waitForChildProcessToExit = async (childProcess: ChildProcess): Promise<ProcessResult> => {
-  const { resolve, promise } = Promise.withResolvers<ProcessResult>()
+  const { promise, resolve } = Promise.withResolvers<ProcessResult>()
   let stdout = ''
   let stderr = ''
 
@@ -19,7 +19,7 @@ export const waitForChildProcessToExit = async (childProcess: ChildProcess): Pro
   }
 
   const handleExit = (code: number | null): void => {
-    cleanup({ code, stdout, stderr })
+    cleanup({ code, stderr, stdout })
   }
 
   const handleStdoutData = (data: Buffer): void => {
@@ -40,7 +40,7 @@ export const waitForChildProcessToExit = async (childProcess: ChildProcess): Pro
 
   return {
     code,
-    stdout,
     stderr,
+    stdout,
   }
 }

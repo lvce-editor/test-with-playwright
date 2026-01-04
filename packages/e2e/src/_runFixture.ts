@@ -7,9 +7,9 @@ import { waitForChildProcessToExit } from './waitForChildProcessToExit.ts'
 const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'src', 'server.js')
 
 interface FixtureResult {
-  stdout: string
-  stderr: string
   exitCode: number | null
+  stderr: string
+  stdout: string
 }
 
 export const runFixture = async (name: string): Promise<FixtureResult> => {
@@ -20,17 +20,17 @@ export const runFixture = async (name: string): Promise<FixtureResult> => {
   }
   const child = fork(binaryPath, ['--headless', '--server-path', serverPath], {
     cwd,
-    stdio: 'pipe',
     env: {
       ...process.env,
       ONLY_EXTENSION: '../extension',
       TEST_PATH: '.',
     },
+    stdio: 'pipe',
   })
-  const { code, stdout, stderr } = await waitForChildProcessToExit(child)
+  const { code, stderr, stdout } = await waitForChildProcessToExit(child)
   return {
-    stdout,
-    stderr,
     exitCode: code,
+    stderr,
+    stdout,
   }
 }

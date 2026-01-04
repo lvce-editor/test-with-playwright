@@ -9,11 +9,11 @@ import * as StartServer from '../StartServer/StartServer.ts'
  * @returns
  */
 export const setupTests = async ({
-  signal,
   headless,
   onlyExtension,
-  testPath,
   serverPath,
+  signal,
+  testPath,
 }: {
   readonly signal: AbortSignal
   readonly headless: boolean
@@ -23,15 +23,15 @@ export const setupTests = async ({
 }): Promise<{ port: number; browser: any; page: any; child: any }> => {
   const port = await GetPort.getPort()
   const { browser, page } = await StartBrowser.startBrowser({
-    signal,
     headless,
+    signal,
   })
   const resolvedServerPath = await GetServerPath.getServerPath(serverPath)
-  const child = await StartServer.startServer({ signal, port, serverPath: resolvedServerPath, onlyExtension, testPath })
+  const child = await StartServer.startServer({ onlyExtension, port, serverPath: resolvedServerPath, signal, testPath })
   return {
-    port,
     browser,
-    page,
     child,
+    page,
+    port,
   }
 }

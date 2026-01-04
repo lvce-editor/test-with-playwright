@@ -3,32 +3,32 @@ import { fileURLToPath } from 'node:url'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
 
 interface RunAllTestsParams {
-  onlyExtension: string
-  testPath: string
+  commandMap: any
   cwd: string
   headless: boolean
-  timeout: number
-  commandMap: any
-  testWorkerUri: string
+  onlyExtension: string
   serverPath?: string
+  testPath: string
+  testWorkerUri: string
+  timeout: number
 }
 
 export const runAllTests = async ({
-  onlyExtension,
-  testPath,
+  commandMap,
   cwd,
   headless,
-  timeout,
-  commandMap,
-  testWorkerUri,
+  onlyExtension,
   serverPath,
+  testPath,
+  testWorkerUri,
+  timeout,
 }: Readonly<RunAllTestsParams>): Promise<void> => {
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
   const rpc = await NodeWorkerRpcParent.create({
-    path,
     argv: [],
     commandMap,
+    path,
     stdio: 'inherit',
   })
   await rpc.invoke(TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout, serverPath)

@@ -7,14 +7,14 @@ import * as TestState from '../TestState/TestState.ts'
  * @param {{testSrc:string, tests:string[], headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
  */
 export const runTests = async ({
-  testSrc,
-  tests,
   headless,
+  onFinalResult,
+  onResult,
   page,
   port,
+  tests,
+  testSrc,
   timeout,
-  onResult,
-  onFinalResult,
 }: {
   readonly testSrc: string
   readonly tests: readonly string[]
@@ -31,10 +31,10 @@ export const runTests = async ({
   const start = performance.now()
   for (const test of tests) {
     const result = await RunTest.runTest({
-      test,
       page,
-      testSrc,
       port,
+      test,
+      testSrc,
       timeout,
     })
     await onResult(result)
@@ -43,11 +43,11 @@ export const runTests = async ({
       case TestState.Fail:
         failed++
         break
-      case TestState.Skip:
-        skipped++
-        break
       case TestState.Pass:
         passed++
+        break
+      case TestState.Skip:
+        skipped++
         break
       default:
         break
@@ -55,10 +55,10 @@ export const runTests = async ({
   }
   const end = performance.now()
   await onFinalResult({
-    passed,
+    end,
     failed,
+    passed,
     skipped,
     start,
-    end,
   })
 }

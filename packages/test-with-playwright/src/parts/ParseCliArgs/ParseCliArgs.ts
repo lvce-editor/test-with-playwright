@@ -3,8 +3,8 @@ import parseArgv from 'minimist'
 interface ParsedCliArgs {
   headless?: boolean
   onlyExtension?: string
-  testPath?: string
   serverPath?: string
+  testPath?: string
 }
 
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
