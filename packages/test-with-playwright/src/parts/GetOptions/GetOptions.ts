@@ -2,17 +2,17 @@ import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as ParseEnv from '../ParseEnv/ParseEnv.ts'
 
 interface Options {
-  testPath: string
   extensionPath: string
   headless: boolean
   onlyExtension?: string
   serverPath?: string
+  testPath: string
 }
 
 const defaultOptions: Options = {
-  testPath: '',
   extensionPath: '',
   headless: false,
+  testPath: '',
 }
 
 interface GetOptionsParams {

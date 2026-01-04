@@ -3,23 +3,23 @@ import * as TestState from '../TestState/TestState.ts'
 
 export const getTestState = (testOverlayState, text): void => {
   switch (testOverlayState) {
+    case TestOverlayState.Fail:
+      // @ts-ignore
+      return {
+        error: `${text}`,
+        status: TestState.Fail,
+      }
     case TestOverlayState.Pass:
       // @ts-ignore
       return {
-        status: TestState.Pass,
         error: '',
+        status: TestState.Pass,
       }
     case TestOverlayState.Skip:
       // @ts-ignore
       return {
-        status: TestState.Skip,
         error: '',
-      }
-    case TestOverlayState.Fail:
-      // @ts-ignore
-      return {
-        status: TestState.Fail,
-        error: `${text}`,
+        status: TestState.Skip,
       }
     default:
       throw new Error(`unexpected test state: ${testOverlayState}`)

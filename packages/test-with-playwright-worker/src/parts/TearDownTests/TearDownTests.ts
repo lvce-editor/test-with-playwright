@@ -1,8 +1,8 @@
 import * as Signal from '../Signal/Signal.ts'
 
 export const tearDownTests = async ({
-  controller,
   child,
+  controller,
 }: {
   readonly controller: AbortController
   readonly child: any

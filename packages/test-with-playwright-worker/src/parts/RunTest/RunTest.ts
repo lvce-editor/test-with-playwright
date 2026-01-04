@@ -14,10 +14,10 @@ const getUrlFromTestFile = (absolutePath: string, port: number): string => {
 }
 
 export const runTest = async ({
-  test,
   page,
-  testSrc,
   port,
+  test,
+  testSrc,
   timeout,
 }: {
   readonly test: string
@@ -43,9 +43,9 @@ export const runTest = async ({
   return {
     // @ts-ignore
     ...testState,
-    name: test,
-    start,
     end,
     error: text,
+    name: test,
+    start,
   }
 }

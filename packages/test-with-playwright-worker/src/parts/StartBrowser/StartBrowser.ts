@@ -6,8 +6,8 @@ import { chromium } from '@playwright/test'
  * @returns
  */
 export const startBrowser = async ({
-  signal,
   headless,
+  signal,
 }: {
   readonly signal: AbortSignal
   readonly headless: boolean

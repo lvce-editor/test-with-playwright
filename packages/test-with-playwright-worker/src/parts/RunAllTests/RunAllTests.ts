@@ -25,12 +25,12 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   const controller = new AbortController()
   const { signal } = controller
   // @ts-ignore
-  const { page, child, port } = await SetupTests.setupTests({
-    signal,
+  const { child, page, port } = await SetupTests.setupTests({
     headless,
     onlyExtension: extensionPath,
-    testPath,
     serverPath,
+    signal,
+    testPath,
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
@@ -40,9 +40,9 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   const onFinalResult = async (finalResult): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
-  await RunTests.runTests({ testSrc, tests, headless, port, page, timeout, onResult, onFinalResult })
+  await RunTests.runTests({ headless, onFinalResult, onResult, page, port, tests, testSrc, timeout })
   await TearDownTests.tearDownTests({
-    controller,
     child,
+    controller,
   })
 }
