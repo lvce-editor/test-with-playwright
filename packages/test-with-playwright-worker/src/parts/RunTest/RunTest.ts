@@ -6,11 +6,16 @@ import * as GetTestState from '../GetTestState/GetTestState.ts'
 /**
  * @param {string} absolutePath
  * @param {number} port
+ * @param {boolean} traceFocus
  */
-const getUrlFromTestFile = (absolutePath: string, port: number): string => {
+const getUrlFromTestFile = (absolutePath: string, port: number, traceFocus?: boolean): string => {
   const baseName = basename(absolutePath)
   const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
-  return `http://localhost:${port}/tests/${htmlFileName}`
+  const baseUrl = `http://localhost:${port}/tests/${htmlFileName}`
+  if (traceFocus) {
+    return `${baseUrl}?traceFocus=true`
+  }
+  return baseUrl
 }
 
 export const runTest = async ({
@@ -19,15 +24,17 @@ export const runTest = async ({
   test,
   testSrc,
   timeout,
+  traceFocus,
 }: {
   readonly test: string
   readonly page: Page
   readonly testSrc: string
   readonly port: number
   readonly timeout: number
+  readonly traceFocus?: boolean
 }): Promise<void> => {
   const start = performance.now()
-  const url = getUrlFromTestFile(test, port)
+  const url = getUrlFromTestFile(test, port, traceFocus)
   await page.goto(url, {
     waitUntil: 'networkidle',
   })

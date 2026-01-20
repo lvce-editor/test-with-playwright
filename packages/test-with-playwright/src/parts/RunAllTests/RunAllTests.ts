@@ -11,6 +11,7 @@ interface RunAllTestsParams {
   testPath: string
   testWorkerUri: string
   timeout: number
+  traceFocus?: boolean
 }
 
 export const runAllTests = async ({
@@ -22,6 +23,7 @@ export const runAllTests = async ({
   testPath,
   testWorkerUri,
   timeout,
+  traceFocus,
 }: Readonly<RunAllTestsParams>): Promise<void> => {
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
@@ -31,6 +33,15 @@ export const runAllTests = async ({
     path,
     stdio: 'inherit',
   })
-  await rpc.invoke(TestWorkerCommandType.RunAllTests, onlyExtension, testPath, cwd, headless, timeout, serverPath)
+  await rpc.invoke(
+    TestWorkerCommandType.RunAllTests,
+    onlyExtension,
+    testPath,
+    cwd,
+    headless,
+    timeout,
+    serverPath,
+    traceFocus,
+  )
   await rpc.dispose()
 }

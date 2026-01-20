@@ -13,9 +13,19 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {string} testPath
  * @param {string} cwd
  * @param {boolean} headless
- * @param {number} headless
+ * @param {number} timeout
+ * @param {string} serverPath
+ * @param {boolean} traceFocus
  */
-export const runAllTests = async (extensionPath, testPath, cwd, headless, timeout, serverPath): Promise<void> => {
+export const runAllTests = async (
+  extensionPath,
+  testPath,
+  cwd,
+  headless,
+  timeout,
+  serverPath,
+  traceFocus,
+): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)
@@ -40,7 +50,7 @@ export const runAllTests = async (extensionPath, testPath, cwd, headless, timeou
   const onFinalResult = async (finalResult): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
-  await RunTests.runTests({ headless, onFinalResult, onResult, page, port, tests, testSrc, timeout })
+  await RunTests.runTests({ headless, onFinalResult, onResult, page, port, tests, testSrc, timeout, traceFocus })
   await TearDownTests.tearDownTests({
     child,
     controller,

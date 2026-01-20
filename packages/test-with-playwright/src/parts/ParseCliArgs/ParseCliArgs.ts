@@ -5,6 +5,7 @@ interface ParsedCliArgs {
   onlyExtension?: string
   serverPath?: string
   testPath?: string
+  traceFocus?: boolean
 }
 
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
@@ -21,6 +22,9 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   if (parsed['server-path']) {
     result.serverPath = parsed['server-path']
+  }
+  if (parsed['trace-focus']) {
+    result.traceFocus = true
   }
   return result
 }
