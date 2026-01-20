@@ -15,6 +15,7 @@ export const runTests = async ({
   tests,
   testSrc,
   timeout,
+  traceFocus,
 }: {
   readonly testSrc: string
   readonly tests: readonly string[]
@@ -24,6 +25,7 @@ export const runTests = async ({
   readonly timeout: number
   readonly onResult: (result: any) => Promise<void>
   readonly onFinalResult: (result: any) => Promise<void>
+  readonly traceFocus?: boolean
 }): Promise<void> => {
   let failed = 0
   let skipped = 0
@@ -36,6 +38,7 @@ export const runTests = async ({
       test,
       testSrc,
       timeout,
+      traceFocus,
     })
     await onResult(result)
     // @ts-ignore

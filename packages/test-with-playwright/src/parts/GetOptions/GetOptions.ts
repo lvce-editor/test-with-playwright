@@ -7,6 +7,7 @@ interface Options {
   onlyExtension?: string
   serverPath?: string
   testPath: string
+  traceFocus?: boolean
 }
 
 const defaultOptions: Options = {
