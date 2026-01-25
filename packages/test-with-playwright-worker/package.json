@@ -44,7 +44,7 @@
     "@lvce-editor/rpc": "^5.4.0",
     "@lvce-editor/rpc-registry": "^7.5.0",
     "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "1.57.0",
+    "@playwright/test": "1.58.0",
     "get-port": "^7.1.0"
   },
   "engines": {
