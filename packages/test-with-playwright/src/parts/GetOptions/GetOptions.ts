@@ -3,6 +3,7 @@ import * as ParseEnv from '../ParseEnv/ParseEnv.ts'
 
 interface Options {
   extensionPath: string
+  filter?: string
   headless: boolean
   onlyExtension?: string
   serverPath?: string

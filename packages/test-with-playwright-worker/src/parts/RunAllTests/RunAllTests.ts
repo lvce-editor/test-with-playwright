@@ -16,6 +16,7 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {number} timeout
  * @param {string} serverPath
  * @param {boolean} traceFocus
+ * @param {string} filter
  */
 export const runAllTests = async (
   extensionPath,
@@ -25,6 +26,7 @@ export const runAllTests = async (
   timeout,
   serverPath,
   traceFocus,
+  filter,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
