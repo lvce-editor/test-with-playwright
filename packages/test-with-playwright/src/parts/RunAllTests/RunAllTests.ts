@@ -5,6 +5,7 @@ import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerComma
 interface RunAllTestsParams {
   commandMap: any
   cwd: string
+  filter?: string
   headless: boolean
   onlyExtension: string
   serverPath?: string
@@ -17,6 +18,7 @@ interface RunAllTestsParams {
 export const runAllTests = async ({
   commandMap,
   cwd,
+  filter,
   headless,
   onlyExtension,
   serverPath,
@@ -42,6 +44,7 @@ export const runAllTests = async ({
     timeout,
     serverPath,
     traceFocus,
+    filter,
   )
   await rpc.dispose()
 }
