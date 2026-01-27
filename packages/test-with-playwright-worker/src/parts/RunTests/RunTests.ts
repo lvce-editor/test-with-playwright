@@ -34,7 +34,7 @@ export const runTests = async ({
   let passed = 0
   const start = performance.now()
   // Filter tests if a filter is provided
-  const filteredTests = filter ? tests.filter(test => test.includes(filter)) : tests
+  const filteredTests = filter ? tests.filter((test) => test.includes(filter)) : tests
   for (const test of filteredTests) {
     const result = await RunTest.runTest({
       page,

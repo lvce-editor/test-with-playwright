@@ -52,7 +52,18 @@ export const runAllTests = async (
   const onFinalResult = async (finalResult): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
-  await RunTests.runTests({ filter, headless, onFinalResult, onResult, page, port, tests, testSrc, timeout, traceFocus })
+  await RunTests.runTests({
+    filter,
+    headless,
+    onFinalResult,
+    onResult,
+    page,
+    port,
+    tests,
+    testSrc,
+    timeout,
+    traceFocus,
+  })
   await TearDownTests.tearDownTests({
     child,
     controller,

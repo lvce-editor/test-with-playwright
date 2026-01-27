@@ -12,13 +12,13 @@ interface FixtureResult {
   stdout: string
 }
 
-export const runFixture = async (name: string): Promise<FixtureResult> => {
+export const runFixture = async (name: string, args: readonly string[] = []): Promise<FixtureResult> => {
   const binaryPath = join(root, 'packages', 'test-with-playwright', 'bin', 'test-with-playwright.js')
   const cwd = join(root, 'packages', 'e2e', 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
-  const child = fork(binaryPath, ['--headless', '--server-path', serverPath], {
+  const child = fork(binaryPath, ['--headless', '--server-path', serverPath, ...args], {
     cwd,
     env: {
       ...process.env,
