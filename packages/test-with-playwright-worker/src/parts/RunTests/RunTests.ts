@@ -4,9 +4,10 @@ import * as TestState from '../TestState/TestState.ts'
 
 /**
  *
- * @param {{testSrc:string, tests:string[], headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
+ * @param {{testSrc:string, tests:string[], filter?: string, headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
  */
 export const runTests = async ({
+  filter,
   headless,
   onFinalResult,
   onResult,
@@ -19,6 +20,7 @@ export const runTests = async ({
 }: {
   readonly testSrc: string
   readonly tests: readonly string[]
+  readonly filter?: string
   readonly headless: boolean
   readonly page: Page
   readonly port: number
@@ -31,7 +33,9 @@ export const runTests = async ({
   let skipped = 0
   let passed = 0
   const start = performance.now()
-  for (const test of tests) {
+  // Filter tests if a filter is provided
+  const filteredTests = filter ? tests.filter(test => test.includes(filter)) : tests
+  for (const test of filteredTests) {
     const result = await RunTest.runTest({
       page,
       port,
