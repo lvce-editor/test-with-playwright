@@ -31,7 +31,7 @@
     "@lerna/legacy-package-management": "^8.2.4",
     "@lvce-editor/eslint-config": "^4.8.0",
     "@types/eslint__js": "^9.14.0",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.1.0",
     "eslint": "^9.39.2",
     "jest": "^30.2.0",
     "lerna": "^8.2.4",
