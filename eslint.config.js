@@ -14,6 +14,7 @@ export default [
       'n/no-extraneous-import': 'off',
       '@typescript-eslint/restrict-plus-operands': 'off',
       'github-actions/ci-versions': 'off',
+      '@cspell/spellchecker': 'off',
     },
   },
   {
