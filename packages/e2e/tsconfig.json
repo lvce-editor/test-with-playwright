@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "target": "esnext",
-    "module": "NodeNext",
-    "types": ["node"],
-    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "types": [
+      "node"
+    ],
+    "moduleResolution": "nodeNext",
     "isolatedModules": true,
     "skipLibCheck": true,
     "rootDir": ".",
@@ -21,5 +25,8 @@
     "allowJs": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "test"]
+  "include": [
+    "src",
+    "test"
+  ]
 }
