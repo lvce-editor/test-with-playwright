@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 import { basename } from 'node:path'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
+import * as TestState from '../TestState/TestState.ts'
 
 /**
  * @param {string} absolutePath
@@ -32,27 +33,39 @@ export const runTest = async ({
   readonly port: number
   readonly timeout: number
   readonly traceFocus?: boolean
-}): Promise<void> => {
+}): Promise<any> => {
   const start = performance.now()
-  const url = getUrlFromTestFile(test, port, traceFocus)
-  await page.goto(url, {
-    waitUntil: 'networkidle',
-  })
-  const testOverlay = page.locator('#TestOverlay')
-  await expect(testOverlay).toBeVisible({
-    timeout,
-  })
-  const text = await testOverlay.textContent()
-  const testOverlayState = await testOverlay.getAttribute('data-state')
-  // @ts-ignore
-  const testState = GetTestState.getTestState(testOverlayState)
-  const end = performance.now()
-  return {
+  try {
+    const url = getUrlFromTestFile(test, port, traceFocus)
+    await page.goto(url, {
+      waitUntil: 'networkidle',
+    })
+    const testOverlay = page.locator('#TestOverlay')
+    await expect(testOverlay).toBeVisible({
+      timeout,
+    })
+    const text = await testOverlay.textContent()
+    const testOverlayState = await testOverlay.getAttribute('data-state')
     // @ts-ignore
-    ...testState,
-    end,
-    error: text,
-    name: test,
-    start,
+    const testState = GetTestState.getTestState(testOverlayState)
+    const end = performance.now()
+    return {
+      // @ts-ignore
+      ...testState,
+      end,
+      error: text,
+      name: test,
+      start,
+    }
+  } catch (error) {
+    const end = performance.now()
+    const message = error instanceof Error ? error.message : `${error}`
+    return {
+      end,
+      error: message,
+      name: test,
+      start,
+      status: TestState.Fail,
+    }
   }
 }
