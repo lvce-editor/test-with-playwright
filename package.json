@@ -26,12 +26,12 @@
     "testTimeout": 30000
   },
   "devDependencies": {
-    "@jest/globals": "^30.2.0",
+    "@jest/globals": "^30.3.0",
     "@lerna/legacy-package-management": "^8.2.4",
-    "@lvce-editor/eslint-config": "^7.5.0",
-    "@types/node": "^25.3.5",
+    "@lvce-editor/eslint-config": "^7.7.0",
+    "@types/node": "^25.5.0",
     "eslint": "^9.39.2",
-    "jest": "^30.2.0",
+    "jest": "^30.3.0",
     "lerna": "^8.2.4",
     "prettier": "^3.8.1",
     "ts-jest": "^29.4.6",

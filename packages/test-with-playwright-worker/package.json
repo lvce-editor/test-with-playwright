@@ -42,10 +42,10 @@
   "dependencies": {
     "@lvce-editor/assert": "^1.5.1",
     "@lvce-editor/rpc": "^6.4.0",
-    "@lvce-editor/rpc-registry": "^9.5.0",
+    "@lvce-editor/rpc-registry": "^9.12.0",
     "@lvce-editor/verror": "^1.7.0",
     "@playwright/test": "1.58.2",
-    "get-port": "^7.1.0"
+    "get-port": "^7.2.0"
   },
   "engines": {
     "node": ">=24"
