@@ -5,7 +5,19 @@ import { fork } from 'node:child_process'
  * @param {{signal:AbortSignal, port:number, serverPath:string, onlyExtension:string, testPath:string}} param0
  * @returns
  */
-export const startServer = async ({ onlyExtension, port, serverPath, signal, testPath }): Promise<any> => {
+export const startServer = async ({
+  onlyExtension,
+  port,
+  serverPath,
+  signal,
+  testPath,
+}: {
+  onlyExtension: string
+  port: number
+  serverPath: string
+  signal: AbortSignal
+  testPath: string
+}): Promise<any> => {
   const child = fork(serverPath, {
     // signal,
     env: {

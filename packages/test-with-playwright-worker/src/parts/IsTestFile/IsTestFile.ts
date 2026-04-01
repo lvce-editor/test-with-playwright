@@ -1,9 +1,8 @@
-// @ts-ignore
-import { Dirent } from 'node:fs'
+import type { Dirent } from 'node:fs'
 
 /**
  * @param {Dirent} dirent
  */
-export const isTestFile = (dirent): void => {
+export const isTestFile = (dirent: Dirent): boolean => {
   return dirent.isFile() && !dirent.name.startsWith('_')
 }

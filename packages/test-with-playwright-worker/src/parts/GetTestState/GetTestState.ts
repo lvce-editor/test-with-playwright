@@ -1,7 +1,7 @@
 import * as TestOverlayState from '../TestOverlayState/TestOverlayState.ts'
 import * as TestState from '../TestState/TestState.ts'
 
-export const getTestState = (testOverlayState, text): void => {
+export const getTestState = (testOverlayState: string, text: string): void => {
   switch (testOverlayState) {
     case TestOverlayState.Fail:
       // @ts-ignore
