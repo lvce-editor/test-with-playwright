@@ -4,7 +4,7 @@ export const getServerPath = async (serverPath?: string): Promise<string> => {
   if (serverPath) {
     return serverPath
   }
-  const toTry = GetPossibleServerPaths.getPossibleServerPaths()
+  const toTry = GetPossibleServerPaths.getPossibleServerPaths(process.cwd())
   // @ts-ignore
   for (const path of toTry) {
     try {

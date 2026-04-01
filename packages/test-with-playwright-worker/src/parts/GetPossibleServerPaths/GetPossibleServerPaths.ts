@@ -1,8 +1,7 @@
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-export const getPossibleServerPaths = (): readonly string[] => {
-  const cwd = process.cwd()
+export const getPossibleServerPaths = (cwd: string): readonly string[] => {
   const toTry: readonly string[] = [
     '@lvce-editor/server',
     pathToFileURL(join(cwd, '..', 'server', 'node_modules', '@lvce-editor', 'server', 'index.js')).toString(),

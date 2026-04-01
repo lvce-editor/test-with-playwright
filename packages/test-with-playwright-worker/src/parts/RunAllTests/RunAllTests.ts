@@ -53,7 +53,7 @@ export const runAllTests = async (
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   await RunTests.runTests({
-    ...(filter !== undefined ? { filter } : {}),
+    ...(filter ? { filter } : {}),
     headless,
     onFinalResult,
     onResult,
