@@ -42,7 +42,7 @@ export const runTests = async ({
       test,
       testSrc,
       timeout,
-      traceFocus,
+      traceFocus: traceFocus ?? false,
     })
     await onResult(result)
     // @ts-ignore

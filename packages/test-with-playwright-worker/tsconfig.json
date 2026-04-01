@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "target": "esnext",
     "module": "NodeNext",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "moduleResolution": "nodenext",
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,

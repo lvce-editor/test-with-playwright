@@ -19,14 +19,14 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {string} filter
  */
 export const runAllTests = async (
-  extensionPath,
-  testPath,
-  cwd,
-  headless,
-  timeout,
-  serverPath,
-  traceFocus,
-  filter,
+  extensionPath: string,
+  testPath: string,
+  cwd: string,
+  headless: boolean,
+  timeout: number,
+  serverPath: string,
+  traceFocus: boolean,
+  filter: string | undefined,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -46,14 +46,14 @@ export const runAllTests = async (
   })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
-  const onResult = async (result): Promise<void> => {
+  const onResult = async (result: any): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleResult, result)
   }
-  const onFinalResult = async (finalResult): Promise<void> => {
+  const onFinalResult = async (finalResult: any): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   await RunTests.runTests({
-    filter,
+    ...(filter !== undefined ? { filter } : {}),
     headless,
     onFinalResult,
     onResult,

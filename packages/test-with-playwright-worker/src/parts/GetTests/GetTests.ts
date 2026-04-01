@@ -1,17 +1,18 @@
+import type { Dirent } from 'node:fs'
 import { VError } from '@lvce-editor/verror'
 import { readdir } from 'node:fs/promises'
 import * as IsEnoentError from '../IsEnoentError/IsEnoentError.ts'
 import * as IsTestFile from '../IsTestFile/IsTestFile.ts'
 import { NoTestFilesFoundError } from '../NoTestFilesFoundError/NoTestFilesFoundError.ts'
 
-const getName = (dirent): string => {
+const getName = (dirent: Dirent): string => {
   return dirent.name
 }
 
 /**
  * @param {string} testSrc
  */
-export const getTests = async (testSrc): Promise<string[]> => {
+export const getTests = async (testSrc: string): Promise<string[]> => {
   try {
     const dirents = await readdir(testSrc, {
       withFileTypes: true,
