@@ -1,5 +1,0 @@
-image:
-  file: .gitpod.Dockerfile
-
-tasks:
-  - init: npm ci && cd packages/test-with-playwright && npx playwright install chromium && cd ../../ && npm test
