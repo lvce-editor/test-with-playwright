@@ -42,9 +42,9 @@
   "dependencies": {
     "@lvce-editor/assert": "^1.5.1",
     "@lvce-editor/rpc": "^6.4.0",
-    "@lvce-editor/rpc-registry": "^9.16.0",
+    "@lvce-editor/rpc-registry": "^9.17.0",
     "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "1.59.0",
+    "@playwright/test": "1.59.1",
     "get-port": "^7.2.0"
   },
   "engines": {
