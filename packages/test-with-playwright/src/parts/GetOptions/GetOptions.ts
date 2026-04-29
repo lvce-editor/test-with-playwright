@@ -2,10 +2,16 @@ import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as ParseEnv from '../ParseEnv/ParseEnv.ts'
 
 interface Options {
+  electronArgs?: string[]
+  electronCwd?: string
+  electronEntry?: string
+  electronEnv?: string[]
+  electronPath?: string
   extensionPath: string
   filter?: string
   headless: boolean
   onlyExtension?: string
+  runtime?: string
   serverPath?: string
   testPath: string
   traceFocus?: boolean
