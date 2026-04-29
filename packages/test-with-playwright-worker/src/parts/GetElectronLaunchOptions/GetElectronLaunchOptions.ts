@@ -14,7 +14,7 @@ export const getElectronLaunchOptions = ({
   env,
   executablePath,
 }: ElectronRuntimeOptions): {
-  readonly args: readonly string[]
+  args: string[]
   readonly cwd: string
   readonly env: Record<string, string>
   readonly executablePath?: string
@@ -23,6 +23,6 @@ export const getElectronLaunchOptions = ({
     args: [entry, ...args],
     cwd,
     env,
-    executablePath,
+    ...(executablePath ? { executablePath } : {}),
   }
 }

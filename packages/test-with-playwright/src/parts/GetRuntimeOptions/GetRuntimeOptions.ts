@@ -23,6 +23,18 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
+const getOptionalStringProperty = <T extends string>(
+  key: T,
+  value: string | undefined,
+): { readonly [K in T]?: string } => {
+  if (value === undefined) {
+    return {}
+  }
+  return {
+    [key]: value,
+  } as { readonly [K in T]?: string }
+}
+
 const parseElectronEnv = (electronEnv: readonly string[] | undefined): Record<string, string> => {
   if (!electronEnv) {
     return Object.create(null)
@@ -57,12 +69,12 @@ export const getRuntimeOptions = ({
       cwd: electronCwd || cwd,
       entry: electronEntry || '.',
       env: parseElectronEnv(electronEnv),
-      executablePath: electronPath,
+      ...getOptionalStringProperty('executablePath', electronPath),
       type: 'electron',
     }
   }
   return {
-    serverPath,
+    ...getOptionalStringProperty('serverPath', serverPath),
     type: 'browser',
   }
 }

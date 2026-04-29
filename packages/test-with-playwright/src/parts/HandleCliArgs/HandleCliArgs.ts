@@ -30,13 +30,13 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
   const testWorkerUri = GetTestWorkerUrl.getTestWorkerUrl()
   const runtimeOptions = GetRuntimeOptions.getRuntimeOptions({
     cwd,
-    electronArgs,
-    electronCwd,
-    electronEntry,
-    electronEnv,
-    electronPath,
-    runtime,
-    serverPath,
+    ...(electronArgs ? { electronArgs } : {}),
+    ...(electronCwd ? { electronCwd } : {}),
+    ...(electronEntry ? { electronEntry } : {}),
+    ...(electronEnv ? { electronEnv } : {}),
+    ...(electronPath ? { electronPath } : {}),
+    ...(runtime ? { runtime } : {}),
+    ...(serverPath ? { serverPath } : {}),
   })
 
   await RunAllTests.runAllTests({

@@ -85,9 +85,9 @@ export const runAllTests = async (
   const { child, page, port } = await SetupTests.setupTests({
     headless,
     onlyExtension: extensionPath,
-    serverPath: runtimeOptions.serverPath,
     signal,
     testPath,
+    ...(runtimeOptions.serverPath ? { serverPath: runtimeOptions.serverPath } : {}),
   })
   await RunTests.runTests({
     ...(filter ? { filter } : {}),

@@ -29,7 +29,6 @@ test('getRuntimeOptions returns electron runtime with defaults', () => {
       DEV: '1',
       LVCE_ROOT: '/workspace/app',
     },
-    executablePath: undefined,
     type: 'electron',
   })
 })

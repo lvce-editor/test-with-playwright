@@ -15,14 +15,24 @@ interface ParsedCliArgs {
   traceFocus?: boolean
 }
 
+const toCliString = (value: unknown): string => {
+  if (typeof value === 'string') {
+    return value
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return `${value}`
+  }
+  throw new TypeError('expected cli argument value to be a string, number, or boolean')
+}
+
 const toStringArray = (value: unknown): string[] | undefined => {
-  if (typeof value === 'undefined') {
+  if (value === undefined) {
     return undefined
   }
   if (Array.isArray(value)) {
-    return value.map(String)
+    return value.map(toCliString)
   }
-  return [String(value)]
+  return [toCliString(value)]
 }
 
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {

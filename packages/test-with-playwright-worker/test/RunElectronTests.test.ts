@@ -1,19 +1,23 @@
-import { test, expect, jest } from '@jest/globals'
+import { afterEach, test, expect, jest } from '@jest/globals'
+import * as RunElectronTest from '../src/parts/RunElectronTest/RunElectronTest.ts'
+import * as RunElectronTests from '../src/parts/RunElectronTests/RunElectronTests.ts'
 import * as TestState from '../src/parts/TestState/TestState.ts'
 
-const mockRunElectronTest = jest.fn()
-
-jest.unstable_mockModule('../src/parts/RunElectronTest/RunElectronTest.ts', () => ({
-  runElectronTest: mockRunElectronTest,
-}))
-
-const RunElectronTests = await import('../src/parts/RunElectronTests/RunElectronTests.ts')
+afterEach(() => {
+  jest.restoreAllMocks()
+})
 
 test('runElectronTests filters tests and reports exact results', async () => {
-  mockRunElectronTest.mockResolvedValueOnce({ status: TestState.Pass })
+  const runElectronTestSpy = jest.spyOn(RunElectronTest, 'runElectronTest').mockResolvedValueOnce({
+    end: 1,
+    error: '',
+    name: 'test-A.js',
+    start: 0,
+    status: TestState.Pass,
+  })
 
-  const onResult = jest.fn(async () => {})
-  const onFinalResult = jest.fn(async () => {})
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
 
   await RunElectronTests.runElectronTests({
     filter: 'A',
@@ -21,25 +25,24 @@ test('runElectronTests filters tests and reports exact results', async () => {
     onResult,
     page: {} as any,
     tests: ['test-A.js', 'test-B.js'],
-    timeout: 1_000,
+    timeout: 1000,
   })
 
-  expect(mockRunElectronTest.mock.calls).toEqual([
+  expect(runElectronTestSpy.mock.calls).toEqual([
     [
       {
         page: {},
         test: 'test-A.js',
-        timeout: 1_000,
+        timeout: 1000,
       },
     ],
   ])
   expect(onResult.mock.calls).toHaveLength(1)
   expect(onFinalResult.mock.calls).toHaveLength(1)
-  expect(onFinalResult.mock.calls[0]?.[0]).toEqual(
-    expect.objectContaining({
-      failed: 0,
-      passed: 1,
-      skipped: 0,
-    }),
-  )
+  const finalResult = onFinalResult.mock.calls.at(0)?.[0]
+  expect(finalResult).toMatchObject({
+    failed: 0,
+    passed: 1,
+    skipped: 0,
+  })
 })

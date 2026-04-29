@@ -30,13 +30,13 @@ export const test = async ({ Locator }) => {
 `)
 
   const page = {
-    locator: (selector: string) => `locator:${selector}`,
+    locator: (selector: string): string => `locator:${selector}`,
   }
 
   const result = await RunElectronTest.runElectronTest({
     page: page as any,
     test: testPath,
-    timeout: 1_000,
+    timeout: 1000,
   })
 
   expect(result.status).toBe(TestState.Pass)
@@ -55,7 +55,7 @@ export const test = async () => {}
       locator: () => 'unused',
     } as any,
     test: testPath,
-    timeout: 1_000,
+    timeout: 1000,
   })
 
   expect(result.status).toBe(TestState.Skip)

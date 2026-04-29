@@ -18,7 +18,10 @@ export const startElectron = async ({
   readonly signal: AbortSignal
 }): Promise<{ electronApp: any; page: any }> => {
   const launchOptions = GetElectronLaunchOptions.getElectronLaunchOptions(runtimeOptions)
-  const electronApp = await electron.launch(launchOptions)
+  const electronApp = await electron.launch({
+    ...launchOptions,
+    args: [...launchOptions.args],
+  })
   const page = await electronApp.firstWindow()
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   signal.addEventListener('abort', async () => {

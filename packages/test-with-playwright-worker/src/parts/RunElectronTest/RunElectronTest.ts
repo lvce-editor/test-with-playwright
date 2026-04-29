@@ -23,7 +23,7 @@ const withTimeout = async <T>(promise: Promise<T>, timeout: number): Promise<T> 
       },
       (error) => {
         clearTimeout(timer)
-        reject(error)
+        reject(error instanceof Error ? error : new Error(`${error}`))
       },
     )
   })
@@ -53,8 +53,8 @@ export const runElectronTest = async ({
     }
     await withTimeout(
       testModule.test({
-        Locator: page.locator.bind(page),
         expect,
+        Locator: page.locator.bind(page),
         page,
       }),
       timeout,
