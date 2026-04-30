@@ -11,11 +11,7 @@
   "forwardPorts": [3000],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-<<<<<<< HEAD
   "postCreateCommand": "npm ci && cd packages/test-with-playwright-worker && npx playwright install chromium"
-=======
-  "postCreateCommand": "npm ci && cd packages/e2e && npx playwright install"
->>>>>>> origin/main
 
   // Configure tool-specific properties.
   // "customizations": {},
