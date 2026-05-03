@@ -33,12 +33,14 @@ const isBrowser = (value: string): value is Browser => {
 export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options => {
   const parsedEnv = ParseEnv.parseEnv(env)
   const parsedArgs = ParseCliArgs.parseCliArgs(argv)
-  if (parsedArgs.browser && !isBrowser(parsedArgs.browser)) {
-    throw new Error(`[test-with-playwright] unsupported browser: ${parsedArgs.browser}`)
+  const browser = parsedArgs.browser ?? defaultOptions.browser
+  if (!isBrowser(browser)) {
+    throw new Error(`[test-with-playwright] unsupported browser: ${browser}`)
   }
   return {
     ...defaultOptions,
     ...parsedEnv,
     ...parsedArgs,
+    browser,
   }
 }
