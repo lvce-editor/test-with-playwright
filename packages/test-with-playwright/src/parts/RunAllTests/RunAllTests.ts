@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
 
 interface RunAllTestsParams {
+  browser: 'chromium' | 'firefox'
   commandMap: any
   cwd: string
   filter?: string
@@ -16,6 +17,7 @@ interface RunAllTestsParams {
 }
 
 export const runAllTests = async ({
+  browser,
   commandMap,
   cwd,
   filter,
@@ -40,6 +42,7 @@ export const runAllTests = async ({
     onlyExtension,
     testPath,
     cwd,
+    browser,
     headless,
     timeout,
     serverPath,

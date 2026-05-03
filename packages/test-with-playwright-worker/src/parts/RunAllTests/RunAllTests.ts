@@ -12,6 +12,7 @@ import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
  * @param {string} extensionPath
  * @param {string} testPath
  * @param {string} cwd
+ * @param {'chromium'|'firefox'} browser
  * @param {boolean} headless
  * @param {number} timeout
  * @param {string} serverPath
@@ -22,6 +23,7 @@ export const runAllTests = async (
   extensionPath: string,
   testPath: string,
   cwd: string,
+  browser: 'chromium' | 'firefox',
   headless: boolean,
   timeout: number,
   serverPath: string,
@@ -31,6 +33,7 @@ export const runAllTests = async (
   Assert.string(extensionPath)
   Assert.string(testPath)
   Assert.string(cwd)
+  Assert.string(browser)
   Assert.boolean(headless)
   Assert.number(timeout)
   const rpc = get(Cli)
@@ -38,6 +41,7 @@ export const runAllTests = async (
   const { signal } = controller
   // @ts-ignore
   const { child, page, port } = await SetupTests.setupTests({
+    browser,
     headless,
     onlyExtension: extensionPath,
     serverPath,
