@@ -1,29 +1,32 @@
-import { chromium } from '@playwright/test'
+import { chromium, firefox } from '@playwright/test'
 
 /**
  *
- * @param {{signal:AbortSignal, headless:boolean}} options
+ * @param {{browser:'chromium'|'firefox', signal:AbortSignal, headless:boolean}} options
  * @returns
  */
 export const startBrowser = async ({
+  browser,
   headless,
   signal,
 }: {
+  readonly browser: 'chromium' | 'firefox'
   readonly signal: AbortSignal
   readonly headless: boolean
 }): Promise<{ browser: any; page: any }> => {
-  const browser = await chromium.launch({
+  const launcher = browser === 'firefox' ? firefox : chromium
+  const browserInstance = await launcher.launch({
     headless,
   })
-  const page = await browser.newPage()
+  const page = await browserInstance.newPage()
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   signal.addEventListener('abort', async () => {
     await page.close()
-    await browser.close()
+    await browserInstance.close()
   })
   // @ts-ignore
   return {
-    browser,
+    browser: browserInstance,
     page,
   }
 }

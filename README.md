@@ -24,6 +24,7 @@ test('sample.hello-world', async () => {
 - `--server-path`: explicit server entry point
 - `--filter`: run only matching tests
 - `--headless`: run Playwright in headless mode
+- `--browser`: browser engine to launch, either `chromium` or `firefox`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 
 ## Environment Variables

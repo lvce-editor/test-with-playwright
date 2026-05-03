@@ -34,19 +34,43 @@ jobs:
       - name: npm ci
         run: npm ci
         if: steps.npm-cache.outputs.cache-hit != 'true'
-      - name: install playwright dependencies
-        working-directory: ./packages/test-with-playwright-worker
-        run: npx playwright install chromium
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: 0
       - run: npm run type-check
       - run: npm run lint
       - name: Run headless test
         run: npm test
+
+  e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+      - name: Compute node modules cache key
+        id: nodeModulesCacheKey
+        run: echo "value=$(node packages/build/src/computeNodeModulesCacheKey.ts)" >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: actions/cache@v5
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-cacheNodeModules-${{ steps.nodeModulesCacheKey.outputs.value }}
+          restore-keys: ${{ runner.os }}-cacheNodeModules-
+      - name: npm ci
+        run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: install playwright browsers and system dependencies
+        working-directory: ./packages/test-with-playwright-worker
+        run: npx playwright install --with-deps ${{ matrix.browser }}
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - name: Run headless test
+      - name: Run e2e tests
         run: npm run e2e
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
+          TEST_WITH_PLAYWRIGHT_BROWSER: ${{ matrix.browser }}

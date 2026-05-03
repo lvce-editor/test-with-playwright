@@ -12,13 +12,21 @@ interface FixtureResult {
   stdout: string
 }
 
+const getBrowserArgs = (): readonly string[] => {
+  const browser = process.env['TEST_WITH_PLAYWRIGHT_BROWSER']
+  if (!browser) {
+    return []
+  }
+  return [`--browser=${browser}`]
+}
+
 export const runFixture = async (name: string, args: readonly string[] = []): Promise<FixtureResult> => {
   const binaryPath = join(root, 'packages', 'test-with-playwright', 'bin', 'test-with-playwright.js')
   const cwd = join(root, 'packages', 'e2e', 'fixtures', name, 'e2e')
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
-  const child = fork(binaryPath, ['--headless', '--server-path', serverPath, ...args], {
+  const child = fork(binaryPath, ['--headless', '--server-path', serverPath, ...getBrowserArgs(), ...args], {
     cwd,
     env: {
       ...process.env,

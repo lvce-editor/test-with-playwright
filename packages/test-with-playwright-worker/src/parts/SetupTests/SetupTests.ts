@@ -5,16 +5,18 @@ import * as StartServer from '../StartServer/StartServer.ts'
 
 /**
  *
- * @param {{signal:AbortSignal, headless: boolean, onlyExtension:string, testPath:string}} options
+ * @param {{browser:'chromium'|'firefox', signal:AbortSignal, headless: boolean, onlyExtension:string, testPath:string}} options
  * @returns
  */
 export const setupTests = async ({
+  browser,
   headless,
   onlyExtension,
   serverPath,
   signal,
   testPath,
 }: {
+  readonly browser: 'chromium' | 'firefox'
   readonly signal: AbortSignal
   readonly headless: boolean
   readonly onlyExtension: string
@@ -22,14 +24,15 @@ export const setupTests = async ({
   readonly serverPath?: string
 }): Promise<{ port: number; browser: any; page: any; child: any }> => {
   const port = await GetPort.getPort()
-  const { browser, page } = await StartBrowser.startBrowser({
+  const { browser: browserInstance, page } = await StartBrowser.startBrowser({
+    browser,
     headless,
     signal,
   })
   const resolvedServerPath = await GetServerPath.getServerPath(serverPath)
   const child = await StartServer.startServer({ onlyExtension, port, serverPath: resolvedServerPath, signal, testPath })
   return {
-    browser,
+    browser: browserInstance,
     child,
     page,
     port,

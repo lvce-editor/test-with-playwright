@@ -1,6 +1,7 @@
 import parseArgv from 'minimist'
 
 interface ParsedCliArgs {
+  browser?: string
   filter?: string
   headless?: boolean
   onlyExtension?: string
@@ -12,6 +13,9 @@ interface ParsedCliArgs {
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   const parsed = parseArgv(argv)
   const result: ParsedCliArgs = Object.create(null)
+  if (parsed.browser) {
+    result.browser = parsed.browser
+  }
   if (parsed.filter) {
     result.filter = parsed.filter
   }
