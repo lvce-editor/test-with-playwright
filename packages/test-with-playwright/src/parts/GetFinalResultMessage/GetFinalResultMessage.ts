@@ -1,33 +1,26 @@
 import { formatDuration } from '../FormatDuration/FormatDuration.ts'
 
+const getCountMessage = (count: number, singular: string, plural: string): string => {
+  if (count === 1) {
+    return `1 ${singular}`
+  }
+  return `${count} ${plural}`
+}
+
 export const getFinalResultMessage = (passed: number, skipped: number, failed: number, duration: number): string => {
   if (passed === 0 && skipped === 0 && failed === 0) {
     return `no tests found`
   }
   const formattedDuration = formatDuration(duration)
-  if (passed === 0 && skipped === 0 && failed === 1) {
-    return `${failed} test failed in ${formattedDuration}`
+  const parts: string[] = []
+  if (passed > 0) {
+    parts.push(getCountMessage(passed, 'test passed', 'tests passed'))
   }
-  if (passed === 0 && skipped === 1 && failed === 0) {
-    return `${skipped} test skipped in ${formattedDuration}`
+  if (skipped > 0) {
+    parts.push(getCountMessage(skipped, 'test skipped', 'tests skipped'))
   }
-  if (passed === 0 && skipped === 1 && failed === 1) {
-    return `${skipped} test skipped, ${failed} test failed in ${formattedDuration}`
+  if (failed > 0) {
+    parts.push(getCountMessage(failed, 'test failed', 'tests failed'))
   }
-  if (passed === 1 && skipped === 0 && failed === 0) {
-    return `${passed} test passed in ${formattedDuration}`
-  }
-  if (passed === 1 && skipped === 0 && failed === 1) {
-    return `${passed} test passed, ${failed} test failed in ${formattedDuration}`
-  }
-  if (passed === 1 && skipped === 1 && failed === 0) {
-    return `${passed} test passed, ${skipped} test skipped in ${formattedDuration}`
-  }
-  if (passed === 1 && skipped === 1 && failed === 1) {
-    return `${passed} test passed, ${skipped} test skipped, ${failed} test failed in ${formattedDuration}`
-  }
-  if (passed > 1 && skipped === 0 && failed === 0) {
-    return `${passed} tests passed in ${formattedDuration}`
-  }
-  return `${passed} tests passed, ${skipped} tests skipped, ${failed} tests failed in ${formattedDuration}`
+  return `${parts.join(', ')} in ${formattedDuration}`
 }
