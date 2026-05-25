@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@babel/preset-typescript": "^7.28.5",
+    "@babel/preset-typescript": "^7.29.7",
     "@lvce-editor/test-worker": "^14.20.0",
     "@lvce-editor/verror": "^1.7.0",
     "@rollup/plugin-babel": "^7.0.0",
