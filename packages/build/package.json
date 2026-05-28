@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/preset-typescript": "^7.29.7",
-    "@lvce-editor/test-worker": "^15.6.0",
+    "@lvce-editor/test-worker": "^15.7.0",
     "@lvce-editor/verror": "^1.7.0",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
