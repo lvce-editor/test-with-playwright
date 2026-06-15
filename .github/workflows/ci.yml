@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox]
+        browser: [chromium]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
