@@ -14,10 +14,10 @@
     "@lvce-editor/verror": "^1.7.0",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@types/node": "^25.9.1",
-    "esbuild": "^0.28.0",
+    "@types/node": "^25.9.3",
+    "esbuild": "^0.28.1",
     "execa": "^9.6.1",
-    "rollup": "^4.61.0",
+    "rollup": "^4.62.0",
     "@rollup/plugin-commonjs": "^29.0.3"
   },
   "devDependencies": {}
