@@ -12,6 +12,7 @@ export default [
   {
     rules: {
       'n/no-process-exit': 'off',
+      'unicorn/consistent-boolean-name': 'off',
       'unicorn/no-process-exit': 'off',
       'no-console': 'off',
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
