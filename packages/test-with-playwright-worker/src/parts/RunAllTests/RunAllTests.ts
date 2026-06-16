@@ -4,9 +4,23 @@ import * as Assert from '../Assert/Assert.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
 import { Cli } from '../RpcId/RpcId.ts'
+import * as RunElectronTests from '../RunElectronTests/RunElectronTests.ts'
 import * as RunTests from '../RunTests/RunTests.ts'
 import * as SetupTests from '../SetupTests/SetupTests.ts'
+import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
+
+interface BrowserRuntimeOptions {
+  readonly serverPath?: string
+  readonly type: 'browser'
+}
+
+interface ElectronRuntimeOptions {
+  readonly args: readonly string[]
+  readonly env: Record<string, string>
+  readonly executablePath: string
+  readonly type: 'electron'
+}
 
 /**
  * @param {string} extensionPath
@@ -26,7 +40,7 @@ export const runAllTests = async (
   browser: 'chromium' | 'firefox',
   headless: boolean,
   timeout: number,
-  serverPath: string,
+  runtimeOptions: BrowserRuntimeOptions | ElectronRuntimeOptions,
   traceFocus: boolean,
   filter: string | undefined,
 ): Promise<void> => {
@@ -36,18 +50,10 @@ export const runAllTests = async (
   Assert.string(browser)
   Assert.boolean(headless)
   Assert.number(timeout)
+  Assert.object(runtimeOptions)
   const rpc = get(Cli)
   const controller = new AbortController()
   const { signal } = controller
-  // @ts-ignore
-  const { child, page, port } = await SetupTests.setupTests({
-    browser,
-    headless,
-    onlyExtension: extensionPath,
-    serverPath,
-    signal,
-    testPath,
-  })
   const testSrc = join(testPath, 'src')
   const tests = await GetTests.getTests(testSrc)
   const onResult = async (result: any): Promise<void> => {
@@ -57,6 +63,37 @@ export const runAllTests = async (
     await rpc.invoke(CliCommandType.HandleFinalResult, finalResult)
   }
   const filterOption = filter === undefined ? undefined : { filter }
+  if (runtimeOptions.type === 'electron') {
+    const { electronApp, page } = await StartElectron.startElectron({
+      runtimeOptions,
+      signal,
+    })
+    await RunElectronTests.runElectronTests({
+      ...filterOption,
+      electronApp,
+      onFinalResult,
+      onResult,
+      page,
+      tests,
+      testSrc,
+      timeout,
+    })
+    await TearDownTests.tearDownTests({
+      controller,
+      kill: async () => {
+        await electronApp.close()
+      },
+    })
+    return
+  }
+  const { child, page, port } = await SetupTests.setupTests({
+    browser,
+    headless,
+    onlyExtension: extensionPath,
+    ...(runtimeOptions.serverPath ? { serverPath: runtimeOptions.serverPath } : {}),
+    signal,
+    testPath,
+  })
   await RunTests.runTests({
     ...filterOption,
     headless,
