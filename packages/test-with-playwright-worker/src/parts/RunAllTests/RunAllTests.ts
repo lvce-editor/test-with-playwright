@@ -10,12 +10,12 @@ import * as SetupTests from '../SetupTests/SetupTests.ts'
 import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
 
-interface BrowserRuntimeOptions {
+export interface BrowserRuntimeOptions {
   readonly serverPath?: string
   readonly type: 'browser'
 }
 
-interface ElectronRuntimeOptions {
+export interface ElectronRuntimeOptions {
   readonly args: readonly string[]
   readonly env: Record<string, string>
   readonly executablePath: string
