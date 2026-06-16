@@ -1,5 +1,5 @@
-import * as GetOptions from '../GetOptions/GetOptions.ts'
 import * as GetHelpMessage from '../GetHelpMessage/GetHelpMessage.ts'
+import * as GetOptions from '../GetOptions/GetOptions.ts'
 import * as GetTestWorkerUrl from '../GetTestWorkerPath/GetTestWorkerPath.ts'
 import * as RunAllTests from '../RunAllTests/RunAllTests.ts'
 

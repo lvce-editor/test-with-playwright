@@ -3,8 +3,8 @@ import parseArgv from 'minimist'
 interface ParsedCliArgs {
   browser?: string
   filter?: string
-  help?: boolean
   headless?: boolean
+  help?: boolean
   onlyExtension?: string
   serverPath?: string
   testPath?: string
