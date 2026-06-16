@@ -10,16 +10,18 @@ const getHtmlFileName = (test: string): string => {
 }
 
 export const getTestUrl = ({
+  origin,
   port,
   test,
   traceFocus,
 }: {
+  readonly origin?: string
   readonly port: number
   readonly test: string
   readonly traceFocus?: boolean
 }): string => {
   const htmlFileName = getHtmlFileName(test)
-  const baseUrl = `http://localhost:${port}/tests/${htmlFileName}`
+  const baseUrl = origin ? `${origin}/tests/${htmlFileName}` : `http://localhost:${port}/tests/${htmlFileName}`
   if (traceFocus) {
     return `${baseUrl}?traceFocus=true`
   }

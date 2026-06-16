@@ -5,6 +5,7 @@ import * as GetTestUrl from '../GetTestUrl/GetTestUrl.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 export const runTest = async ({
+  origin,
   page,
   port,
   test,
@@ -13,6 +14,7 @@ export const runTest = async ({
   traceFocus,
 }: {
   readonly test: string
+  readonly origin?: string
   readonly page: Page
   readonly testSrc: string
   readonly port: number
@@ -21,7 +23,7 @@ export const runTest = async ({
 }): Promise<any> => {
   const start = performance.now()
   try {
-    const url = GetTestUrl.getTestUrl({ port, test, traceFocus })
+    const url = GetTestUrl.getTestUrl({ origin, port, test, traceFocus })
     await page.goto(url, {
       waitUntil: 'networkidle',
     })
