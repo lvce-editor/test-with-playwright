@@ -20,7 +20,6 @@ export const runElectronTests = async ({
   onFinalResult,
   onResult,
   page,
-  port,
   tests,
   testSrc,
   timeout,
@@ -30,7 +29,6 @@ export const runElectronTests = async ({
   readonly onFinalResult: (result: any) => Promise<void>
   readonly onResult: (result: any) => Promise<void>
   readonly page: Page
-  readonly port: number
   readonly tests: readonly string[]
   readonly testSrc: string
   readonly timeout: number
@@ -43,7 +41,6 @@ export const runElectronTests = async ({
   for (const test of filteredTests) {
     const result = await RunElectronTest.runElectronTest({
       page,
-      port,
       test,
       timeout,
     })
