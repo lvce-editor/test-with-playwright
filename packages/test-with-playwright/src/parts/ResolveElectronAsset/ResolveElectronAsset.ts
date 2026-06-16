@@ -1,16 +1,16 @@
 export interface ElectronAsset {
-  readonly assetName: string
   readonly archiveType: 'deb' | 'dmg' | 'exe'
+  readonly assetName: string
 }
 
 const getLinuxArch = (arch: string): string => {
   switch (arch) {
-    case 'x64':
-      return 'amd64'
-    case 'arm64':
-      return 'arm64'
     case 'arm':
       return 'armhf'
+    case 'arm64':
+      return 'arm64'
+    case 'x64':
+      return 'amd64'
     default:
       throw new Error(`[test-with-playwright] unsupported electron platform: linux/${arch}`)
   }
@@ -18,10 +18,10 @@ const getLinuxArch = (arch: string): string => {
 
 const getWindowsArch = (arch: string): string => {
   switch (arch) {
-    case 'x64':
-      return 'x64'
     case 'arm64':
       return 'arm64'
+    case 'x64':
+      return 'x64'
     default:
       throw new Error(`[test-with-playwright] unsupported electron platform: win32/${arch}`)
   }
@@ -37,11 +37,6 @@ export const resolveElectronAsset = ({
   readonly version: string
 }): ElectronAsset => {
   switch (platform) {
-    case 'linux':
-      return {
-        archiveType: 'deb',
-        assetName: `lvce-${version}_${getLinuxArch(arch)}.deb`,
-      }
     case 'darwin':
       if (arch !== 'arm64') {
         throw new Error(`[test-with-playwright] unsupported electron platform: darwin/${arch}`)
@@ -49,6 +44,11 @@ export const resolveElectronAsset = ({
       return {
         archiveType: 'dmg',
         assetName: `lvce-${version}_arm64.dmg`,
+      }
+    case 'linux':
+      return {
+        archiveType: 'deb',
+        assetName: `lvce-${version}_${getLinuxArch(arch)}.deb`,
       }
     case 'win32':
       return {

@@ -22,6 +22,6 @@ export default [
     },
   },
   {
-    ignores: ['**/fixtures/**'],
+    ignores: ['**/.test-with-playwright/**', '**/fixtures/**'],
   },
 ]

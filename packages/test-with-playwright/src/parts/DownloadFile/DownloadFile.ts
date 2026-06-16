@@ -3,7 +3,7 @@ import { mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 
-export const downloadFile = async ({ url, to }: { readonly url: string; readonly to: string }): Promise<void> => {
+export const downloadFile = async ({ to, url }: { readonly to: string; readonly url: string }): Promise<void> => {
   await mkdir(dirname(to), { recursive: true })
   const response = await fetch(url)
   if (!response.ok || !response.body) {

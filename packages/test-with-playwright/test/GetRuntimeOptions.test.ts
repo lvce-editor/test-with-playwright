@@ -41,6 +41,8 @@ test('getRuntimeOptions requires electron version when no path is provided', asy
       runtime: 'electron',
     }),
   ).rejects.toThrow(
-    new Error('[test-with-playwright] --electron-version is required when --runtime=electron and --electron-path is not provided'),
+    new Error(
+      '[test-with-playwright] --electron-version is required when --runtime=electron and --electron-path is not provided',
+    ),
   )
 })

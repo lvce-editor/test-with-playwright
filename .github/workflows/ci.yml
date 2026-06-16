@@ -106,11 +106,11 @@ jobs:
           key: ${{ runner.os }}-lvce-electron-v0.84.0
       - name: Run Electron e2e tests
         if: runner.os != 'Linux'
-        run: npm run e2e -- --runTestsByPath packages/e2e/test/sample.electron.test.ts
+        run: npm --prefix packages/e2e run e2e -- --runTestsByPath test/sample.electron.test.ts
         env:
           TEST_WITH_PLAYWRIGHT_ELECTRON: 1
       - name: Run Electron e2e tests
         if: runner.os == 'Linux'
-        run: xvfb-run -a npm run e2e -- --runTestsByPath packages/e2e/test/sample.electron.test.ts
+        run: xvfb-run -a npm --prefix packages/e2e run e2e -- --runTestsByPath test/sample.electron.test.ts
         env:
           TEST_WITH_PLAYWRIGHT_ELECTRON: 1

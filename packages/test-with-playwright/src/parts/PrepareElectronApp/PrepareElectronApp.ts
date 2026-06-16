@@ -11,14 +11,26 @@ const getDownloadUrl = ({ assetName, version }: { readonly assetName: string; re
   return `https://github.com/lvce-editor/lvce-editor/releases/download/${version}/${assetName}`
 }
 
-const prepareLinux = async ({ assetPath, cachePath }: { readonly assetPath: string; readonly cachePath: string }): Promise<void> => {
+const prepareLinux = async ({
+  assetPath,
+  cachePath,
+}: {
+  readonly assetPath: string
+  readonly cachePath: string
+}): Promise<void> => {
   await ExecFile.execFile({
     args: ['-x', assetPath, cachePath],
     command: 'dpkg-deb',
   })
 }
 
-const prepareMacos = async ({ assetPath, cachePath }: { readonly assetPath: string; readonly cachePath: string }): Promise<void> => {
+const prepareMacos = async ({
+  assetPath,
+  cachePath,
+}: {
+  readonly assetPath: string
+  readonly cachePath: string
+}): Promise<void> => {
   const mountRoot = await mkdtemp(join(tmpdir(), 'test-with-playwright-dmg-'))
   try {
     await ExecFile.execFile({
@@ -43,7 +55,13 @@ const prepareMacos = async ({ assetPath, cachePath }: { readonly assetPath: stri
   }
 }
 
-const prepareWindows = async ({ assetPath, cachePath }: { readonly assetPath: string; readonly cachePath: string }): Promise<void> => {
+const prepareWindows = async ({
+  assetPath,
+  cachePath,
+}: {
+  readonly assetPath: string
+  readonly cachePath: string
+}): Promise<void> => {
   await ExecFile.execFile({
     args: ['/S', `/D=${cachePath}`],
     command: assetPath,
@@ -89,7 +107,9 @@ export const prepareElectronApp = async ({
     return resolve(electronPath)
   }
   if (!version) {
-    throw new Error('[test-with-playwright] --electron-version is required when --runtime=electron and --electron-path is not provided')
+    throw new Error(
+      '[test-with-playwright] --electron-version is required when --runtime=electron and --electron-path is not provided',
+    )
   }
   const { archiveType, assetName } = ResolveElectronAsset.resolveElectronAsset({ version })
   const cachePath = resolve(cacheDir, version, process.platform, process.arch)
@@ -97,7 +117,8 @@ export const prepareElectronApp = async ({
   const appPath = join(cachePath, 'app')
   const executableMarkerPath = join(cachePath, 'executable-path.txt')
   if (existsSync(executableMarkerPath)) {
-    const cachedExecutablePath = (await readFile(executableMarkerPath, 'utf8')).trim()
+    const cachedExecutablePathContent = await readFile(executableMarkerPath, 'utf8')
+    const cachedExecutablePath = cachedExecutablePathContent.trim()
     if (existsSync(cachedExecutablePath)) {
       return cachedExecutablePath
     }

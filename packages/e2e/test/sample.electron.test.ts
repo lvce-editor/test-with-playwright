@@ -5,14 +5,16 @@ import { root } from '../src/root.ts'
 
 const testPassedRegex = /1 test passed in \d+(\.\d+)?ms/
 
-const runElectronTest = process.env['TEST_WITH_PLAYWRIGHT_ELECTRON'] === '1' ? test : test.skip
-
-runElectronTest('sample.electron', async (): Promise<void> => {
-  const { exitCode, stdout } = await runFixture('sample.electron', [
-    '--runtime=electron',
-    '--electron-version=v0.84.0',
-    `--electron-cache-dir=${join(root, '.test-with-playwright', 'electron')}`,
-  ])
-  expect(exitCode).toBe(0)
-  expect(stdout).toMatch(testPassedRegex)
-})
+if (process.env['TEST_WITH_PLAYWRIGHT_ELECTRON'] === '1') {
+  test('sample.electron', async (): Promise<void> => {
+    const { exitCode, stdout } = await runFixture('sample.electron', [
+      '--runtime=electron',
+      '--electron-version=v0.84.0',
+      `--electron-cache-dir=${join(root, '.test-with-playwright', 'electron')}`,
+    ])
+    expect(exitCode).toBe(0)
+    expect(stdout).toMatch(testPassedRegex)
+  })
+} else {
+  test.skip('sample.electron disabled', async (): Promise<void> => {})
+}
