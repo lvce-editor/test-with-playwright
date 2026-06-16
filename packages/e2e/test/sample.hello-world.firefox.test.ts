@@ -3,6 +3,7 @@ import { runFixture } from '../src/_runFixture.ts'
 
 const testPassedRegex = /1 test passed in \d+(\.\d+)?ms/
 
+// eslint-disable-next-line jest/no-disabled-tests -- firefox fixture is intentionally parked but kept runnable
 test.skip('sample.hello-world in firefox', async (): Promise<void> => {
   const { exitCode, stdout } = await runFixture('sample.hello-world', ['--browser=firefox'])
   expect(exitCode).toBe(0)

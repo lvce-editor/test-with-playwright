@@ -9,7 +9,7 @@ interface RunAllTestsParams {
   filter?: string
   headless: boolean
   onlyExtension: string
-  serverPath?: string
+  runtimeOptions: any
   testPath: string
   testWorkerUri: string
   timeout: number
@@ -23,7 +23,7 @@ export const runAllTests = async ({
   filter,
   headless,
   onlyExtension,
-  serverPath,
+  runtimeOptions,
   testPath,
   testWorkerUri,
   timeout,
@@ -45,7 +45,7 @@ export const runAllTests = async ({
     browser,
     headless,
     timeout,
-    serverPath,
+    runtimeOptions,
     traceFocus,
     filter,
   )

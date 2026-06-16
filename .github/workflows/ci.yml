@@ -74,3 +74,45 @@ jobs:
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
           TEST_WITH_PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
+
+  e2e-electron:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+      - name: Compute node modules cache key
+        id: nodeModulesCacheKey
+        run: echo "value=$(node packages/build/src/computeNodeModulesCacheKey.ts)" >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: actions/cache@v5
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-cacheNodeModules-${{ steps.nodeModulesCacheKey.outputs.value }}
+          restore-keys: ${{ runner.os }}-cacheNodeModules-
+      - name: npm ci
+        run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+      - uses: actions/cache@v5
+        with:
+          path: .test-with-playwright/electron
+          key: ${{ runner.os }}-lvce-electron-v0.84.0
+      - name: Run Electron e2e tests
+        if: runner.os != 'Linux'
+        working-directory: ./packages/e2e
+        run: npm run e2e -- --runTestsByPath test/sample.electron.test.ts
+        env:
+          TEST_WITH_PLAYWRIGHT_ELECTRON: 1
+      - name: Run Electron e2e tests
+        if: runner.os == 'Linux'
+        working-directory: ./packages/e2e
+        run: xvfb-run -a npm run e2e -- --runTestsByPath test/sample.electron.test.ts
+        env:
+          TEST_WITH_PLAYWRIGHT_ELECTRON: 1

@@ -3,6 +3,7 @@ import { runFixture } from '../src/_runFixture.ts'
 
 const testPassedRegex = /1 test passed in \d+(\.\d+)?ms/
 
+// eslint-disable-next-line jest/no-disabled-tests -- fixture is intentionally parked but kept runnable
 test.skip('sample.with-utility-file', async (): Promise<void> => {
   const { exitCode, stdout } = await runFixture('sample.with-utility-file')
   expect(exitCode).toBe(0)
