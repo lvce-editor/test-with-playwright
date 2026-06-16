@@ -1,5 +1,9 @@
 {
   "name": "sample.electron-e2e",
   "type": "module",
-  "private": true
+  "private": true,
+  "scripts": {
+    "e2e": "node ../../../../../packages/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=. --runtime=electron --electron-version=v0.84.0 --electron-cache-dir=../../../../../.test-with-playwright/electron",
+    "e2e:headless": "node ../../../../../packages/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=. --runtime=electron --electron-version=v0.84.0 --electron-cache-dir=../../../../../.test-with-playwright/electron --headless"
+  }
 }
