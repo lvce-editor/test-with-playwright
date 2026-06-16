@@ -24,12 +24,14 @@ export const getElectronLaunchOptions = ({
   readonly env: Record<string, string>
   readonly executablePath: string
 } => {
+  const launchEnv = {
+    ...getProcessEnv(),
+    ...env,
+  }
+  delete launchEnv['ELECTRON_RUN_AS_NODE']
   return {
     args,
-    env: {
-      ...getProcessEnv(),
-      ...env,
-    },
+    env: launchEnv,
     executablePath,
   }
 }
