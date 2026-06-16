@@ -10,6 +10,7 @@
   "author": "Lvce Editor",
   "type": "module",
   "main": "src/main.ts",
+  "types": "api.d.ts",
   "bin": "bin/test-with-playwright.js",
   "scripts": {
     "test": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
@@ -46,6 +47,7 @@
   "dependencies": {
     "@lvce-editor/assert": "^1.5.1",
     "@lvce-editor/rpc": "^6.4.0",
+    "@lvce-editor/test-worker": "^16.2.0",
     "@lvce-editor/verror": "^1.7.0",
     "minimist": "^1.2.8"
   },

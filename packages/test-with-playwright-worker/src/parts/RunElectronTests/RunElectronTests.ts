@@ -16,7 +16,6 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
 }
 
 export const runElectronTests = async ({
-  electronApp,
   filter,
   onFinalResult,
   onResult,
@@ -41,10 +40,8 @@ export const runElectronTests = async ({
   const filteredTests = filter ? tests.filter((test) => test.includes(filter)) : tests
   for (const test of filteredTests) {
     const result = await RunElectronTest.runElectronTest({
-      electronApp,
       page,
       test,
-      testSrc,
       timeout,
     })
     await onResult(result)

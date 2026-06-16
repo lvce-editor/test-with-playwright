@@ -1,72 +1,39 @@
-import { afterEach, expect, test } from '@jest/globals'
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import * as RunElectronTest from '../src/parts/RunElectronTest/RunElectronTest.ts'
-import * as TestState from '../src/parts/TestState/TestState.ts'
+import { expect, jest, test } from '@jest/globals'
 
-const temporaryDirectories: string[] = []
-
-afterEach(async () => {
-  const directories = [...temporaryDirectories]
-  temporaryDirectories.length = 0
-  await Promise.all(directories.map((directory) => rm(directory, { force: true, recursive: true })))
+const runTest = jest.fn(async (): Promise<any> => {
+  return {
+    error: '',
+    name: 'electron.typed-smoke.ts',
+    status: 1,
+  }
 })
 
-const writeTestModule = async (source: string): Promise<{ test: string; testSrc: string }> => {
-  const testSrc = await mkdtemp(join(tmpdir(), 'test-with-playwright-'))
-  temporaryDirectories.push(testSrc)
-  const test = 'sample.test.mjs'
-  await writeFile(join(testSrc, test), source)
-  return { test, testSrc }
-}
+jest.unstable_mockModule('../src/parts/RunTest/RunTest.ts', () => {
+  return {
+    runTest,
+  }
+})
 
-test('runElectronTest executes test module with electron context', async () => {
-  const { test: testFile, testSrc } = await writeTestModule(`
-export const test = async ({ Locator, electronApp }) => {
-  const value = Locator('.SideBar')
-  if (value !== 'locator:.SideBar') {
-    throw new Error('unexpected locator')
-  }
-  if (electronApp.name !== 'app') {
-    throw new Error('unexpected electron app')
-  }
-}
-`)
+const RunElectronTest = await import('../src/parts/RunElectronTest/RunElectronTest.ts')
 
-  const page = {
-    locator: (selector: string): string => `locator:${selector}`,
-  }
+test('runElectronTest delegates to overlay test runner on electron app port', async () => {
+  const page = {}
 
   const result = await RunElectronTest.runElectronTest({
-    electronApp: { name: 'app' },
     page: page as any,
-    test: testFile,
-    testSrc,
+    test: 'electron.typed-smoke.ts',
     timeout: 1000,
   })
 
-  expect(result.status).toBe(TestState.Pass)
-  expect(result.error).toBe('')
-  expect(result.name).toBe(testFile)
-})
-
-test('runElectronTest marks skipped modules as skipped', async () => {
-  const { test: testFile, testSrc } = await writeTestModule(`
-export const skip = 1
-export const test = async () => {}
-`)
-
-  const result = await RunElectronTest.runElectronTest({
-    electronApp: {},
-    page: {
-      locator: () => 'unused',
-    } as any,
-    test: testFile,
-    testSrc,
+  expect(result).toEqual({
+    error: '',
+    name: 'electron.typed-smoke.ts',
+    status: 1,
+  })
+  expect(runTest).toHaveBeenCalledWith({
+    page,
+    port: 3001,
+    test: 'electron.typed-smoke.ts',
     timeout: 1000,
   })
-
-  expect(result.status).toBe(TestState.Skip)
-  expect(result.error).toBe('')
 })

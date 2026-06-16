@@ -1,23 +1,8 @@
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
-import { basename } from 'node:path'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
+import * as GetTestUrl from '../GetTestUrl/GetTestUrl.ts'
 import * as TestState from '../TestState/TestState.ts'
-
-/**
- * @param {string} absolutePath
- * @param {number} port
- * @param {boolean} traceFocus
- */
-const getUrlFromTestFile = (absolutePath: string, port: number, traceFocus?: boolean): string => {
-  const baseName = basename(absolutePath)
-  const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
-  const baseUrl = `http://localhost:${port}/tests/${htmlFileName}`
-  if (traceFocus) {
-    return `${baseUrl}?traceFocus=true`
-  }
-  return baseUrl
-}
 
 export const runTest = async ({
   page,
@@ -36,7 +21,7 @@ export const runTest = async ({
 }): Promise<any> => {
   const start = performance.now()
   try {
-    const url = getUrlFromTestFile(test, port, traceFocus)
+    const url = GetTestUrl.getTestUrl({ port, test, traceFocus })
     await page.goto(url, {
       waitUntil: 'networkidle',
     })

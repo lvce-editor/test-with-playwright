@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { runFixture } from '../src/_runFixture.ts'
 import { root } from '../src/root.ts'
 
-const testPassedRegex = /1 test passed in \d+(\.\d+)?ms/
+const testPassedRegex = /4 tests passed in \d+(\.\d+)?ms/
 
 if (process.env['TEST_WITH_PLAYWRIGHT_ELECTRON'] === '1') {
   test('sample.electron', async (): Promise<void> => {
