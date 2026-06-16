@@ -16,5 +16,5 @@ if (process.env['TEST_WITH_PLAYWRIGHT_ELECTRON'] === '1') {
     expect(stdout).toMatch(testPassedRegex)
   })
 } else {
-  test.skip('sample.electron disabled', async (): Promise<void> => {})
+  test.todo('sample.electron disabled')
 }
