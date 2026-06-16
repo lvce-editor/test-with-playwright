@@ -4,6 +4,7 @@ interface ParsedCliArgs {
   browser?: string
   filter?: string
   headless?: boolean
+  help?: boolean
   onlyExtension?: string
   serverPath?: string
   testPath?: string
@@ -18,6 +19,9 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   if (parsed.filter) {
     result.filter = parsed.filter
+  }
+  if (parsed.help || parsed.h) {
+    result.help = true
   }
   if (parsed.headless) {
     result.headless = true

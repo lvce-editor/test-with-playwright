@@ -27,3 +27,21 @@ test('getOptions throws for unsupported browser', () => {
     }),
   ).toThrow(new Error('[test-with-playwright] unsupported browser: webkit'))
 })
+
+test('getOptions reads help from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--help'],
+    env: {},
+  })
+
+  expect(options.help).toBe(true)
+})
+
+test('getOptions reads short help from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['-h'],
+    env: {},
+  })
+
+  expect(options.help).toBe(true)
+})
