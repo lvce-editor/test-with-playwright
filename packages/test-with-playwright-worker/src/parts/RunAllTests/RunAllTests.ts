@@ -2,12 +2,14 @@ import { get } from '@lvce-editor/rpc-registry'
 import { join } from 'node:path'
 import * as Assert from '../Assert/Assert.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
+import * as GetServerPath from '../GetServerPath/GetServerPath.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
 import { Cli } from '../RpcId/RpcId.ts'
 import * as RunElectronTests from '../RunElectronTests/RunElectronTests.ts'
 import * as RunTests from '../RunTests/RunTests.ts'
 import * as SetupTests from '../SetupTests/SetupTests.ts'
 import * as StartElectron from '../StartElectron/StartElectron.ts'
+import * as StartServer from '../StartServer/StartServer.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
 
 export interface BrowserRuntimeOptions {
@@ -19,6 +21,7 @@ export interface ElectronRuntimeOptions {
   readonly args: readonly string[]
   readonly env: Record<string, string>
   readonly executablePath: string
+  readonly serverPath?: string
   readonly type: 'electron'
 }
 
@@ -64,20 +67,37 @@ export const runAllTests = async (
   }
   const filterOption = filter === undefined ? undefined : { filter }
   if (runtimeOptions.type === 'electron') {
-    await using electron = await StartElectron.startElectron({
-      runtimeOptions,
+    const port = 3001
+    const resolvedServerPath = await GetServerPath.getServerPath(runtimeOptions.serverPath)
+    const child = await StartServer.startServer({
+      onlyExtension: extensionPath,
+      port,
+      serverPath: resolvedServerPath,
       signal,
+      testPath,
     })
-    await RunElectronTests.runElectronTests({
-      ...filterOption,
-      electronApp: electron.electronApp,
-      onFinalResult,
-      onResult,
-      page: electron.page,
-      tests,
-      testSrc,
-      timeout,
-    })
+    try {
+      await using electron = await StartElectron.startElectron({
+        runtimeOptions,
+        signal,
+      })
+      await RunElectronTests.runElectronTests({
+        ...filterOption,
+        electronApp: electron.electronApp,
+        onFinalResult,
+        onResult,
+        page: electron.page,
+        port,
+        tests,
+        testSrc,
+        timeout,
+      })
+    } finally {
+      await TearDownTests.tearDownTests({
+        child,
+        controller,
+      })
+    }
     return
   }
   const { child, page, port } = await SetupTests.setupTests({

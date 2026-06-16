@@ -21,6 +21,7 @@ test('runElectronTest delegates to overlay test runner on electron app port', as
 
   const result = await RunElectronTest.runElectronTest({
     page: page as any,
+    port: 3002,
     test: 'electron.typed-smoke.ts',
     timeout: 1000,
   })
@@ -32,7 +33,7 @@ test('runElectronTest delegates to overlay test runner on electron app port', as
   })
   expect(runTest).toHaveBeenCalledWith({
     page,
-    port: 3001,
+    port: 3002,
     test: 'electron.typed-smoke.ts',
     timeout: 1000,
   })
