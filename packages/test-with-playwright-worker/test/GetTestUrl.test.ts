@@ -28,3 +28,13 @@ test('getTestUrl preserves traceFocus option', () => {
     }),
   ).toBe('http://localhost:4567/tests/sample.hello-world.html?traceFocus=true')
 })
+
+test('getTestUrl supports custom origins', () => {
+  expect(
+    GetTestUrl.getTestUrl({
+      origin: 'lvce://-',
+      port: 0,
+      test: 'electron.typed-smoke.ts',
+    }),
+  ).toBe('lvce://-/tests/electron.typed-smoke.html')
+})

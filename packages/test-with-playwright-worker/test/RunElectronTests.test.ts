@@ -35,7 +35,6 @@ test('runElectronTests filters tests and reports exact results', async () => {
     page: {
       locator: () => 'unused',
     } as any,
-    port: 3002,
     tests: ['electron.typed-smoke.ts', 'electron.open-folder-dialog.ts'],
     testSrc: '/workspace/e2e/src',
     timeout: 1000,
@@ -44,7 +43,6 @@ test('runElectronTests filters tests and reports exact results', async () => {
   expect(runElectronTest).toHaveBeenCalledTimes(1)
   expect(runElectronTest).toHaveBeenCalledWith({
     page: expect.any(Object),
-    port: 3002,
     test: 'electron.typed-smoke.ts',
     timeout: 1000,
   })
