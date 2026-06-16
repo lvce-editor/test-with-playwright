@@ -52,7 +52,7 @@ const getFirstPage = async (browser: any): Promise<any> => {
 const closeElectron = async ({ browser, child }: { readonly browser: any; readonly child: ChildProcess }): Promise<void> => {
   await browser.close().catch(() => undefined)
   if (!child.killed) {
-    child.kill(Signal.SIGINT)
+    child.kill(Signal.SIGINT as NodeJS.Signals)
   }
 }
 
@@ -94,7 +94,7 @@ export const startElectron = async ({
       await browser.close().catch(() => undefined)
     }
     if (!child.killed) {
-      child.kill(Signal.SIGINT)
+      child.kill(Signal.SIGINT as NodeJS.Signals)
     }
     throw error
   }
