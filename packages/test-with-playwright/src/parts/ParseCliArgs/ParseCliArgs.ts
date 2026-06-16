@@ -3,6 +3,7 @@ import parseArgv from 'minimist'
 interface ParsedCliArgs {
   browser?: string
   filter?: string
+  help?: boolean
   headless?: boolean
   onlyExtension?: string
   serverPath?: string
@@ -18,6 +19,9 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   if (parsed.filter) {
     result.filter = parsed.filter
+  }
+  if (parsed.help || parsed.h) {
+    result.help = true
   }
   if (parsed.headless) {
     result.headless = true

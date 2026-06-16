@@ -7,6 +7,7 @@ interface Options {
   browser: Browser
   extensionPath: string
   filter?: string
+  help: boolean
   headless: boolean
   onlyExtension?: string
   serverPath?: string
@@ -17,6 +18,7 @@ interface Options {
 const defaultOptions: Options = {
   browser: 'chromium',
   extensionPath: '',
+  help: false,
   headless: false,
   testPath: '',
 }
