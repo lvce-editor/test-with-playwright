@@ -47,7 +47,7 @@ export const runTest = async ({
     const text = await testOverlay.textContent()
     const testOverlayState = await testOverlay.getAttribute('data-state')
     // @ts-ignore
-    const testState = GetTestState.getTestState(testOverlayState)
+    const testState = GetTestState.getTestState(testOverlayState, text || '')
     const end = performance.now()
     return {
       // @ts-ignore
@@ -59,7 +59,7 @@ export const runTest = async ({
     }
   } catch (error) {
     const end = performance.now()
-    const message = error instanceof Error ? error.message : `${error}`
+    const message = error instanceof Error ? error.message : String(error)
     return {
       end,
       error: message,
