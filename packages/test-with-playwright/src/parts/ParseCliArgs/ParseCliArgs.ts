@@ -22,7 +22,7 @@ const toCliString = (value: unknown): string => {
     return value
   }
   if (typeof value === 'number' || typeof value === 'boolean') {
-    return `${value}`
+    return String(value)
   }
   throw new TypeError('expected cli argument value to be a string, number, or boolean')
 }

@@ -47,10 +47,14 @@ const prepareMacos = async ({
       command: 'cp',
     })
   } finally {
-    await ExecFile.execFile({
-      args: ['detach', mountRoot, '-quiet'],
-      command: 'hdiutil',
-    }).catch(() => undefined)
+    try {
+      await ExecFile.execFile({
+        args: ['detach', mountRoot, '-quiet'],
+        command: 'hdiutil',
+      })
+    } catch {
+      // ignore detach errors during cleanup
+    }
     await rm(mountRoot, { force: true, recursive: true })
   }
 }

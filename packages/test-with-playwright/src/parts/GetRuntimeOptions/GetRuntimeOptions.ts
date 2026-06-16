@@ -73,8 +73,8 @@ export const getRuntimeOptions = async ({
   const cacheDir = resolve(cwd, electronCacheDir || '.test-with-playwright/electron')
   const executablePath = await PrepareElectronApp.prepareElectronApp({
     cacheDir,
-    ...(electronPath ? { electronPath: resolve(cwd, electronPath) } : {}),
-    ...(electronVersion ? { version: electronVersion } : {}),
+    ...(electronPath && { electronPath: resolve(cwd, electronPath) }),
+    ...(electronVersion && { version: electronVersion }),
   })
   return {
     args: electronArgs || [],

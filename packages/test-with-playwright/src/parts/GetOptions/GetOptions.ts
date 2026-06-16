@@ -47,14 +47,14 @@ const isRuntime = (value: string): value is Runtime => {
 export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options => {
   const parsedEnv = ParseEnv.parseEnv(env)
   const parsedArgs = ParseCliArgs.parseCliArgs(argv)
+  if (parsedArgs.browser !== undefined && !isBrowser(parsedArgs.browser)) {
+    throw new Error(`[test-with-playwright] unsupported browser: ${parsedArgs.browser}`)
+  }
+  if (parsedArgs.runtime !== undefined && !isRuntime(parsedArgs.runtime)) {
+    throw new Error(`[test-with-playwright] unsupported runtime: ${parsedArgs.runtime}`)
+  }
   const browser = parsedArgs.browser ?? defaultOptions.browser
   const runtime = parsedArgs.runtime ?? defaultOptions.runtime
-  if (!isBrowser(browser)) {
-    throw new Error(`[test-with-playwright] unsupported browser: ${browser}`)
-  }
-  if (!isRuntime(runtime)) {
-    throw new Error(`[test-with-playwright] unsupported runtime: ${runtime}`)
-  }
   return {
     ...defaultOptions,
     ...parsedEnv,

@@ -84,7 +84,7 @@ export const runAllTests = async (
     browser,
     headless,
     onlyExtension: extensionPath,
-    ...(runtimeOptions.serverPath ? { serverPath: runtimeOptions.serverPath } : {}),
+    ...(runtimeOptions.serverPath && { serverPath: runtimeOptions.serverPath }),
     signal,
     testPath,
   })

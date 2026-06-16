@@ -15,7 +15,8 @@ interface ElectronTestModule {
 
 const importTestModule = async (testSrc: string, test: string): Promise<ElectronTestModule> => {
   const testPath = join(testSrc, test)
-  return import(pathToFileURL(testPath).toString()) as Promise<ElectronTestModule>
+  const testModule = await import(pathToFileURL(testPath).toString())
+  return testModule as ElectronTestModule
 }
 
 const withTimeout = async <T>(promise: Promise<T>, timeout: number): Promise<T> => {
@@ -23,16 +24,16 @@ const withTimeout = async <T>(promise: Promise<T>, timeout: number): Promise<T> 
     const timer = setTimeout(() => {
       reject(new Error(`Electron test timed out after ${timeout}ms`))
     }, timeout)
-    promise.then(
-      (value) => {
-        clearTimeout(timer)
+    void (async (): Promise<void> => {
+      try {
+        const value = await promise
         resolve(value)
-      },
-      (error) => {
+      } catch (error) {
+        reject(error instanceof Error ? error : new Error(String(error)))
+      } finally {
         clearTimeout(timer)
-        reject(error instanceof Error ? error : new Error(`${error}`))
-      },
-    )
+      }
+    })()
   })
 }
 
@@ -81,7 +82,7 @@ export const runElectronTest = async ({
     }
   } catch (error) {
     const end = performance.now()
-    const message = error instanceof Error ? error.message : `${error}`
+    const message = error instanceof Error ? error.message : String(error)
     return {
       end,
       error: message,

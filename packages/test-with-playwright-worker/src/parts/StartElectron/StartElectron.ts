@@ -68,7 +68,11 @@ const closeElectron = async ({
   readonly browser: any
   readonly child: ChildProcess
 }): Promise<void> => {
-  await browser.close().catch(() => undefined)
+  try {
+    await browser.close()
+  } catch {
+    // ignore close errors during cleanup
+  }
   if (!child.killed) {
     child.kill(Signal.SIGINT as NodeJS.Signals)
   }
@@ -100,9 +104,13 @@ const createElectronLaunch = ({
     void dispose()
   }
   const handleProcessSignal = (processSignal: NodeJS.Signals): void => {
-    void dispose().finally(() => {
-      process.kill(process.pid, processSignal)
-    })
+    void (async (): Promise<void> => {
+      try {
+        await dispose()
+      } finally {
+        process.kill(process.pid, processSignal)
+      }
+    })()
   }
   const handleSigint = (): void => {
     handleProcessSignal('SIGINT')
@@ -147,7 +155,11 @@ export const startElectron = async ({
     return createElectronLaunch({ browser, child, page, signal })
   } catch (error) {
     if (browser) {
-      await browser.close().catch(() => undefined)
+      try {
+        await browser.close()
+      } catch {
+        // ignore close errors during cleanup
+      }
     }
     if (!child.killed) {
       child.kill(Signal.SIGINT as NodeJS.Signals)

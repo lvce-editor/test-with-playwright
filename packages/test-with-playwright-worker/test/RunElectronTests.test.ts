@@ -7,7 +7,9 @@ import * as RunElectronTests from '../src/parts/RunElectronTests/RunElectronTest
 const temporaryDirectories: string[] = []
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map((directory) => rm(directory, { force: true, recursive: true })))
+  const directories = [...temporaryDirectories]
+  temporaryDirectories.length = 0
+  await Promise.all(directories.map((directory) => rm(directory, { force: true, recursive: true })))
 })
 
 const createTestSrc = async (): Promise<string> => {
