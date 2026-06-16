@@ -11,6 +11,18 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
+interface ElectronApp {
+  readonly close: () => Promise<void>
+  readonly process: () => ChildProcess
+  readonly [Symbol.asyncDispose]: () => Promise<void>
+}
+
+export interface ElectronLaunch {
+  readonly electronApp: ElectronApp
+  readonly page: any
+  readonly [Symbol.asyncDispose]: () => Promise<void>
+}
+
 const devtoolsRegex = /^DevTools listening on (ws:\/\/.*)$/
 
 const waitForDevtoolsEndpoint = async (child: ChildProcess): Promise<string> => {
@@ -62,13 +74,66 @@ const closeElectron = async ({
   }
 }
 
+const createElectronLaunch = ({
+  browser,
+  child,
+  page,
+  signal,
+}: {
+  readonly browser: any
+  readonly child: ChildProcess
+  readonly page: any
+  readonly signal: AbortSignal
+}): ElectronLaunch => {
+  let disposed = false
+  const dispose = async (): Promise<void> => {
+    if (disposed) {
+      return
+    }
+    disposed = true
+    signal.removeEventListener('abort', handleAbort)
+    process.off('SIGINT', handleSigint)
+    process.off('SIGTERM', handleSigterm)
+    await closeElectron({ browser, child })
+  }
+  const handleAbort = (): void => {
+    void dispose()
+  }
+  const handleProcessSignal = (processSignal: NodeJS.Signals): void => {
+    void dispose().finally(() => {
+      process.kill(process.pid, processSignal)
+    })
+  }
+  const handleSigint = (): void => {
+    handleProcessSignal('SIGINT')
+  }
+  const handleSigterm = (): void => {
+    handleProcessSignal('SIGTERM')
+  }
+  signal.addEventListener('abort', handleAbort)
+  process.once('SIGINT', handleSigint)
+  process.once('SIGTERM', handleSigterm)
+  const electronApp: ElectronApp = {
+    close: dispose,
+    process: (): ChildProcess => {
+      return child
+    },
+    [Symbol.asyncDispose]: dispose,
+  }
+  return {
+    electronApp,
+    page,
+    [Symbol.asyncDispose]: dispose,
+  }
+}
+
 export const startElectron = async ({
   runtimeOptions,
   signal,
 }: {
   readonly runtimeOptions: ElectronRuntimeOptions
   readonly signal: AbortSignal
-}): Promise<{ electronApp: any; page: any }> => {
+}): Promise<ElectronLaunch> => {
   const launchOptions = GetElectronLaunchOptions.getElectronLaunchOptions(runtimeOptions)
   const child = spawn(launchOptions.executablePath, ['--remote-debugging-port=0', ...launchOptions.args], {
     env: launchOptions.env,
@@ -79,22 +144,7 @@ export const startElectron = async ({
     const endpoint = await waitForDevtoolsEndpoint(child)
     browser = await chromium.connectOverCDP(endpoint)
     const page = await getFirstPage(browser)
-    const electronApp = {
-      close: async (): Promise<void> => {
-        await closeElectron({ browser, child })
-      },
-      process: (): ChildProcess => {
-        return child
-      },
-    }
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    signal.addEventListener('abort', async () => {
-      await electronApp.close()
-    })
-    return {
-      electronApp,
-      page,
-    }
+    return createElectronLaunch({ browser, child, page, signal })
   } catch (error) {
     if (browser) {
       await browser.close().catch(() => undefined)

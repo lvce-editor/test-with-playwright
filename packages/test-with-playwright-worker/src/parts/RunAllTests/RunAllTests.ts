@@ -64,25 +64,19 @@ export const runAllTests = async (
   }
   const filterOption = filter === undefined ? undefined : { filter }
   if (runtimeOptions.type === 'electron') {
-    const { electronApp, page } = await StartElectron.startElectron({
+    await using electron = await StartElectron.startElectron({
       runtimeOptions,
       signal,
     })
     await RunElectronTests.runElectronTests({
       ...filterOption,
-      electronApp,
+      electronApp: electron.electronApp,
       onFinalResult,
       onResult,
-      page,
+      page: electron.page,
       tests,
       testSrc,
       timeout,
-    })
-    await TearDownTests.tearDownTests({
-      controller,
-      kill: async () => {
-        await electronApp.close()
-      },
     })
     return
   }
