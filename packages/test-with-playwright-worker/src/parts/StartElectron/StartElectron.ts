@@ -49,7 +49,13 @@ const getFirstPage = async (browser: any): Promise<any> => {
   return context.waitForEvent('page', { timeout: 15_000 })
 }
 
-const closeElectron = async ({ browser, child }: { readonly browser: any; readonly child: ChildProcess }): Promise<void> => {
+const closeElectron = async ({
+  browser,
+  child,
+}: {
+  readonly browser: any
+  readonly child: ChildProcess
+}): Promise<void> => {
   await browser.close().catch(() => undefined)
   if (!child.killed) {
     child.kill(Signal.SIGINT as NodeJS.Signals)
