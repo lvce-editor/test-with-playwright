@@ -6,7 +6,7 @@ export const getTestState = (testOverlayState: string, text: string): void => {
     case TestOverlayState.Fail:
       // @ts-ignore
       return {
-        error: `${text}`,
+        error: text,
         status: TestState.Fail,
       }
     case TestOverlayState.Pass:
