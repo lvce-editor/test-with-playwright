@@ -14,7 +14,7 @@ interface ElectronRuntimeOptions {
 const devtoolsRegex = /^DevTools listening on (ws:\/\/.*)$/
 
 const waitForDevtoolsEndpoint = async (child: ChildProcess): Promise<string> => {
-  const stderr = child.stderr
+  const { stderr } = child
   if (!stderr) {
     throw new Error('Electron stderr is unavailable')
   }
