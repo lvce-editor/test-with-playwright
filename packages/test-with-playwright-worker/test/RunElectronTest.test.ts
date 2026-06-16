@@ -36,5 +36,6 @@ test('runElectronTest delegates to overlay test runner on electron app port', as
     port: 0,
     test: 'electron.typed-smoke.ts',
     timeout: 1000,
+    waitUntil: 'domcontentloaded',
   })
 })

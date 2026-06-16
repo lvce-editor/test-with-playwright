@@ -16,5 +16,6 @@ export const runElectronTest = async ({
     port: 0,
     test,
     timeout,
+    waitUntil: 'domcontentloaded',
   })
 }

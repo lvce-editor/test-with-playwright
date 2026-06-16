@@ -12,6 +12,7 @@ export const runTest = async ({
   testSrc,
   timeout,
   traceFocus,
+  waitUntil = 'networkidle',
 }: {
   readonly test: string
   readonly origin?: string
@@ -20,12 +21,13 @@ export const runTest = async ({
   readonly port: number
   readonly timeout: number
   readonly traceFocus?: boolean
+  readonly waitUntil?: 'domcontentloaded' | 'load' | 'networkidle'
 }): Promise<any> => {
   const start = performance.now()
   try {
     const url = GetTestUrl.getTestUrl({ origin, port, test, traceFocus })
     await page.goto(url, {
-      waitUntil: 'networkidle',
+      waitUntil,
     })
     const testOverlay = page.locator('#TestOverlay')
     await expect(testOverlay).toBeVisible({
