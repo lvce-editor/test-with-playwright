@@ -76,6 +76,8 @@ jobs:
           TEST_WITH_PLAYWRIGHT_BROWSER: ${{ matrix.browser }}
 
   e2e-electron:
+    # Temporarily disabled while Electron CI/PR runs are paused.
+    if: ${{ false }}
     strategy:
       fail-fast: false
       matrix:
