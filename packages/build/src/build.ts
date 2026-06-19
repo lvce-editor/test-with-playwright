@@ -54,7 +54,6 @@ const copyPackageJson = async (version: string, testWorkerVersion: string): Prom
   delete packageJson.dependencies['@lvce-editor/rpc']
   delete packageJson.dependencies['@lvce-editor/verror']
   delete packageJson.dependencies['minimist']
-  delete packageJson.dependencies['get-port']
   packageJson.main = packageJson.main = 'dist/main.js'
   await mkdir(join(root, 'dist', 'test-with-playwright'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright', 'package.json'), packageJson)
@@ -70,7 +69,6 @@ const copyWorkerPackageJson = async (version: string): Promise<void> => {
   delete packageJson.dependencies['@lvce-editor/rpc']
   delete packageJson.dependencies['@lvce-editor/rpc-registry']
   delete packageJson.dependencies['@lvce-editor/verror']
-  delete packageJson.dependencies['get-port']
   packageJson.main = packageJson.main = 'dist/workerMain.js'
   await mkdir(join(root, 'dist', 'test-with-playwright-worker'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
