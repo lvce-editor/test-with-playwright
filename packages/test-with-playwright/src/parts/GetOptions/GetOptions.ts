@@ -1,7 +1,9 @@
 import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as ParseEnv from '../ParseEnv/ParseEnv.ts'
 
-type Browser = 'chromium' | 'firefox'
+const browsers = ['chromium', 'firefox', 'webkit'] as const
+
+type Browser = (typeof browsers)[number]
 type Runtime = 'browser' | 'electron'
 
 interface Options {
@@ -37,7 +39,7 @@ interface GetOptionsParams {
 }
 
 const isBrowser = (value: string): value is Browser => {
-  return value === 'chromium' || value === 'firefox'
+  return browsers.includes(value as Browser)
 }
 
 const isRuntime = (value: string): value is Runtime => {

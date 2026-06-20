@@ -33,7 +33,7 @@ test('sample.hello-world', async () => {
 - `--server-path`: explicit server entry point
 - `--filter`: run only matching tests
 - `--headless`: run Playwright in headless mode
-- `--browser`: browser engine to launch, either `chromium` or `firefox`
+- `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--electron-path`: path to an existing Electron app executable
 - `--electron-version`: Lvce release version to download, required for `--runtime=electron` when `--electron-path` is not provided

@@ -2,7 +2,7 @@ export const getHelpMessage = (): string => {
   return `Usage: test-with-playwright [options]
 
 Options:
-  --browser=<browser>       Browser to run tests in: chromium or firefox
+  --browser=<browser>       Browser to run tests in: chromium, firefox, or webkit
   --runtime=<runtime>       Runtime to run tests in: browser or electron
   --filter=<pattern>        Only run tests matching the filter
   --headless                Run the browser in headless mode

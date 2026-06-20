@@ -10,6 +10,15 @@ test('getOptions reads browser from cli args', () => {
   expect(options.browser).toBe('firefox')
 })
 
+test('getOptions reads webkit browser from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--browser=webkit'],
+    env: {},
+  })
+
+  expect(options.browser).toBe('webkit')
+})
+
 test('getOptions defaults browser to chromium', () => {
   const options = GetOptions.getOptions({
     argv: [],
@@ -22,10 +31,10 @@ test('getOptions defaults browser to chromium', () => {
 test('getOptions throws for unsupported browser', () => {
   expect(() =>
     GetOptions.getOptions({
-      argv: ['--browser=webkit'],
+      argv: ['--browser=edge'],
       env: {},
     }),
-  ).toThrow(new Error('[test-with-playwright] unsupported browser: webkit'))
+  ).toThrow(new Error('[test-with-playwright] unsupported browser: edge'))
 })
 
 test('getOptions reads help from cli args', () => {
