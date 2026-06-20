@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test'
+import type { expect as PlaywrightExpect, Page } from '@playwright/test'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import * as TestState from '../TestState/TestState.ts'
@@ -8,7 +8,7 @@ interface ElectronTestModule {
   readonly test: (context: {
     readonly Locator: (selector: string) => ReturnType<Page['locator']>
     readonly electronApp: any
-    readonly expect: typeof expect
+    readonly expect: typeof PlaywrightExpect
     readonly page: Page
   }) => Promise<void>
 }
@@ -63,6 +63,7 @@ export const runElectronTest = async ({
         status: TestState.Skip,
       }
     }
+    const { expect } = await import('@playwright/test')
     await withTimeout(
       testModule.test({
         electronApp,

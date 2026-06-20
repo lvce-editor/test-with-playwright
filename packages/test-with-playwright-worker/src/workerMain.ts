@@ -1,3 +1,9 @@
-import * as Main from './parts/Main/Main.ts'
+import * as PatchPlaywrightFirefoxWorkerWebSocket from './parts/PatchPlaywrightFirefoxWorkerWebSocket/PatchPlaywrightFirefoxWorkerWebSocket.ts'
 
-Main.main()
+if (process.argv.includes('--browser=firefox')) {
+  await PatchPlaywrightFirefoxWorkerWebSocket.patchPlaywrightFirefoxWorkerWebSocket()
+}
+
+const Main = await import('./parts/Main/Main.ts')
+
+await Main.main()

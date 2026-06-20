@@ -40,6 +40,7 @@ export const bundleJs = async ({ inputFile, outputFile }: { inputFile: string; o
     output: {
       ...baseOptions.output,
       file: outputFile,
+      inlineDynamicImports: true,
     },
   }
   const input = await rollup(fullOptions)

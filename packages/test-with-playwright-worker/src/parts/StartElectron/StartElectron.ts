@@ -1,4 +1,3 @@
-import { chromium } from '@playwright/test'
 import { spawn, type ChildProcess } from 'node:child_process'
 import { createInterface } from 'node:readline'
 import * as GetElectronLaunchOptions from '../GetElectronLaunchOptions/GetElectronLaunchOptions.ts'
@@ -148,6 +147,7 @@ export const startElectron = async ({
   let browser: any
   try {
     const endpoint = await waitForDevtoolsEndpoint(child)
+    const { chromium } = await import('@playwright/test')
     browser = await chromium.connectOverCDP(endpoint)
     const page = await getFirstPage(browser)
     return createElectronLaunch({ browser, child, page, signal })
