@@ -1,20 +1,33 @@
-import { chromium, firefox } from '@playwright/test'
+import { chromium, firefox, webkit } from '@playwright/test'
+
+type Browser = 'chromium' | 'firefox' | 'webkit'
 
 /**
  *
- * @param {{browser:'chromium'|'firefox', signal:AbortSignal, headless:boolean}} options
+ * @param {{browser:'chromium'|'firefox'|'webkit', signal:AbortSignal, headless:boolean}} options
  * @returns
  */
+const getLauncher = (browser: Browser): typeof chromium => {
+  switch (browser) {
+    case 'chromium':
+      return chromium
+    case 'firefox':
+      return firefox
+    case 'webkit':
+      return webkit
+  }
+}
+
 export const startBrowser = async ({
   browser,
   headless,
   signal,
 }: {
-  readonly browser: 'chromium' | 'firefox'
+  readonly browser: Browser
   readonly signal: AbortSignal
   readonly headless: boolean
 }): Promise<{ browser: any; page: any }> => {
-  const launcher = browser === 'firefox' ? firefox : chromium
+  const launcher = getLauncher(browser)
   const browserInstance = await launcher.launch({
     headless,
   })

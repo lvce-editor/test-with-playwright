@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerCommandType.ts'
 
 interface RunAllTestsParams {
-  browser: 'chromium' | 'firefox'
+  browser: 'chromium' | 'firefox' | 'webkit'
   commandMap: any
   cwd: string
   filter?: string

@@ -26,7 +26,7 @@ export interface ElectronRuntimeOptions {
  * @param {string} extensionPath
  * @param {string} testPath
  * @param {string} cwd
- * @param {'chromium'|'firefox'} browser
+ * @param {'chromium'|'firefox'|'webkit'} browser
  * @param {boolean} headless
  * @param {number} timeout
  * @param {string} serverPath
@@ -37,7 +37,7 @@ export const runAllTests = async (
   extensionPath: string,
   testPath: string,
   cwd: string,
-  browser: 'chromium' | 'firefox',
+  browser: 'chromium' | 'firefox' | 'webkit',
   headless: boolean,
   timeout: number,
   runtimeOptions: BrowserRuntimeOptions | ElectronRuntimeOptions,

@@ -5,7 +5,7 @@ import * as StartServer from '../StartServer/StartServer.ts'
 
 /**
  *
- * @param {{browser:'chromium'|'firefox', signal:AbortSignal, headless: boolean, onlyExtension:string, testPath:string}} options
+ * @param {{browser:'chromium'|'firefox'|'webkit', signal:AbortSignal, headless: boolean, onlyExtension:string, testPath:string}} options
  * @returns
  */
 export const setupTests = async ({
@@ -16,7 +16,7 @@ export const setupTests = async ({
   signal,
   testPath,
 }: {
-  readonly browser: 'chromium' | 'firefox'
+  readonly browser: 'chromium' | 'firefox' | 'webkit'
   readonly signal: AbortSignal
   readonly headless: boolean
   readonly onlyExtension: string
