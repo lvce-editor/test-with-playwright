@@ -14,6 +14,7 @@ export default [
       'n/no-process-exit': 'off',
       'unicorn/consistent-boolean-name': 'off',
       'unicorn/no-process-exit': 'off',
+      'unicorn/no-nonstandard-builtin-properties': 'off',
       'no-console': 'off',
       '@typescript-eslint/prefer-readonly-parameter-types': 'off',
       'n/no-extraneous-import': 'off',

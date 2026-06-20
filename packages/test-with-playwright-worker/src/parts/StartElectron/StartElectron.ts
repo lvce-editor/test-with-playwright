@@ -11,16 +11,14 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
-interface ElectronApp {
+interface ElectronApp extends AsyncDisposable {
   readonly close: () => Promise<void>
   readonly process: () => ChildProcess
-  readonly [Symbol.asyncDispose]: () => Promise<void>
 }
 
-export interface ElectronLaunch {
+export interface ElectronLaunch extends AsyncDisposable {
   readonly electronApp: ElectronApp
   readonly page: any
-  readonly [Symbol.asyncDispose]: () => Promise<void>
 }
 
 const devtoolsRegex = /^DevTools listening on (ws:\/\/.*)$/

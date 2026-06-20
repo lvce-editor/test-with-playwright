@@ -73,16 +73,11 @@ export const findElectronExecutable = async ({
     if (executable) {
       return executable
     }
-  } else if (platform === 'win32') {
-    const executable = await findFile(directory, isWindowsExecutable)
-    if (executable) {
-      return executable
-    }
-  } else {
-    const executable = await findFile(directory, (entry) => entry === 'lvce')
-    if (executable) {
-      return executable
-    }
+  }
+  const predicate = platform === 'win32' ? isWindowsExecutable : (entry: string): boolean => entry === 'lvce'
+  const executable = await findFile(directory, predicate)
+  if (executable) {
+    return executable
   }
   throw new Error(`[test-with-playwright] failed to locate Electron executable in ${directory}`)
 }
