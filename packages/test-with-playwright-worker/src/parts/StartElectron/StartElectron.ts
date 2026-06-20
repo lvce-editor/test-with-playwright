@@ -11,14 +11,12 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
-interface ElectronApp {
-  readonly [Symbol.asyncDispose]: () => Promise<void>
+interface ElectronApp extends AsyncDisposable {
   readonly close: () => Promise<void>
   readonly process: () => ChildProcess
 }
 
-export interface ElectronLaunch {
-  readonly [Symbol.asyncDispose]: () => Promise<void>
+export interface ElectronLaunch extends AsyncDisposable {
   readonly electronApp: ElectronApp
   readonly page: any
 }
@@ -122,16 +120,16 @@ const createElectronLaunch = ({
   process.once('SIGINT', handleSigint)
   process.once('SIGTERM', handleSigterm)
   const electronApp: ElectronApp = {
-    [Symbol.asyncDispose]: dispose,
     close: dispose,
     process: (): ChildProcess => {
       return child
     },
+    [Symbol.asyncDispose]: dispose,
   }
   return {
-    [Symbol.asyncDispose]: dispose,
     electronApp,
     page,
+    [Symbol.asyncDispose]: dispose,
   }
 }
 
