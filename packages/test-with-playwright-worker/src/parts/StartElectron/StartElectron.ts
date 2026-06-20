@@ -4,6 +4,8 @@ import { createInterface } from 'node:readline'
 import * as GetElectronLaunchOptions from '../GetElectronLaunchOptions/GetElectronLaunchOptions.ts'
 import * as Signal from '../Signal/Signal.ts'
 
+const { asyncDispose }: { readonly asyncDispose: typeof Symbol.asyncDispose } = Symbol
+
 interface ElectronRuntimeOptions {
   readonly args: readonly string[]
   readonly env: Record<string, string>
@@ -11,16 +13,14 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
-interface ElectronApp {
+interface ElectronApp extends AsyncDisposable {
   readonly close: () => Promise<void>
   readonly process: () => ChildProcess
-  readonly [Symbol.asyncDispose]: () => Promise<void>
 }
 
-export interface ElectronLaunch {
+export interface ElectronLaunch extends AsyncDisposable {
   readonly electronApp: ElectronApp
   readonly page: any
-  readonly [Symbol.asyncDispose]: () => Promise<void>
 }
 
 const devtoolsRegex = /^DevTools listening on (ws:\/\/.*)$/
@@ -122,16 +122,16 @@ const createElectronLaunch = ({
   process.once('SIGINT', handleSigint)
   process.once('SIGTERM', handleSigterm)
   const electronApp: ElectronApp = {
+    [asyncDispose]: dispose,
     close: dispose,
     process: (): ChildProcess => {
       return child
     },
-    [Symbol.asyncDispose]: dispose,
   }
   return {
+    [asyncDispose]: dispose,
     electronApp,
     page,
-    [Symbol.asyncDispose]: dispose,
   }
 }
 
