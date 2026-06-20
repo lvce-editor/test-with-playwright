@@ -152,6 +152,7 @@ export const startElectron = async ({
     const endpoint = await waitForDevtoolsEndpoint(child)
     browser = await chromium.connectOverCDP(endpoint)
     const page = await getFirstPage(browser)
+    await page.waitForLoadState('domcontentloaded', { timeout: 15_000 })
     return createElectronLaunch({ browser, child, page, signal })
   } catch (error) {
     if (browser) {

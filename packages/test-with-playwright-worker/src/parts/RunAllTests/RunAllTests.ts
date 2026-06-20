@@ -19,6 +19,7 @@ export interface ElectronRuntimeOptions {
   readonly args: readonly string[]
   readonly env: Record<string, string>
   readonly executablePath: string
+  readonly serverPath?: string
   readonly type: 'electron'
 }
 

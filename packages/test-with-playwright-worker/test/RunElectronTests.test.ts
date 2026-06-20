@@ -1,58 +1,55 @@
-import { afterEach, expect, jest, test } from '@jest/globals'
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import * as RunElectronTests from '../src/parts/RunElectronTests/RunElectronTests.ts'
+import { expect, jest, test } from '@jest/globals'
 
-const temporaryDirectories: string[] = []
-
-afterEach(async () => {
-  const directories = [...temporaryDirectories]
-  temporaryDirectories.length = 0
-  await Promise.all(directories.map((directory) => rm(directory, { force: true, recursive: true })))
+const runElectronTest = jest.fn(async ({ test }: { readonly test: string }): Promise<any> => {
+  if (test.includes('skipped')) {
+    return {
+      error: '',
+      name: test,
+      status: 2,
+    }
+  }
+  return {
+    error: '',
+    name: test,
+    status: 1,
+  }
 })
 
-const createTestSrc = async (): Promise<string> => {
-  const testSrc = await mkdtemp(join(tmpdir(), 'test-with-playwright-'))
-  temporaryDirectories.push(testSrc)
-  await writeFile(
-    join(testSrc, 'test-A.mjs'),
-    `
-export const test = async () => {}
-`,
-  )
-  await writeFile(
-    join(testSrc, 'test-B.mjs'),
-    `
-export const skip = 1
-export const test = async () => {}
-`,
-  )
-  return testSrc
-}
+jest.unstable_mockModule('../src/parts/RunElectronTest/RunElectronTest.ts', () => {
+  return {
+    runElectronTest,
+  }
+})
+
+const RunElectronTests = await import('../src/parts/RunElectronTests/RunElectronTests.ts')
 
 test('runElectronTests filters tests and reports exact results', async () => {
   const onResult = jest.fn(async (_result: any): Promise<void> => {})
   const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
-  const testSrc = await createTestSrc()
 
   await RunElectronTests.runElectronTests({
     electronApp: {},
-    filter: 'A',
+    filter: 'typed',
     onFinalResult,
     onResult,
     page: {
       locator: () => 'unused',
     } as any,
-    tests: ['test-A.mjs', 'test-B.mjs'],
-    testSrc,
+    tests: ['electron.typed-smoke.ts', 'electron.open-folder-dialog.ts'],
+    testSrc: '/workspace/e2e/src',
     timeout: 1000,
   })
 
+  expect(runElectronTest).toHaveBeenCalledTimes(1)
+  expect(runElectronTest).toHaveBeenCalledWith({
+    page: expect.any(Object),
+    test: 'electron.typed-smoke.ts',
+    timeout: 1000,
+  })
   expect(onResult.mock.calls).toHaveLength(1)
   expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({
     error: '',
-    name: 'test-A.mjs',
+    name: 'electron.typed-smoke.ts',
     status: 1,
   })
   expect(onFinalResult.mock.calls).toHaveLength(1)

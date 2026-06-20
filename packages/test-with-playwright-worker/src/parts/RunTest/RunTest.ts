@@ -1,44 +1,33 @@
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
-import { basename } from 'node:path'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
+import * as GetTestUrl from '../GetTestUrl/GetTestUrl.ts'
 import * as TestState from '../TestState/TestState.ts'
 
-/**
- * @param {string} absolutePath
- * @param {number} port
- * @param {boolean} traceFocus
- */
-const getUrlFromTestFile = (absolutePath: string, port: number, traceFocus?: boolean): string => {
-  const baseName = basename(absolutePath)
-  const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
-  const baseUrl = `http://localhost:${port}/tests/${htmlFileName}`
-  if (traceFocus) {
-    return `${baseUrl}?traceFocus=true`
-  }
-  return baseUrl
-}
-
 export const runTest = async ({
+  origin,
   page,
   port,
   test,
   testSrc,
   timeout,
   traceFocus,
+  waitUntil = 'networkidle',
 }: {
   readonly test: string
+  readonly origin?: string
   readonly page: Page
   readonly testSrc: string
   readonly port: number
   readonly timeout: number
   readonly traceFocus?: boolean
+  readonly waitUntil?: 'domcontentloaded' | 'load' | 'networkidle'
 }): Promise<any> => {
   const start = performance.now()
   try {
-    const url = getUrlFromTestFile(test, port, traceFocus)
+    const url = GetTestUrl.getTestUrl({ origin, port, test, traceFocus })
     await page.goto(url, {
-      waitUntil: 'networkidle',
+      waitUntil,
     })
     const testOverlay = page.locator('#TestOverlay')
     await expect(testOverlay).toBeVisible({

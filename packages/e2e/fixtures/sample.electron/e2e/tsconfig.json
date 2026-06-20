@@ -1,5 +1,30 @@
 {
   "compilerOptions": {
-    "target": "esnext"
-  }
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "checkJs": true,
+    "module": "nodenext",
+    "types": [],
+    "moduleResolution": "nodenext",
+    "rootDir": ".",
+    "allowJs": true,
+    "skipLibCheck": false,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "composite": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@lvce-editor/test-with-playwright": ["../../../../test-with-playwright/api.d.ts"]
+    }
+  },
+  "include": ["src"]
 }
