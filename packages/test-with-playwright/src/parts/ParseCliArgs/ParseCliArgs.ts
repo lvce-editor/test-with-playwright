@@ -15,6 +15,7 @@ interface ParsedCliArgs {
   runtime?: string
   serverPath?: string
   testPath?: string
+  timeout?: number
   traceFocus?: boolean
 }
 
@@ -36,6 +37,25 @@ const toStringArray = (value: unknown): string[] | undefined => {
     return value.map(toCliString)
   }
   return [toCliString(value)]
+}
+
+const toPositiveNumber = (value: unknown, name: string): number => {
+  const number = Number(toCliString(value))
+  if (!Number.isFinite(number) || number <= 0) {
+    throw new TypeError(`expected ${name} to be a positive number`)
+  }
+  return number
+}
+
+const setOptionalPositiveNumber = (
+  result: ParsedCliArgs,
+  key: keyof ParsedCliArgs,
+  value: unknown,
+  name: string,
+): void => {
+  if (value !== undefined) {
+    result[key] = toPositiveNumber(value, name) as never
+  }
 }
 
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
@@ -65,6 +85,7 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (parsed['test-path']) {
     result.testPath = String(parsed['test-path'])
   }
+  setOptionalPositiveNumber(result, 'timeout', parsed.timeout, '--timeout')
   if (parsed['server-path']) {
     result.serverPath = String(parsed['server-path'])
   }

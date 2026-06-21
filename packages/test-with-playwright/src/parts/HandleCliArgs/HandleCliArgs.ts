@@ -28,13 +28,13 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     runtime,
     serverPath,
     testPath,
+    timeout,
     traceFocus,
   } = options
   if (help) {
     console.info(GetHelpMessage.getHelpMessage())
     return
   }
-  const timeout = 30_000
   const testWorkerUri = GetTestWorkerUrl.getTestWorkerUrl()
   const runtimeOptions = await GetRuntimeOptions.getRuntimeOptions({
     cwd,

@@ -39,3 +39,17 @@ test('parseCliArgs reads reuse page flag', () => {
     reusePage: true,
   })
 })
+
+test('parseCliArgs reads timeout', () => {
+  const result = ParseCliArgs.parseCliArgs(['--timeout=600000'])
+
+  expect(result).toEqual({
+    timeout: 600_000,
+  })
+})
+
+test('parseCliArgs rejects invalid timeout', () => {
+  expect(() => ParseCliArgs.parseCliArgs(['--timeout=invalid'])).toThrow(
+    new TypeError('expected --timeout to be a positive number'),
+  )
+})

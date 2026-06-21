@@ -22,8 +22,12 @@ interface Options {
   runtime: Runtime
   serverPath?: string
   testPath: string
+  timeout: number
   traceFocus?: boolean
 }
+
+const defaultTimeout = 30_000
+const reusePageDefaultTimeout = 600_000
 
 const defaultOptions: Options = {
   browser: 'chromium',
@@ -33,6 +37,7 @@ const defaultOptions: Options = {
   reusePage: false,
   runtime: 'browser',
   testPath: '',
+  timeout: defaultTimeout,
 }
 
 interface GetOptionsParams {
@@ -62,11 +67,15 @@ export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options =
   if (parsedArgs.reusePage && runtime === 'electron') {
     throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
   }
+  const reusePage = parsedArgs.reusePage ?? defaultOptions.reusePage
+  const timeout = parsedArgs.timeout ?? (reusePage ? reusePageDefaultTimeout : defaultTimeout)
   return {
     ...defaultOptions,
     ...parsedEnv,
     ...parsedArgs,
     browser,
+    reusePage,
     runtime,
+    timeout,
   }
 }
