@@ -11,6 +11,7 @@ interface ParsedCliArgs {
   headless?: boolean
   help?: boolean
   onlyExtension?: string
+  reusePage?: boolean
   runtime?: string
   serverPath?: string
   testPath?: string
@@ -57,6 +58,9 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   if (parsed['only-extension']) {
     result.onlyExtension = String(parsed['only-extension'])
+  }
+  if (parsed['reuse-page']) {
+    result.reusePage = true
   }
   if (parsed['test-path']) {
     result.testPath = String(parsed['test-path'])

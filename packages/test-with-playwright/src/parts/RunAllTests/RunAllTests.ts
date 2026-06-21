@@ -9,6 +9,7 @@ interface RunAllTestsParams {
   filter?: string
   headless: boolean
   onlyExtension: string
+  reusePage: boolean
   runtimeOptions: any
   testPath: string
   testWorkerUri: string
@@ -23,6 +24,7 @@ export const runAllTests = async ({
   filter,
   headless,
   onlyExtension,
+  reusePage,
   runtimeOptions,
   testPath,
   testWorkerUri,
@@ -48,6 +50,7 @@ export const runAllTests = async ({
     runtimeOptions,
     traceFocus,
     filter,
+    reusePage,
   )
   await rpc.dispose()
 }

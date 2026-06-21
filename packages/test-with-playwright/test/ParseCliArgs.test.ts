@@ -31,3 +31,11 @@ test('parseCliArgs converts repeatable electron options to arrays', () => {
     electronEnv: ['DEV=1'],
   })
 })
+
+test('parseCliArgs reads reuse page flag', () => {
+  const result = ParseCliArgs.parseCliArgs(['--reuse-page'])
+
+  expect(result).toEqual({
+    reusePage: true,
+  })
+})

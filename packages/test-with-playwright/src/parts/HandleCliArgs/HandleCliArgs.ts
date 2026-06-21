@@ -24,6 +24,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     headless,
     help,
     onlyExtension,
+    reusePage,
     runtime,
     serverPath,
     testPath,
@@ -54,6 +55,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     headless,
     // @ts-ignore
     onlyExtension,
+    reusePage,
     runtimeOptions,
     testPath,
     testWorkerUri,

@@ -28,6 +28,24 @@ test('getOptions defaults browser to chromium', () => {
   expect(options.browser).toBe('chromium')
 })
 
+test('getOptions defaults reusePage to false', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    env: {},
+  })
+
+  expect(options.reusePage).toBe(false)
+})
+
+test('getOptions reads reusePage from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--reuse-page'],
+    env: {},
+  })
+
+  expect(options.reusePage).toBe(true)
+})
+
 test('getOptions throws for unsupported browser', () => {
   expect(() =>
     GetOptions.getOptions({
@@ -35,6 +53,15 @@ test('getOptions throws for unsupported browser', () => {
       env: {},
     }),
   ).toThrow(new Error('[test-with-playwright] unsupported browser: edge'))
+})
+
+test('getOptions throws for reusePage with electron runtime', () => {
+  expect(() =>
+    GetOptions.getOptions({
+      argv: ['--runtime=electron', '--reuse-page'],
+      env: {},
+    }),
+  ).toThrow(new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser'))
 })
 
 test('getOptions reads help from cli args', () => {
