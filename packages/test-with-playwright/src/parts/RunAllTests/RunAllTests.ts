@@ -32,7 +32,7 @@ export const runAllTests = async ({
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
   const rpc = await NodeWorkerRpcParent.create({
-    argv: [],
+    argv: [`--browser=${browser}`],
     commandMap,
     path,
     stdio: 'inherit',

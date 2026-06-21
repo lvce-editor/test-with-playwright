@@ -1,13 +1,16 @@
-import { chromium, firefox, webkit } from '@playwright/test'
+import type { chromium as PlaywrightChromium } from '@playwright/test'
+import * as PatchPlaywrightFirefoxWorkerWebSocket from '../PatchPlaywrightFirefoxWorkerWebSocket/PatchPlaywrightFirefoxWorkerWebSocket.ts'
 
 type Browser = 'chromium' | 'firefox' | 'webkit'
+type BrowserLauncher = typeof PlaywrightChromium
 
 /**
  *
  * @param {{browser:'chromium'|'firefox'|'webkit', signal:AbortSignal, headless:boolean}} options
  * @returns
  */
-const getLauncher = (browser: Browser): typeof chromium => {
+const getLauncher = async (browser: Browser): Promise<BrowserLauncher> => {
+  const { chromium, firefox, webkit } = await import('@playwright/test')
   switch (browser) {
     case 'chromium':
       return chromium
@@ -27,7 +30,10 @@ export const startBrowser = async ({
   readonly signal: AbortSignal
   readonly headless: boolean
 }): Promise<{ browser: any; page: any }> => {
-  const launcher = getLauncher(browser)
+  if (browser === 'firefox') {
+    await PatchPlaywrightFirefoxWorkerWebSocket.patchPlaywrightFirefoxWorkerWebSocket()
+  }
+  const launcher = await getLauncher(browser)
   const browserInstance = await launcher.launch({
     headless,
   })

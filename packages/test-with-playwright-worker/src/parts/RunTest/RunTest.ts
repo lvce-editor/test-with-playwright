@@ -1,5 +1,4 @@
 import type { Page } from '@playwright/test'
-import { expect } from '@playwright/test'
 import { basename } from 'node:path'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
 import * as TestState from '../TestState/TestState.ts'
@@ -36,6 +35,7 @@ export const runTest = async ({
 }): Promise<any> => {
   const start = performance.now()
   try {
+    const { expect } = await import('@playwright/test')
     const url = getUrlFromTestFile(test, port, traceFocus)
     await page.goto(url, {
       waitUntil: 'networkidle',
