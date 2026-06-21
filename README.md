@@ -34,6 +34,7 @@ test('sample.hello-world', async () => {
 - `--filter`: run only matching tests
 - `--headless`: run Playwright in headless mode
 - `--reuse-page`: run browser tests through `/tests/_all.html` on one page
+- `--timeout`: test timeout in milliseconds, defaults to `30000` or `600000` with `--reuse-page`
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--electron-path`: path to an existing Electron app executable

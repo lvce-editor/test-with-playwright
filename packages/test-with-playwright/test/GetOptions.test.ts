@@ -37,6 +37,15 @@ test('getOptions defaults reusePage to false', () => {
   expect(options.reusePage).toBe(false)
 })
 
+test('getOptions defaults timeout to 30 seconds', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    env: {},
+  })
+
+  expect(options.timeout).toBe(30_000)
+})
+
 test('getOptions reads reusePage from cli args', () => {
   const options = GetOptions.getOptions({
     argv: ['--reuse-page'],
@@ -44,6 +53,24 @@ test('getOptions reads reusePage from cli args', () => {
   })
 
   expect(options.reusePage).toBe(true)
+})
+
+test('getOptions defaults timeout to 10 minutes for reused page', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--reuse-page'],
+    env: {},
+  })
+
+  expect(options.timeout).toBe(600_000)
+})
+
+test('getOptions reads timeout from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--timeout=45000', '--reuse-page'],
+    env: {},
+  })
+
+  expect(options.timeout).toBe(45_000)
 })
 
 test('getOptions throws for unsupported browser', () => {

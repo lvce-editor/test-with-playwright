@@ -10,6 +10,7 @@ Options:
   --only-extension=<path>   Path to the extension under test
   --server-path=<path>      Path to the editor server entrypoint
   --test-path=<path>        Path to the test files
+  --timeout=<ms>            Test timeout in milliseconds
   --trace-focus             Log focus changes while tests run
   --electron-path=<path>    Path to an existing Electron app executable
   --electron-version=<ver>  Lvce release version to download, for example v0.84.0
