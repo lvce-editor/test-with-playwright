@@ -6,6 +6,7 @@ Options:
   --runtime=<runtime>       Runtime to run tests in: browser or electron
   --filter=<pattern>        Only run tests matching the filter
   --headless                Run the browser in headless mode
+  --reuse-page              Run browser tests through /tests/_all.html on one page
   --only-extension=<path>   Path to the extension under test
   --server-path=<path>      Path to the editor server entrypoint
   --test-path=<path>        Path to the test files

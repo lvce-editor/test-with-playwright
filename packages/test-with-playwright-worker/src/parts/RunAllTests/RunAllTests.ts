@@ -6,6 +6,7 @@ import * as GetTests from '../GetTests/GetTests.ts'
 import { Cli } from '../RpcId/RpcId.ts'
 import * as RunElectronTests from '../RunElectronTests/RunElectronTests.ts'
 import * as RunTests from '../RunTests/RunTests.ts'
+import * as RunTestsWithReusedPage from '../RunTestsWithReusedPage/RunTestsWithReusedPage.ts'
 import * as SetupTests from '../SetupTests/SetupTests.ts'
 import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
@@ -32,6 +33,7 @@ export interface ElectronRuntimeOptions {
  * @param {string} serverPath
  * @param {boolean} traceFocus
  * @param {string} filter
+ * @param {boolean} reusePage
  */
 export const runAllTests = async (
   extensionPath: string,
@@ -43,6 +45,7 @@ export const runAllTests = async (
   runtimeOptions: BrowserRuntimeOptions | ElectronRuntimeOptions,
   traceFocus: boolean,
   filter: string | undefined,
+  reusePage: boolean,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -51,11 +54,11 @@ export const runAllTests = async (
   Assert.boolean(headless)
   Assert.number(timeout)
   Assert.object(runtimeOptions)
+  Assert.boolean(reusePage)
   const rpc = get(Cli)
   const controller = new AbortController()
   const { signal } = controller
   const testSrc = join(testPath, 'src')
-  const tests = await GetTests.getTests(testSrc)
   const onResult = async (result: any): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleResult, result)
   }
@@ -64,6 +67,7 @@ export const runAllTests = async (
   }
   const filterOption = filter === undefined ? undefined : { filter }
   if (runtimeOptions.type === 'electron') {
+    const tests = await GetTests.getTests(testSrc)
     await using electron = await StartElectron.startElectron({
       runtimeOptions,
       signal,
@@ -88,6 +92,23 @@ export const runAllTests = async (
     signal,
     testPath,
   })
+  if (reusePage) {
+    await RunTestsWithReusedPage.runTestsWithReusedPage({
+      ...filterOption,
+      onFinalResult,
+      onResult,
+      page,
+      port,
+      timeout,
+      traceFocus,
+    })
+    await TearDownTests.tearDownTests({
+      child,
+      controller,
+    })
+    return
+  }
+  const tests = await GetTests.getTests(testSrc)
   await RunTests.runTests({
     ...filterOption,
     headless,

@@ -33,6 +33,7 @@ test('sample.hello-world', async () => {
 - `--server-path`: explicit server entry point
 - `--filter`: run only matching tests
 - `--headless`: run Playwright in headless mode
+- `--reuse-page`: run browser tests through `/tests/_all.html` on one page
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--electron-path`: path to an existing Electron app executable
@@ -44,8 +45,27 @@ test('sample.hello-world', async () => {
 ## Runtime Notes
 
 - `browser` keeps the server-backed HTML test execution flow.
+- `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses a Lvce Electron app, launches it with Playwright, and runs each test module against the first window.
 - `--electron-path` skips downloading and is useful for custom local builds.
+
+## Reuse Page Results
+
+When `--reuse-page` is enabled, `/tests/_all.html` should run the tests and write a JSON array into `.TestResults`:
+
+```json
+[
+  {
+    "name": "sample.hello-world.js",
+    "status": "pass",
+    "error": "",
+    "start": 0,
+    "end": 12.5
+  }
+]
+```
+
+`status` must be `pass`, `skip`, or `fail`. `error` is optional and defaults to an empty string.
 
 ## Environment Variables
 

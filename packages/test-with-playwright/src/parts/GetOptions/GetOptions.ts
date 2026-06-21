@@ -18,6 +18,7 @@ interface Options {
   headless: boolean
   help: boolean
   onlyExtension?: string
+  reusePage: boolean
   runtime: Runtime
   serverPath?: string
   testPath: string
@@ -29,6 +30,7 @@ const defaultOptions: Options = {
   extensionPath: '',
   headless: false,
   help: false,
+  reusePage: false,
   runtime: 'browser',
   testPath: '',
 }
@@ -57,6 +59,9 @@ export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options =
   }
   const browser = parsedArgs.browser ?? defaultOptions.browser
   const runtime = parsedArgs.runtime ?? defaultOptions.runtime
+  if (parsedArgs.reusePage && runtime === 'electron') {
+    throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
+  }
   return {
     ...defaultOptions,
     ...parsedEnv,
