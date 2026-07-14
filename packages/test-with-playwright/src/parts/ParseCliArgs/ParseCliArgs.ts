@@ -58,14 +58,25 @@ const setOptionalPositiveNumber = (
   }
 }
 
+const getRuntime = (parsed: Record<string, unknown>): string | undefined => {
+  if (parsed.electron) {
+    return 'electron'
+  }
+  if (parsed.runtime) {
+    return toCliString(parsed.runtime)
+  }
+  return undefined
+}
+
 export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   const parsed = parseArgv(argv)
   const result: ParsedCliArgs = Object.create(null)
   if (parsed.browser) {
     result.browser = String(parsed.browser)
   }
-  if (parsed.runtime) {
-    result.runtime = String(parsed.runtime)
+  const runtime = getRuntime(parsed)
+  if (runtime) {
+    result.runtime = runtime
   }
   if (parsed.filter) {
     result.filter = String(parsed.filter)

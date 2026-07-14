@@ -32,6 +32,14 @@ test('parseCliArgs converts repeatable electron options to arrays', () => {
   })
 })
 
+test('parseCliArgs reads electron shorthand', () => {
+  const result = ParseCliArgs.parseCliArgs(['--electron'])
+
+  expect(result).toEqual({
+    runtime: 'electron',
+  })
+})
+
 test('parseCliArgs reads reuse page flag', () => {
   const result = ParseCliArgs.parseCliArgs(['--reuse-page'])
 

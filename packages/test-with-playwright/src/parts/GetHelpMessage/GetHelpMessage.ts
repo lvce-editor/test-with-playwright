@@ -4,6 +4,7 @@ export const getHelpMessage = (): string => {
 Options:
   --browser=<browser>       Browser to run tests in: chromium, firefox, or webkit
   --runtime=<runtime>       Runtime to run tests in: browser or electron
+  --electron                Run tests in Electron and infer the matching Lvce version
   --filter=<pattern>        Only run tests matching the filter
   --headless                Run the browser in headless mode
   --reuse-page              Run browser tests through /tests/_all.html on one page
@@ -13,7 +14,7 @@ Options:
   --timeout=<ms>            Test timeout in milliseconds
   --trace-focus             Log focus changes while tests run
   --electron-path=<path>    Path to an existing Electron app executable
-  --electron-version=<ver>  Lvce release version to download, for example v0.84.0
+  --electron-version=<ver>  Override the inferred Lvce release version
   --electron-cache-dir=<p>  Directory for downloaded Electron apps
   --electron-arg=<arg>      Extra Electron app argument, repeatable
   --electron-env=<env>      Electron environment variable as NAME=value, repeatable

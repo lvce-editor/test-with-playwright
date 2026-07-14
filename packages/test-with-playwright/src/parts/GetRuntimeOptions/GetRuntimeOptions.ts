@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import * as GetElectronVersion from '../GetElectronVersion/GetElectronVersion.ts'
 import * as PrepareElectronApp from '../PrepareElectronApp/PrepareElectronApp.ts'
 
 interface GetRuntimeOptionsOptions {
@@ -71,10 +72,17 @@ export const getRuntimeOptions = async ({
     return getBrowserRuntimeOptions(serverPath)
   }
   const cacheDir = resolve(cwd, electronCacheDir || '.test-with-playwright/electron')
+  const version =
+    electronVersion || electronPath
+      ? electronVersion
+      : await GetElectronVersion.getElectronVersion({
+          cwd,
+          ...(serverPath && { serverPath }),
+        })
   const executablePath = await PrepareElectronApp.prepareElectronApp({
     cacheDir,
     ...(electronPath && { electronPath: resolve(cwd, electronPath) }),
-    ...(electronVersion && { version: electronVersion }),
+    ...(version && { version }),
   })
   return {
     args: electronArgs || [],
