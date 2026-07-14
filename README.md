@@ -13,7 +13,7 @@
 ```json
 {
   "scripts": {
-    "e2e:electron": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js --runtime=electron --electron-version=v0.84.0 --test-path=./e2e"
+    "e2e:electron": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js --electron --test-path=./e2e"
   }
 }
 ```
@@ -28,6 +28,7 @@ test('sample.hello-world', async () => {
 ## CLI Flags
 
 - `--runtime`: `browser` (default) or `electron`
+- `--electron`: shorthand for `--runtime=electron`; infers the Lvce release from the installed `@lvce-editor/server`
 - `--only-extension`: path to the extension under test
 - `--test-path`: path to the test root
 - `--server-path`: explicit server entry point
@@ -38,7 +39,7 @@ test('sample.hello-world', async () => {
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--electron-path`: path to an existing Electron app executable
-- `--electron-version`: Lvce release version to download, required for `--runtime=electron` when `--electron-path` is not provided
+- `--electron-version`: Lvce release version override; by default Electron uses the installed `@lvce-editor/server` version
 - `--electron-cache-dir`: directory for downloaded Electron apps, defaults to `.test-with-playwright/electron`
 - `--electron-arg`: extra Electron app argument, can be provided multiple times
 - `--electron-env`: Electron environment variable in `NAME=value` form, can be provided multiple times
@@ -47,7 +48,7 @@ test('sample.hello-world', async () => {
 
 - `browser` keeps the server-backed HTML test execution flow.
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
-- `electron` downloads or reuses a Lvce Electron app, launches it with Playwright, and runs each test module against the first window.
+- `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
 - `--electron-path` skips downloading and is useful for custom local builds.
 
 ## Reuse Page Results

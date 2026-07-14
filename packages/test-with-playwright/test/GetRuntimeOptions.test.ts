@@ -34,7 +34,7 @@ test('getRuntimeOptions returns electron runtime with path override', async () =
   })
 })
 
-test('getRuntimeOptions requires electron version when no path is provided', async () => {
+test('getRuntimeOptions requires an installed server when no version or path is provided', async () => {
   await expect(
     GetRuntimeOptions.getRuntimeOptions({
       cwd: '/workspace/e2e',
@@ -42,7 +42,7 @@ test('getRuntimeOptions requires electron version when no path is provided', asy
     }),
   ).rejects.toThrow(
     new Error(
-      '[test-with-playwright] --electron-version is required when --runtime=electron and --electron-path is not provided',
+      '[test-with-playwright] Electron version could not be inferred from @lvce-editor/server; use --electron-version or --electron-path',
     ),
   )
 })
