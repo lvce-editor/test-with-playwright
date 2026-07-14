@@ -8,7 +8,7 @@ test('getElectronProcessArgs uses a temporary user data directory', () => {
       platform: 'darwin',
       userDataDir: '/tmp/profile',
     }),
-  ).toEqual(['--remote-debugging-port=0', '--disable-gpu', '--user-data-dir=/tmp/profile'])
+  ).toEqual(['--disable-gpu', '--user-data-dir=/tmp/profile'])
 })
 
 test('getElectronProcessArgs disables the sandbox for an extracted Linux app', () => {
@@ -18,5 +18,5 @@ test('getElectronProcessArgs disables the sandbox for an extracted Linux app', (
       platform: 'linux',
       userDataDir: '/tmp/profile',
     }),
-  ).toEqual(['--remote-debugging-port=0', '--no-sandbox', '--user-data-dir=/tmp/profile'])
+  ).toEqual(['--no-sandbox', '--user-data-dir=/tmp/profile'])
 })

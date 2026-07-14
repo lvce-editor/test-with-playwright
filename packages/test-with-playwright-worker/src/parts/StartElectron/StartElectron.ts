@@ -1,13 +1,11 @@
-import { spawn, type ChildProcess } from 'node:child_process'
+import type { ChildProcess } from 'node:child_process'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { createInterface } from 'node:readline'
 import * as GetElectronLaunchOptions from '../GetElectronLaunchOptions/GetElectronLaunchOptions.ts'
 import * as GetElectronProcessArgs from '../GetElectronProcessArgs/GetElectronProcessArgs.ts'
-import * as Signal from '../Signal/Signal.ts'
 
-const electronConnectionTimeout = 120_000
+const electronLaunchTimeout = 120_000
 
 interface ElectronRuntimeOptions {
   readonly args: readonly string[]
@@ -16,8 +14,9 @@ interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
-interface ElectronApp extends AsyncDisposable {
+interface ElectronApp {
   readonly close: () => Promise<void>
+  readonly firstWindow: (options: { readonly timeout: number }) => Promise<any>
   readonly process: () => ChildProcess
 }
 
@@ -26,98 +25,28 @@ export interface ElectronLaunch extends AsyncDisposable {
   readonly page: any
 }
 
-const devtoolsRegex = /^DevTools listening on (ws:\/\/.*)$/
-
-const waitForDevtoolsEndpoint = async (child: ChildProcess): Promise<string> => {
-  const { stderr } = child
-  if (!stderr) {
-    throw new Error('Electron stderr is unavailable')
-  }
-  const lines = createInterface({ input: stderr })
-  const { promise, reject, resolve } = Promise.withResolvers<string>()
-  const stderrLines: string[] = []
-  const onExit = (): void => {
-    const details = stderrLines.length > 0 ? `: ${stderrLines.join('\n')}` : ''
-    reject(new Error(`Electron exited before DevTools endpoint was available${details}`))
-  }
-  const onLine = (line: string): void => {
-    stderrLines.push(line)
-    const match = line.match(devtoolsRegex)
-    if (match) {
-      resolve(match[1])
-    }
-  }
-  child.once('exit', onExit)
-  lines.on('line', onLine)
-  try {
-    return await promise
-  } finally {
-    child.off('exit', onExit)
-    lines.off('line', onLine)
-    lines.close()
-  }
-}
-
-const getFirstPage = async (browser: any): Promise<any> => {
-  const context = browser.contexts()[0]
-  const pages = context.pages()
-  if (pages.length > 0) {
-    return pages[0]
-  }
-  return context.waitForEvent('page', { timeout: 15_000 })
-}
-
-const waitForChildExit = async (child: ChildProcess): Promise<void> => {
-  if (child.exitCode !== null || child.signalCode !== null) {
-    return
-  }
-  await new Promise<void>((resolve) => {
-    const timeout = setTimeout(resolve, 5000)
-    child.once('exit', () => {
-      clearTimeout(timeout)
-      resolve()
-    })
-  })
-}
-
-const stopElectronProcess = async (child: ChildProcess): Promise<void> => {
-  if (child.exitCode === null && child.signalCode === null) {
-    child.kill(Signal.SIGINT as NodeJS.Signals)
-    await waitForChildExit(child)
-  }
-  if (child.exitCode === null && child.signalCode === null) {
-    child.kill('SIGKILL')
-    await waitForChildExit(child)
-  }
-}
-
 const closeElectron = async ({
-  browser,
-  child,
+  electronApp,
   userDataDir,
 }: {
-  readonly browser: any
-  readonly child: ChildProcess
+  readonly electronApp: ElectronApp
   readonly userDataDir: string
 }): Promise<void> => {
   try {
-    await browser.close()
+    await electronApp.close()
   } catch {
     // ignore close errors during cleanup
   }
-  await stopElectronProcess(child)
   await rm(userDataDir, { force: true, recursive: true })
 }
 
 const createElectronLaunch = ({
-  browser,
-  child,
+  electronApp,
   page,
   signal,
   userDataDir,
 }: {
-  readonly browser: any
-  readonly child: ChildProcess
+  readonly electronApp: ElectronApp
   readonly page: any
   readonly signal: AbortSignal
   readonly userDataDir: string
@@ -131,7 +60,7 @@ const createElectronLaunch = ({
     signal.removeEventListener('abort', handleAbort)
     process.off('SIGINT', handleSigint)
     process.off('SIGTERM', handleSigterm)
-    await closeElectron({ browser, child, userDataDir })
+    await closeElectron({ electronApp, userDataDir })
   }
   const handleAbort = (): void => {
     void dispose()
@@ -154,13 +83,6 @@ const createElectronLaunch = ({
   signal.addEventListener('abort', handleAbort)
   process.once('SIGINT', handleSigint)
   process.once('SIGTERM', handleSigterm)
-  const electronApp: ElectronApp = {
-    close: dispose,
-    process: (): ChildProcess => {
-      return child
-    },
-    [Symbol.asyncDispose]: dispose,
-  }
   return {
     electronApp,
     page,
@@ -178,27 +100,23 @@ export const startElectron = async ({
   const launchOptions = GetElectronLaunchOptions.getElectronLaunchOptions(runtimeOptions)
   const userDataDir = await mkdtemp(join(tmpdir(), 'test-with-playwright-electron-'))
   const args = GetElectronProcessArgs.getElectronProcessArgs({ args: launchOptions.args, userDataDir })
-  const child = spawn(launchOptions.executablePath, args, {
-    env: launchOptions.env,
-    stdio: ['ignore', 'ignore', 'pipe'],
-  })
-  let browser: any
+  let electronApp: ElectronApp | undefined
   try {
-    const endpoint = await waitForDevtoolsEndpoint(child)
-    const { chromium } = await import('@playwright/test')
-    browser = await chromium.connectOverCDP(endpoint, { timeout: electronConnectionTimeout })
-    const page = await getFirstPage(browser)
-    return createElectronLaunch({ browser, child, page, signal, userDataDir })
+    const { _electron } = await import('@playwright/test')
+    electronApp = await _electron.launch({
+      args: [...args],
+      env: launchOptions.env,
+      executablePath: launchOptions.executablePath,
+      timeout: electronLaunchTimeout,
+    })
+    const page = await electronApp.firstWindow({ timeout: electronLaunchTimeout })
+    return createElectronLaunch({ electronApp, page, signal, userDataDir })
   } catch (error) {
-    if (browser) {
-      try {
-        await browser.close()
-      } catch {
-        // ignore close errors during cleanup
-      }
+    if (electronApp) {
+      await closeElectron({ electronApp, userDataDir })
+    } else {
+      await rm(userDataDir, { force: true, recursive: true })
     }
-    await stopElectronProcess(child)
-    await rm(userDataDir, { force: true, recursive: true })
     throw error
   }
 }

@@ -7,10 +7,5 @@ export const getElectronProcessArgs = ({
   readonly platform?: string
   readonly userDataDir: string
 }): readonly string[] => {
-  return [
-    '--remote-debugging-port=0',
-    ...(platform === 'linux' ? ['--no-sandbox'] : []),
-    ...args,
-    `--user-data-dir=${userDataDir}`,
-  ]
+  return [...(platform === 'linux' ? ['--no-sandbox'] : []), ...args, `--user-data-dir=${userDataDir}`]
 }
