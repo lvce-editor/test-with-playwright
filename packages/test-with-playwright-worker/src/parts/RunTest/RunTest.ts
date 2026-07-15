@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test'
 import { basename } from 'node:path'
+import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
+import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -21,6 +23,7 @@ const getUrlFromTestFile = (absolutePath: string, port: number, traceFocus?: boo
 export const runTest = async ({
   page,
   port,
+  svgScreenshotOptions,
   test,
   testSrc,
   timeout,
@@ -32,6 +35,7 @@ export const runTest = async ({
   readonly port: number
   readonly timeout: number
   readonly traceFocus?: boolean
+  readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<any> => {
   const start = performance.now()
   try {
@@ -48,6 +52,13 @@ export const runTest = async ({
     const testOverlayState = await testOverlay.getAttribute('data-state')
     // @ts-ignore
     const testState = GetTestState.getTestState(testOverlayState, text || '')
+    if (testState.status === TestState.Pass && svgScreenshotOptions) {
+      await CaptureSvgScreenshot.captureSvgScreenshot({
+        options: svgScreenshotOptions,
+        page,
+        test,
+      })
+    }
     const end = performance.now()
     return {
       // @ts-ignore

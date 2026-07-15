@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as RunTest from '../RunTest/RunTest.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -26,6 +27,7 @@ export const runTests = async ({
   onResult,
   page,
   port,
+  svgScreenshotOptions,
   tests,
   testSrc,
   timeout,
@@ -41,6 +43,7 @@ export const runTests = async ({
   readonly onResult: (result: any) => Promise<void>
   readonly onFinalResult: (result: any) => Promise<void>
   readonly traceFocus?: boolean
+  readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<void> => {
   let failed = 0
   let skipped = 0
@@ -56,6 +59,7 @@ export const runTests = async ({
       testSrc,
       timeout,
       traceFocus: traceFocus ?? false,
+      ...(svgScreenshotOptions && { svgScreenshotOptions }),
     })
     await onResult(result)
     // @ts-ignore

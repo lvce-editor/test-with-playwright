@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { root } from './root.ts'
 import { generateApiTypes } from './generateApiTypes.ts'
-import { bundleJs } from './bundleJs.ts'
+import { bundleBrowserJs, bundleJs } from './bundleJs.ts'
 
 const execAsync = promisify(exec)
 
@@ -69,6 +69,7 @@ const copyWorkerPackageJson = async (version: string): Promise<void> => {
   delete packageJson.dependencies['@lvce-editor/rpc']
   delete packageJson.dependencies['@lvce-editor/rpc-registry']
   delete packageJson.dependencies['@lvce-editor/verror']
+  delete packageJson.dependencies['dom-to-svg']
   packageJson.main = packageJson.main = 'dist/workerMain.js'
   await mkdir(join(root, 'dist', 'test-with-playwright-worker'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
@@ -114,6 +115,11 @@ const copyWorkerFiles = async (): Promise<void> => {
   await bundleJs({
     inputFile: join(root, 'packages', 'test-with-playwright-worker', 'src', 'workerMain.ts'),
     outputFile: join(root, 'dist', 'test-with-playwright-worker', 'dist', 'workerMain.js'),
+  })
+  await bundleBrowserJs({
+    inputFile: join(root, 'packages', 'test-with-playwright-worker', 'src', 'browser', 'SvgScreenshot.ts'),
+    name: 'SvgScreenshot',
+    outputFile: join(root, 'dist', 'test-with-playwright-worker', 'dist', 'svgScreenshot.js'),
   })
 }
 

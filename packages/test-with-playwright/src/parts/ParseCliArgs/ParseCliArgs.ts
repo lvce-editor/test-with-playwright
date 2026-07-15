@@ -14,9 +14,12 @@ interface ParsedCliArgs {
   reusePage?: boolean
   runtime?: string
   serverPath?: string
+  svgScreenshotDir?: string
+  svgScreenshotSelector?: string
   testPath?: string
   timeout?: number
   traceFocus?: boolean
+  updateSvgScreenshots?: boolean
 }
 
 const toCliString = (value: unknown): string => {
@@ -55,6 +58,18 @@ const setOptionalPositiveNumber = (
 ): void => {
   if (value !== undefined) {
     result[key] = toPositiveNumber(value, name) as never
+  }
+}
+
+const setOptionalString = (result: ParsedCliArgs, key: keyof ParsedCliArgs, value: unknown): void => {
+  if (value) {
+    result[key] = toCliString(value) as never
+  }
+}
+
+const setFlag = (result: ParsedCliArgs, key: keyof ParsedCliArgs, value: unknown): void => {
+  if (value) {
+    result[key] = true as never
   }
 }
 
@@ -100,6 +115,8 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (parsed['server-path']) {
     result.serverPath = String(parsed['server-path'])
   }
+  setOptionalString(result, 'svgScreenshotDir', parsed['svg-screenshot-dir'])
+  setOptionalString(result, 'svgScreenshotSelector', parsed['svg-screenshot-selector'])
   if (parsed['electron-path']) {
     result.electronPath = String(parsed['electron-path'])
   }
@@ -120,5 +137,6 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (parsed['trace-focus']) {
     result.traceFocus = true
   }
+  setFlag(result, 'updateSvgScreenshots', parsed['update-svg-screenshots'])
   return result
 }

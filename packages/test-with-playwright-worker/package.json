@@ -49,6 +49,7 @@
     "@lvce-editor/rpc-registry": "^9.34.0",
     "@lvce-editor/verror": "^1.7.0",
     "@playwright/test": "1.61.1",
+    "dom-to-svg": "^0.12.2",
     "get-port": "^7.2.0"
   },
   "engines": {

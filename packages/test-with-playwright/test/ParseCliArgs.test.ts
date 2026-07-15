@@ -56,6 +56,20 @@ test('parseCliArgs reads timeout', () => {
   })
 })
 
+test('parseCliArgs reads SVG screenshot options', () => {
+  const result = ParseCliArgs.parseCliArgs([
+    '--svg-screenshot-dir=./snapshots',
+    '--svg-screenshot-selector=.Explorer',
+    '--update-svg-screenshots',
+  ])
+
+  expect(result).toEqual({
+    svgScreenshotDir: './snapshots',
+    svgScreenshotSelector: '.Explorer',
+    updateSvgScreenshots: true,
+  })
+})
+
 test('parseCliArgs rejects invalid timeout', () => {
   expect(() => ParseCliArgs.parseCliArgs(['--timeout=invalid'])).toThrow(
     new TypeError('expected --timeout to be a positive number'),

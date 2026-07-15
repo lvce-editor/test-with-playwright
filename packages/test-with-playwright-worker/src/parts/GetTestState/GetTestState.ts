@@ -1,22 +1,24 @@
 import * as TestOverlayState from '../TestOverlayState/TestOverlayState.ts'
 import * as TestState from '../TestState/TestState.ts'
 
-export const getTestState = (testOverlayState: string, text: string): void => {
+interface TestStateResult {
+  readonly error: string
+  readonly status: number
+}
+
+export const getTestState = (testOverlayState: string, text: string): TestStateResult => {
   switch (testOverlayState) {
     case TestOverlayState.Fail:
-      // @ts-ignore
       return {
         error: text,
         status: TestState.Fail,
       }
     case TestOverlayState.Pass:
-      // @ts-ignore
       return {
         error: '',
         status: TestState.Pass,
       }
     case TestOverlayState.Skip:
-      // @ts-ignore
       return {
         error: '',
         status: TestState.Skip,
