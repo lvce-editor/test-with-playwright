@@ -2,6 +2,7 @@ import parseArgv from 'minimist'
 
 interface ParsedCliArgs {
   browser?: string
+  coverage?: boolean
   electronArgs?: string[]
   electronCacheDir?: string
   electronEnv?: string[]
@@ -89,6 +90,7 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (parsed.browser) {
     result.browser = String(parsed.browser)
   }
+  setFlag(result, 'coverage', parsed.coverage)
   const runtime = getRuntime(parsed)
   if (runtime) {
     result.runtime = runtime

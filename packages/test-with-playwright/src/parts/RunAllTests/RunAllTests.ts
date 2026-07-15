@@ -5,6 +5,7 @@ import * as TestWorkerCommandType from '../TestWorkerCommandType/TestWorkerComma
 interface RunAllTestsParams {
   browser: 'chromium' | 'firefox' | 'webkit'
   commandMap: any
+  coverage: boolean
   cwd: string
   filter?: string
   headless: boolean
@@ -26,6 +27,7 @@ interface RunAllTestsParams {
 export const runAllTests = async ({
   browser,
   commandMap,
+  coverage,
   cwd,
   filter,
   headless,
@@ -59,6 +61,7 @@ export const runAllTests = async ({
     filter,
     reusePage,
     svgScreenshotOptions,
+    coverage,
   )
   await rpc.dispose()
 }

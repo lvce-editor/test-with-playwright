@@ -28,6 +28,51 @@ test('getOptions defaults browser to chromium', () => {
   expect(options.browser).toBe('chromium')
 })
 
+test('getOptions defaults coverage to false', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    env: {},
+  })
+
+  expect(options.coverage).toBe(false)
+})
+
+test('getOptions reads coverage from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--coverage'],
+    env: {},
+  })
+
+  expect(options.coverage).toBe(true)
+})
+
+test('getOptions rejects coverage in Firefox', () => {
+  expect(() =>
+    GetOptions.getOptions({
+      argv: ['--coverage', '--browser=firefox'],
+      env: {},
+    }),
+  ).toThrow(new Error('[test-with-playwright] --coverage is only supported with Chromium-based browsers'))
+})
+
+test('getOptions rejects coverage in WebKit', () => {
+  expect(() =>
+    GetOptions.getOptions({
+      argv: ['--coverage', '--browser=webkit'],
+      env: {},
+    }),
+  ).toThrow(new Error('[test-with-playwright] --coverage is only supported with Chromium-based browsers'))
+})
+
+test('getOptions supports coverage in Electron', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--coverage', '--runtime=electron'],
+    env: {},
+  })
+
+  expect(options.coverage).toBe(true)
+})
+
 test('getOptions defaults reusePage to false', () => {
   const options = GetOptions.getOptions({
     argv: [],

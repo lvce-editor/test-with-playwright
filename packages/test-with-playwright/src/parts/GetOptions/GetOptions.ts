@@ -8,6 +8,7 @@ type Runtime = 'browser' | 'electron'
 
 interface Options {
   browser: Browser
+  coverage: boolean
   electronArgs?: string[]
   electronCacheDir?: string
   electronEnv?: string[]
@@ -34,6 +35,7 @@ const reusePageDefaultTimeout = 600_000
 
 const defaultOptions: Options = {
   browser: 'chromium',
+  coverage: false,
   extensionPath: '',
   headless: false,
   help: false,
@@ -68,6 +70,9 @@ export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options =
   }
   const browser = parsedArgs.browser ?? defaultOptions.browser
   const runtime = parsedArgs.runtime ?? defaultOptions.runtime
+  if (parsedArgs.coverage && runtime === 'browser' && browser !== 'chromium') {
+    throw new Error('[test-with-playwright] --coverage is only supported with Chromium-based browsers')
+  }
   if (parsedArgs.reusePage && runtime === 'electron') {
     throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
   }

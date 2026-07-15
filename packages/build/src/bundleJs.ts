@@ -20,7 +20,15 @@ const baseOptions: RollupOptions = {
       objectShorthand: true,
     },
   },
-  external: ['ws', 'electron', '@playwright/test'],
+  external: [
+    'ws',
+    'electron',
+    '@playwright/test',
+    'istanbul-lib-coverage',
+    'istanbul-lib-report',
+    'istanbul-reports',
+    'v8-to-istanbul',
+  ],
   plugins: [
     babel({
       babelHelpers: 'bundled',

@@ -3,6 +3,7 @@ export const getHelpMessage = (): string => {
 
 Options:
   --browser=<browser>       Browser to run tests in: chromium, firefox, or webkit
+  --coverage                Collect JavaScript coverage and write Istanbul reports
   --runtime=<runtime>       Runtime to run tests in: browser or electron
   --electron                Run tests in Electron and infer the matching Lvce version
   --filter=<pattern>        Only run tests matching the filter

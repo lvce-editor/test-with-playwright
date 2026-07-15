@@ -8,6 +8,7 @@ import { Cli } from '../RpcId/RpcId.ts'
 import * as RunElectronTests from '../RunElectronTests/RunElectronTests.ts'
 import * as RunTests from '../RunTests/RunTests.ts'
 import * as RunTestsWithReusedPage from '../RunTestsWithReusedPage/RunTestsWithReusedPage.ts'
+import * as RunWithJavascriptCoverage from '../RunWithJavascriptCoverage/RunWithJavascriptCoverage.ts'
 import * as SetupTests from '../SetupTests/SetupTests.ts'
 import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
@@ -35,6 +36,7 @@ export interface ElectronRuntimeOptions {
  * @param {boolean} traceFocus
  * @param {string} filter
  * @param {boolean} reusePage
+ * @param {boolean} coverage
  */
 export const runAllTests = async (
   extensionPath: string,
@@ -48,6 +50,7 @@ export const runAllTests = async (
   filter: string | undefined,
   reusePage: boolean,
   svgScreenshotOptions: SvgScreenshotOptions | undefined,
+  coverage: boolean,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -57,6 +60,7 @@ export const runAllTests = async (
   Assert.number(timeout)
   Assert.object(runtimeOptions)
   Assert.boolean(reusePage)
+  Assert.boolean(coverage)
   if (svgScreenshotOptions !== undefined) {
     Assert.object(svgScreenshotOptions)
   }
@@ -77,16 +81,23 @@ export const runAllTests = async (
       runtimeOptions,
       signal,
     })
-    await RunElectronTests.runElectronTests({
-      ...filterOption,
-      electronApp: electron.electronApp,
-      onFinalResult,
-      onResult,
+    await RunWithJavascriptCoverage.runWithJavascriptCoverage({
+      coverage,
+      cwd,
       page: electron.page,
-      tests,
-      testSrc,
-      timeout,
-      ...(svgScreenshotOptions && { svgScreenshotOptions }),
+      run: async () => {
+        await RunElectronTests.runElectronTests({
+          ...filterOption,
+          electronApp: electron.electronApp,
+          onFinalResult,
+          onResult,
+          page: electron.page,
+          tests,
+          testSrc,
+          timeout,
+          ...(svgScreenshotOptions && { svgScreenshotOptions }),
+        })
+      },
     })
     return
   }
@@ -98,38 +109,51 @@ export const runAllTests = async (
     signal,
     testPath,
   })
-  if (reusePage) {
-    await RunTestsWithReusedPage.runTestsWithReusedPage({
-      ...filterOption,
-      onFinalResult,
-      onResult,
+  try {
+    if (reusePage) {
+      await RunWithJavascriptCoverage.runWithJavascriptCoverage({
+        coverage,
+        cwd,
+        page,
+        run: async () => {
+          await RunTestsWithReusedPage.runTestsWithReusedPage({
+            ...filterOption,
+            onFinalResult,
+            onResult,
+            page,
+            port,
+            timeout,
+            traceFocus,
+          })
+        },
+      })
+      return
+    }
+    const tests = await GetTests.getTests(testSrc)
+    await RunWithJavascriptCoverage.runWithJavascriptCoverage({
+      coverage,
+      cwd,
       page,
-      port,
-      timeout,
-      traceFocus,
+      run: async () => {
+        await RunTests.runTests({
+          ...filterOption,
+          headless,
+          onFinalResult,
+          onResult,
+          page,
+          port,
+          tests,
+          testSrc,
+          timeout,
+          traceFocus,
+          ...(svgScreenshotOptions && { svgScreenshotOptions }),
+        })
+      },
     })
+  } finally {
     await TearDownTests.tearDownTests({
       child,
       controller,
     })
-    return
   }
-  const tests = await GetTests.getTests(testSrc)
-  await RunTests.runTests({
-    ...filterOption,
-    headless,
-    onFinalResult,
-    onResult,
-    page,
-    port,
-    tests,
-    testSrc,
-    timeout,
-    traceFocus,
-    ...(svgScreenshotOptions && { svgScreenshotOptions }),
-  })
-  await TearDownTests.tearDownTests({
-    child,
-    controller,
-  })
 }

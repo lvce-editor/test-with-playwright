@@ -48,6 +48,14 @@ test('parseCliArgs reads reuse page flag', () => {
   })
 })
 
+test('parseCliArgs reads coverage flag', () => {
+  const result = ParseCliArgs.parseCliArgs(['--coverage'])
+
+  expect(result).toEqual({
+    coverage: true,
+  })
+})
+
 test('parseCliArgs reads timeout', () => {
   const result = ParseCliArgs.parseCliArgs(['--timeout=600000'])
 
