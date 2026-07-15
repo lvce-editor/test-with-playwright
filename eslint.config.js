@@ -26,4 +26,10 @@ export default [
   {
     ignores: ['**/.test-with-playwright/**', '**/fixtures/**'],
   },
+  {
+    files: ['packages/e2e/**/*.ts'],
+    rules: {
+      'e2e/no-imports': 'off',
+    },
+  },
 ]
