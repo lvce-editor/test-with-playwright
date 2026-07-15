@@ -20,7 +20,8 @@ const getVersion = async (): Promise<string> => {
     }
     return trimmed
   } catch (error) {
-    if (error && (error as Error).message.includes('no tag exactly matches')) {
+    const message = error instanceof Error ? error.message : ''
+    if (message.includes('no tag exactly matches') || message.includes('No names found')) {
       return '0.0.0-dev'
     }
     throw error
