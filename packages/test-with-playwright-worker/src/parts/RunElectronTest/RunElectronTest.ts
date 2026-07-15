@@ -1,6 +1,8 @@
 import type { expect as PlaywrightExpect, Page } from '@playwright/test'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
+import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 interface ElectronTestModule {
@@ -40,6 +42,7 @@ const withTimeout = async <T>(promise: Promise<T>, timeout: number): Promise<T> 
 export const runElectronTest = async ({
   electronApp,
   page,
+  svgScreenshotOptions,
   test,
   testSrc,
   timeout,
@@ -49,6 +52,7 @@ export const runElectronTest = async ({
   readonly test: string
   readonly testSrc: string
   readonly timeout: number
+  readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<any> => {
   const start = performance.now()
   try {
@@ -73,6 +77,13 @@ export const runElectronTest = async ({
       }),
       timeout,
     )
+    if (svgScreenshotOptions) {
+      await CaptureSvgScreenshot.captureSvgScreenshot({
+        options: svgScreenshotOptions,
+        page,
+        test,
+      })
+    }
     const end = performance.now()
     return {
       end,

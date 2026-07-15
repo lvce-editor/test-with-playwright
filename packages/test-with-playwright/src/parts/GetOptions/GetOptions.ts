@@ -21,9 +21,12 @@ interface Options {
   reusePage: boolean
   runtime: Runtime
   serverPath?: string
+  svgScreenshotDir?: string
+  svgScreenshotSelector?: string
   testPath: string
   timeout: number
   traceFocus?: boolean
+  updateSvgScreenshots: boolean
 }
 
 const defaultTimeout = 30_000
@@ -38,6 +41,7 @@ const defaultOptions: Options = {
   runtime: 'browser',
   testPath: '',
   timeout: defaultTimeout,
+  updateSvgScreenshots: false,
 }
 
 interface GetOptionsParams {
@@ -66,6 +70,15 @@ export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options =
   const runtime = parsedArgs.runtime ?? defaultOptions.runtime
   if (parsedArgs.reusePage && runtime === 'electron') {
     throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
+  }
+  if (parsedArgs.reusePage && parsedArgs.svgScreenshotDir) {
+    throw new Error('[test-with-playwright] --svg-screenshot-dir is not supported with --reuse-page')
+  }
+  if (parsedArgs.updateSvgScreenshots && !parsedArgs.svgScreenshotDir) {
+    throw new Error('[test-with-playwright] --update-svg-screenshots requires --svg-screenshot-dir')
+  }
+  if (parsedArgs.svgScreenshotSelector && !parsedArgs.svgScreenshotDir) {
+    throw new Error('[test-with-playwright] --svg-screenshot-selector requires --svg-screenshot-dir')
   }
   const reusePage = parsedArgs.reusePage ?? defaultOptions.reusePage
   const timeout = parsedArgs.timeout ?? (reusePage ? reusePageDefaultTimeout : defaultTimeout)

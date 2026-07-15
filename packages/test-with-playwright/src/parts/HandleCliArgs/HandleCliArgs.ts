@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import * as GetHelpMessage from '../GetHelpMessage/GetHelpMessage.ts'
 import * as GetOptions from '../GetOptions/GetOptions.ts'
 import * as GetRuntimeOptions from '../GetRuntimeOptions/GetRuntimeOptions.ts'
@@ -27,9 +28,12 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     reusePage,
     runtime,
     serverPath,
+    svgScreenshotDir,
+    svgScreenshotSelector,
     testPath,
     timeout,
     traceFocus,
+    updateSvgScreenshots,
   } = options
   if (help) {
     console.info(GetHelpMessage.getHelpMessage())
@@ -57,6 +61,14 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     onlyExtension,
     reusePage,
     runtimeOptions,
+    ...(svgScreenshotDir && {
+      svgScreenshotOptions: {
+        directory: resolve(cwd, svgScreenshotDir),
+        name: runtime === 'electron' ? 'electron' : browser,
+        ...(svgScreenshotSelector && { selector: svgScreenshotSelector }),
+        update: updateSvgScreenshots,
+      },
+    }),
     testPath,
     testWorkerUri,
     timeout,

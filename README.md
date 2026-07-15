@@ -38,6 +38,9 @@ test('sample.hello-world', async () => {
 - `--timeout`: test timeout in milliseconds, defaults to `30000` or `600000` with `--reuse-page`
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--trace-focus`: add `traceFocus=true` to test URLs
+- `--svg-screenshot-dir`: compare a self-contained SVG screenshot after each passing test with the browser-specific snapshot in this directory
+- `--svg-screenshot-selector`: capture only the first matching element, such as `.Explorer`; defaults to the application body
+- `--update-svg-screenshots`: create or update SVG screenshots in `--svg-screenshot-dir`
 - `--electron-path`: path to an existing Electron app executable
 - `--electron-version`: Lvce release version override; by default Electron uses the installed `@lvce-editor/server` version
 - `--electron-cache-dir`: directory for downloaded Electron apps, defaults to `.test-with-playwright/electron`
@@ -50,6 +53,19 @@ test('sample.hello-world', async () => {
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
 - `--electron-path` skips downloading and is useful for custom local builds.
+- SVG screenshots are not supported with `--reuse-page`, because that mode exposes only the final application state.
+
+## SVG Screenshot Tests
+
+Add `--svg-screenshot-dir=./snapshots` to compare each passing test's final application state with a committed SVG. Use `--svg-screenshot-selector=.Explorer` for a focused Explorer View snapshot. Snapshot names include the runtime, for example `viewlet.explorer-open.chromium.svg`, so browser-specific output does not conflict.
+
+Create or intentionally update the snapshots with:
+
+```sh
+npm run e2e -- --svg-screenshot-dir=./snapshots --update-svg-screenshots
+```
+
+The screenshot converts the rendered DOM to SVG shapes with the computed visual properties already applied. Fonts and images are inlined, test result overlays are excluded, animations and carets are frozen, and no page scripts are included. A mismatch writes an adjacent `.actual` file for inspection and fails the test.
 
 ## Reuse Page Results
 

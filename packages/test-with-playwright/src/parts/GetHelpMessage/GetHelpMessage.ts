@@ -10,9 +10,12 @@ Options:
   --reuse-page              Run browser tests through /tests/_all.html on one page
   --only-extension=<path>   Path to the extension under test
   --server-path=<path>      Path to the editor server entrypoint
+  --svg-screenshot-dir=<p>  Compare SVG screenshots with snapshots in this directory
+  --svg-screenshot-selector=<css>  Capture only the matching element
   --test-path=<path>        Path to the test files
   --timeout=<ms>            Test timeout in milliseconds
   --trace-focus             Log focus changes while tests run
+  --update-svg-screenshots  Create or update expected SVG screenshots
   --electron-path=<path>    Path to an existing Electron app executable
   --electron-version=<ver>  Override the inferred Lvce release version
   --electron-cache-dir=<p>  Directory for downloaded Electron apps

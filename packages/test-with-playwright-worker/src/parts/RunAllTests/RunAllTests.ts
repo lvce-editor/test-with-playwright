@@ -1,5 +1,6 @@
 import { get } from '@lvce-editor/rpc-registry'
 import { join } from 'node:path'
+import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
@@ -46,6 +47,7 @@ export const runAllTests = async (
   traceFocus: boolean,
   filter: string | undefined,
   reusePage: boolean,
+  svgScreenshotOptions: SvgScreenshotOptions | undefined,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -55,6 +57,9 @@ export const runAllTests = async (
   Assert.number(timeout)
   Assert.object(runtimeOptions)
   Assert.boolean(reusePage)
+  if (svgScreenshotOptions !== undefined) {
+    Assert.object(svgScreenshotOptions)
+  }
   const rpc = get(Cli)
   const controller = new AbortController()
   const { signal } = controller
@@ -81,6 +86,7 @@ export const runAllTests = async (
       tests,
       testSrc,
       timeout,
+      ...(svgScreenshotOptions && { svgScreenshotOptions }),
     })
     return
   }
@@ -120,6 +126,7 @@ export const runAllTests = async (
     testSrc,
     timeout,
     traceFocus,
+    ...(svgScreenshotOptions && { svgScreenshotOptions }),
   })
   await TearDownTests.tearDownTests({
     child,

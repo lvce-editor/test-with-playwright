@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as RunElectronTest from '../RunElectronTest/RunElectronTest.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -21,6 +22,7 @@ export const runElectronTests = async ({
   onFinalResult,
   onResult,
   page,
+  svgScreenshotOptions,
   tests,
   testSrc,
   timeout,
@@ -33,6 +35,7 @@ export const runElectronTests = async ({
   readonly tests: readonly string[]
   readonly testSrc: string
   readonly timeout: number
+  readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<void> => {
   let failed = 0
   let skipped = 0
@@ -46,6 +49,7 @@ export const runElectronTests = async ({
       test,
       testSrc,
       timeout,
+      ...(svgScreenshotOptions && { svgScreenshotOptions }),
     })
     await onResult(result)
     const resultCounts = getResultCounts(result.status)

@@ -11,6 +11,12 @@ interface RunAllTestsParams {
   onlyExtension: string
   reusePage: boolean
   runtimeOptions: any
+  svgScreenshotOptions?: {
+    readonly directory: string
+    readonly name: string
+    readonly selector?: string
+    readonly update: boolean
+  }
   testPath: string
   testWorkerUri: string
   timeout: number
@@ -26,6 +32,7 @@ export const runAllTests = async ({
   onlyExtension,
   reusePage,
   runtimeOptions,
+  svgScreenshotOptions,
   testPath,
   testWorkerUri,
   timeout,
@@ -51,6 +58,7 @@ export const runAllTests = async ({
     traceFocus,
     filter,
     reusePage,
+    svgScreenshotOptions,
   )
   await rpc.dispose()
 }
