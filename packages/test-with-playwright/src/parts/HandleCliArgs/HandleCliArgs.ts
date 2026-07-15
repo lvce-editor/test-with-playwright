@@ -16,6 +16,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
   const options = GetOptions.getOptions({ argv, env })
   const {
     browser,
+    coverage,
     electronArgs,
     electronCacheDir,
     electronEnv,
@@ -54,6 +55,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
   await RunAllTests.runAllTests({
     browser,
     commandMap,
+    coverage,
     cwd,
     filter,
     headless,

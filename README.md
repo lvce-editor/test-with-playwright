@@ -37,6 +37,7 @@ test('sample.hello-world', async () => {
 - `--reuse-page`: run browser tests through `/tests/_all.html` on one page
 - `--timeout`: test timeout in milliseconds, defaults to `30000` or `600000` with `--reuse-page`
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
+- `--coverage`: collect JavaScript coverage with Chromium and write Istanbul reports to `coverage`
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--svg-screenshot-dir`: compare a self-contained SVG screenshot after each passing test with the browser-specific snapshot in this directory
 - `--svg-screenshot-selector`: capture only the first matching element, such as `.Explorer`; defaults to the application body
@@ -50,6 +51,7 @@ test('sample.hello-world', async () => {
 ## Runtime Notes
 
 - `browser` keeps the server-backed HTML test execution flow.
+- JavaScript coverage is available for Chromium-based browser and Electron runs. It prints a coverage table and writes `coverage/coverage-final.json`, `coverage/coverage-summary.json`, `coverage/coverage.txt`, and `coverage/lcov.info`.
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
 - `--electron-path` skips downloading and is useful for custom local builds.
