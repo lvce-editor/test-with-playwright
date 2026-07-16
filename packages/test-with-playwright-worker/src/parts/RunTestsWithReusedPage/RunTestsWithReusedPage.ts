@@ -151,6 +151,7 @@ export const runTestsWithReusedPage = async ({
   try {
     const url = getAllTestsUrl(port, filter, traceFocus ?? false)
     await page.goto(url, {
+      timeout,
       waitUntil: 'networkidle',
     })
     const text = await readTestResultsText(page, timeout)
