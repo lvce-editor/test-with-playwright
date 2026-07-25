@@ -52,6 +52,7 @@ const getPossibleServerPaths = (cwd: string, serverPath: string | undefined): re
     ...(serverPath ? [resolve(cwd, serverPath)] : []),
     ...(resolvedServerEntryPoint ? [resolvedServerEntryPoint] : []),
     join(cwd, 'node_modules', '@lvce-editor', 'server', 'package.json'),
+    join(cwd, '..', '..', 'node_modules', '@lvce-editor', 'server', 'package.json'),
     join(cwd, '..', 'server', 'node_modules', '@lvce-editor', 'server', 'package.json'),
     join(cwd, '..', 'build', 'node_modules', '@lvce-editor', 'server', 'package.json'),
   ]
