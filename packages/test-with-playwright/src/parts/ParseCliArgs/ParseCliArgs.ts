@@ -20,6 +20,7 @@ interface ParsedCliArgs {
   testPath?: string
   timeout?: number
   traceFocus?: boolean
+  traceRendererWorker?: boolean
   updateSvgScreenshots?: boolean
 }
 
@@ -139,6 +140,7 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (parsed['trace-focus']) {
     result.traceFocus = true
   }
+  setFlag(result, 'traceRendererWorker', parsed['trace-renderer-worker'])
   setFlag(result, 'updateSvgScreenshots', parsed['update-svg-screenshots'])
   return result
 }

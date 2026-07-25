@@ -10,14 +10,22 @@ import * as TestState from '../TestState/TestState.ts'
  * @param {number} port
  * @param {boolean} traceFocus
  */
-const getUrlFromTestFile = (absolutePath: string, port: number, traceFocus?: boolean): string => {
+export const getUrlFromTestFile = (
+  absolutePath: string,
+  port: number,
+  traceFocus: boolean,
+  traceRendererWorker: boolean,
+): string => {
   const baseName = basename(absolutePath)
   const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
-  const baseUrl = `http://localhost:${port}/tests/${htmlFileName}`
+  const url = new URL(`http://localhost:${port}/tests/${htmlFileName}`)
   if (traceFocus) {
-    return `${baseUrl}?traceFocus=true`
+    url.searchParams.set('traceFocus', 'true')
   }
-  return baseUrl
+  if (traceRendererWorker) {
+    url.searchParams.set('traceRendererWorker', 'true')
+  }
+  return url.href
 }
 
 export const runTest = async ({
@@ -28,6 +36,7 @@ export const runTest = async ({
   testSrc,
   timeout,
   traceFocus,
+  traceRendererWorker,
 }: {
   readonly test: string
   readonly page: Page
@@ -35,12 +44,13 @@ export const runTest = async ({
   readonly port: number
   readonly timeout: number
   readonly traceFocus?: boolean
+  readonly traceRendererWorker?: boolean
   readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<any> => {
   const start = performance.now()
   try {
     const { expect } = await import('@playwright/test')
-    const url = getUrlFromTestFile(test, port, traceFocus)
+    const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
     await page.goto(url, {
       waitUntil: 'networkidle',
     })

@@ -5,4 +5,5 @@ test('getHelpMessage', () => {
   expect(GetHelpMessage.getHelpMessage()).toContain('Usage: test-with-playwright [options]')
   expect(GetHelpMessage.getHelpMessage()).toContain('-h, --help')
   expect(GetHelpMessage.getHelpMessage()).toContain('--reuse-page')
+  expect(GetHelpMessage.getHelpMessage()).toContain('--trace-renderer-worker')
 })
