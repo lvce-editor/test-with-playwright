@@ -34,6 +34,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     testPath,
     timeout,
     traceFocus,
+    traceRendererWorker,
     updateSvgScreenshots,
   } = options
   if (help) {
@@ -75,5 +76,6 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     testWorkerUri,
     timeout,
     traceFocus,
+    traceRendererWorker,
   })
 }

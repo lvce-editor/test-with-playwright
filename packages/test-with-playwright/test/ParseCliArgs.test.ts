@@ -48,6 +48,14 @@ test('parseCliArgs reads reuse page flag', () => {
   })
 })
 
+test('parseCliArgs reads renderer worker trace flag', () => {
+  const result = ParseCliArgs.parseCliArgs(['--trace-renderer-worker'])
+
+  expect(result).toEqual({
+    traceRendererWorker: true,
+  })
+})
+
 test('parseCliArgs reads coverage flag', () => {
   const result = ParseCliArgs.parseCliArgs(['--coverage'])
 

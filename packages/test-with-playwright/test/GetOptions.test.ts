@@ -82,6 +82,33 @@ test('getOptions defaults reusePage to false', () => {
   expect(options.reusePage).toBe(false)
 })
 
+test('getOptions defaults renderer worker tracing to false', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    env: {},
+  })
+
+  expect(options.traceRendererWorker).toBe(false)
+})
+
+test('getOptions reads renderer worker tracing from cli args', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--trace-renderer-worker'],
+    env: {},
+  })
+
+  expect(options.traceRendererWorker).toBe(true)
+})
+
+test('getOptions rejects renderer worker tracing with electron runtime', () => {
+  expect(() =>
+    GetOptions.getOptions({
+      argv: ['--runtime=electron', '--trace-renderer-worker'],
+      env: {},
+    }),
+  ).toThrow(new Error('[test-with-playwright] --trace-renderer-worker is only supported with --runtime=browser'))
+})
+
 test('getOptions defaults timeout to 30 seconds', () => {
   const options = GetOptions.getOptions({
     argv: [],

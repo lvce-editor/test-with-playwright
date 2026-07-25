@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
+import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import * as RunTest from '../RunTest/RunTest.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -27,6 +28,7 @@ export const runTests = async ({
   onResult,
   page,
   port,
+  rendererWorkerTraceDirectory,
   svgScreenshotOptions,
   tests,
   testSrc,
@@ -39,6 +41,7 @@ export const runTests = async ({
   readonly headless: boolean
   readonly page: Page
   readonly port: number
+  readonly rendererWorkerTraceDirectory?: string
   readonly timeout: number
   readonly onResult: (result: any) => Promise<void>
   readonly onFinalResult: (result: any) => Promise<void>
@@ -59,8 +62,16 @@ export const runTests = async ({
       testSrc,
       timeout,
       traceFocus: traceFocus ?? false,
+      traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
       ...(svgScreenshotOptions && { svgScreenshotOptions }),
     })
+    if (rendererWorkerTraceDirectory) {
+      await RendererWorkerTrace.exportTrace({
+        directory: rendererWorkerTraceDirectory,
+        page,
+        test,
+      })
+    }
     await onResult(result)
     // @ts-ignore
     const resultCounts = getResultCounts(result.status)

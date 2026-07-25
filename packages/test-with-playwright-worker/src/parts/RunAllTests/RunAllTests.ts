@@ -4,6 +4,7 @@ import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshot
 import * as Assert from '../Assert/Assert.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
+import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import { Cli } from '../RpcId/RpcId.ts'
 import * as RunElectronTests from '../RunElectronTests/RunElectronTests.ts'
 import * as RunTests from '../RunTests/RunTests.ts'
@@ -37,6 +38,7 @@ export interface ElectronRuntimeOptions {
  * @param {string} filter
  * @param {boolean} reusePage
  * @param {boolean} coverage
+ * @param {boolean} traceRendererWorker
  */
 export const runAllTests = async (
   extensionPath: string,
@@ -51,6 +53,7 @@ export const runAllTests = async (
   reusePage: boolean,
   svgScreenshotOptions: SvgScreenshotOptions | undefined,
   coverage: boolean,
+  traceRendererWorker: boolean,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -61,6 +64,7 @@ export const runAllTests = async (
   Assert.object(runtimeOptions)
   Assert.boolean(reusePage)
   Assert.boolean(coverage)
+  Assert.boolean(traceRendererWorker)
   if (svgScreenshotOptions !== undefined) {
     Assert.object(svgScreenshotOptions)
   }
@@ -68,6 +72,10 @@ export const runAllTests = async (
   const controller = new AbortController()
   const { signal } = controller
   const testSrc = join(testPath, 'src')
+  const rendererWorkerTraceDirectory = join(cwd, 'renderer-worker-traces')
+  if (traceRendererWorker) {
+    await RendererWorkerTrace.prepareDirectory(rendererWorkerTraceDirectory)
+  }
   const onResult = async (result: any): Promise<void> => {
     await rpc.invoke(CliCommandType.HandleResult, result)
   }
@@ -124,6 +132,9 @@ export const runAllTests = async (
             port,
             timeout,
             traceFocus,
+            ...(traceRendererWorker && {
+              rendererWorkerTraceDirectory,
+            }),
           })
         },
       })
@@ -146,6 +157,9 @@ export const runAllTests = async (
           testSrc,
           timeout,
           traceFocus,
+          ...(traceRendererWorker && {
+            rendererWorkerTraceDirectory,
+          }),
           ...(svgScreenshotOptions && { svgScreenshotOptions }),
         })
       },

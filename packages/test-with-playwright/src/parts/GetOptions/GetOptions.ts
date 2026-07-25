@@ -27,6 +27,7 @@ interface Options {
   testPath: string
   timeout: number
   traceFocus?: boolean
+  traceRendererWorker: boolean
   updateSvgScreenshots: boolean
 }
 
@@ -43,6 +44,7 @@ const defaultOptions: Options = {
   runtime: 'browser',
   testPath: '',
   timeout: defaultTimeout,
+  traceRendererWorker: false,
   updateSvgScreenshots: false,
 }
 
@@ -57,6 +59,12 @@ const isBrowser = (value: string): value is Browser => {
 
 const isRuntime = (value: string): value is Runtime => {
   return value === 'browser' || value === 'electron'
+}
+
+const validateRendererWorkerTrace = (traceRendererWorker: boolean | undefined, runtime: Runtime): void => {
+  if (traceRendererWorker && runtime === 'electron') {
+    throw new Error('[test-with-playwright] --trace-renderer-worker is only supported with --runtime=browser')
+  }
 }
 
 export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options => {
@@ -76,6 +84,7 @@ export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options =
   if (parsedArgs.reusePage && runtime === 'electron') {
     throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
   }
+  validateRendererWorkerTrace(parsedArgs.traceRendererWorker, runtime)
   if (parsedArgs.reusePage && parsedArgs.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --svg-screenshot-dir is not supported with --reuse-page')
   }

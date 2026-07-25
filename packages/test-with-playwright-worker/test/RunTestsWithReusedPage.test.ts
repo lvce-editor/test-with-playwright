@@ -8,6 +8,7 @@ const createPage = (text: string): any => {
     waitFor: jest.fn(async (): Promise<void> => {}),
   }
   return {
+    evaluate: jest.fn(async (): Promise<undefined> => undefined),
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testResults),
     waitForFunction: jest.fn(async (): Promise<void> => {}),
@@ -79,6 +80,36 @@ test('runTestsWithReusedPage navigates once and reports parsed results', async (
     passed: 1,
     skipped: 1,
   })
+})
+
+test('runTestsWithReusedPage enables and exports renderer worker tracing', async () => {
+  const page = createPage(
+    JSON.stringify([
+      {
+        end: 5,
+        name: 'test-A.js',
+        start: 1,
+        status: 'pass',
+      },
+    ]),
+  )
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    rendererWorkerTraceDirectory: '/tmp/renderer-worker-traces',
+    timeout: 1000,
+  })
+
+  expect(page.goto).toHaveBeenCalledWith(
+    'http://localhost:1234/tests/_all.html?traceRendererWorker=true',
+    expect.anything(),
+  )
+  expect(page.evaluate).toHaveBeenCalledTimes(1)
 })
 
 test('runTestsWithReusedPage reports invalid json as _all.html failure', async () => {

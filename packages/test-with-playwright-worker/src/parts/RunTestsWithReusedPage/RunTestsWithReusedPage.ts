@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 interface TestResult {
@@ -24,10 +25,18 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
   }
 }
 
-const getAllTestsUrl = (port: number, filter: string | undefined, traceFocus: boolean): string => {
+const getAllTestsUrl = (
+  port: number,
+  filter: string | undefined,
+  traceFocus: boolean,
+  traceRendererWorker: boolean,
+): string => {
   const url = new URL(`http://localhost:${port}/tests/_all.html`)
   if (traceFocus) {
     url.searchParams.set('traceFocus', 'true')
+  }
+  if (traceRendererWorker) {
+    url.searchParams.set('traceRendererWorker', 'true')
   }
   if (filter) {
     url.searchParams.set('filter', filter)
@@ -135,6 +144,7 @@ export const runTestsWithReusedPage = async ({
   onResult,
   page,
   port,
+  rendererWorkerTraceDirectory,
   timeout,
   traceFocus,
 }: {
@@ -143,13 +153,14 @@ export const runTestsWithReusedPage = async ({
   readonly onResult: (result: any) => Promise<void>
   readonly page: Page
   readonly port: number
+  readonly rendererWorkerTraceDirectory?: string
   readonly timeout: number
   readonly traceFocus?: boolean
 }): Promise<void> => {
   const start = performance.now()
   let results: readonly TestResult[]
   try {
-    const url = getAllTestsUrl(port, filter, traceFocus ?? false)
+    const url = getAllTestsUrl(port, filter, traceFocus ?? false, rendererWorkerTraceDirectory !== undefined)
     await page.goto(url, {
       timeout,
       waitUntil: 'networkidle',
@@ -158,6 +169,13 @@ export const runTestsWithReusedPage = async ({
     results = parseTestResults(text)
   } catch (error) {
     results = [getFailedAllTestsResult(error, start)]
+  }
+  if (rendererWorkerTraceDirectory) {
+    await RendererWorkerTrace.exportTrace({
+      directory: rendererWorkerTraceDirectory,
+      page,
+      test: '_all.html',
+    })
   }
   let failed = 0
   let passed = 0
