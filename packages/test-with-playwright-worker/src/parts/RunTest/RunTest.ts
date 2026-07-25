@@ -28,6 +28,12 @@ export const getUrlFromTestFile = (
   return url.href
 }
 
+export const navigateToTest = async (page: Page, url: string): Promise<void> => {
+  await page.goto(url, {
+    waitUntil: 'domcontentloaded',
+  })
+}
+
 export const runTest = async ({
   page,
   port,
@@ -51,9 +57,7 @@ export const runTest = async ({
   try {
     const { expect } = await import('@playwright/test')
     const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
-    await page.goto(url, {
-      waitUntil: 'networkidle',
-    })
+    await navigateToTest(page, url)
     const testOverlay = page.locator('#TestOverlay')
     await expect(testOverlay).toBeVisible({
       timeout,
