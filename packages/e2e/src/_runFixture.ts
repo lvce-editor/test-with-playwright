@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { root } from './root.ts'
 import { waitForChildProcessToExit } from './waitForChildProcessToExit.ts'
 
-const serverPath = join(root, 'packages', 'server', 'node_modules', '@lvce-editor', 'server', 'src', 'server.js')
+const serverPath = join(root, 'node_modules', '@lvce-editor', 'server', 'src', 'server.js')
 
 interface FixtureResult {
   exitCode: number | null

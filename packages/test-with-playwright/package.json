@@ -49,6 +49,9 @@
     "@lvce-editor/verror": "^1.7.0",
     "minimist": "^1.2.8"
   },
+  "devDependencies": {
+    "@types/minimist": "^1.2.5"
+  },
   "engines": {
     "node": ">=24"
   }

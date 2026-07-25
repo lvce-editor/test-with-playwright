@@ -8,13 +8,15 @@
   "files": [
     "src"
   ],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "node packages/build/src/build.ts",
-    "e2e": "npm run build && lerna run e2e",
+    "e2e": "npm run build && npm run e2e --workspaces --if-present",
     "format": "prettier --write .",
-    "postinstall": "lerna bootstrap --ci",
     "lint": "eslint . && prettier --check .",
-    "test": "lerna run test",
+    "test": "npm test --workspaces --if-present",
     "type-check": "tsc -b"
   },
   "prettier": {
@@ -27,12 +29,10 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.4.1",
-    "@lerna/legacy-package-management": "^8.2.4",
     "@lvce-editor/eslint-config": "^17.1.0",
     "@types/node": "^26.1.1",
     "eslint": "^10.7.0",
     "jest": "^30.4.2",
-    "lerna": "^8.2.4",
     "prettier": "^3.9.5",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3"

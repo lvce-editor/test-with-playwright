@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node ../../../node_modules/@lvce-editor/server/bin/server.js --only-extension=. --test-path=../e2e"
+    "dev": "node ../../../../../node_modules/@lvce-editor/server/bin/server.js --only-extension=. --test-path=../e2e"
   }
 }
