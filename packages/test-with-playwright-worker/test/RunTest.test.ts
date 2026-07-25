@@ -14,7 +14,7 @@ test('getUrlFromTestFile combines tracing options', () => {
 })
 
 test('navigateToTest waits for the DOM instead of network idle', async () => {
-  const goto = jest.fn(async (): Promise<void> => {})
+  const goto = jest.fn(async (_url: string, _options: object): Promise<void> => {})
   const page = {
     goto,
   }
