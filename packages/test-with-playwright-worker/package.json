@@ -44,17 +44,17 @@
     }
   },
   "dependencies": {
-    "@lvce-editor/assert": "^1.7.0",
-    "@lvce-editor/rpc": "^6.8.0",
-    "@lvce-editor/rpc-registry": "^9.34.0",
+    "@lvce-editor/assert": "^1.9.0",
+    "@lvce-editor/rpc": "^6.16.0",
+    "@lvce-editor/rpc-registry": "^9.47.0",
     "@lvce-editor/verror": "^1.7.0",
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "1.62.1",
     "dom-to-svg": "^0.12.2",
     "get-port": "^7.2.0",
     "istanbul-lib-coverage": "^3.2.2",
     "istanbul-lib-report": "^3.0.1",
     "istanbul-reports": "^3.2.0",
-    "playwright-core": "^1.61.1",
+    "playwright-core": "^1.62.1",
     "v8-to-istanbul": "^9.3.0"
   },
   "devDependencies": {
