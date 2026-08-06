@@ -7,6 +7,8 @@ import * as IsEnoentError from '../IsEnoentError/IsEnoentError.ts'
 
 const browserScriptCache: { promise?: Promise<string> } = {}
 const fileExtensionRegex = /\.[^.]+$/
+const generatedMaskIconClassRegex = /\bMaskIconCustomView[a-z0-9]+\b/g
+const localServerUrlRegex = /http:\/\/localhost:\d+/g
 const tagBoundaryRegex = />\s*</g
 
 const getBrowserScriptCandidates = (): readonly string[] => {
@@ -50,7 +52,11 @@ const capture = async (page: Page, selector: string | undefined): Promise<string
 }
 
 const formatSvg = (svg: string): string => {
-  return `${svg.replaceAll(tagBoundaryRegex, '>\n<').trim()}\n`
+  return `${svg
+    .replaceAll(localServerUrlRegex, 'http://localhost:PORT')
+    .replaceAll(generatedMaskIconClassRegex, 'MaskIconCustomView')
+    .replaceAll(tagBoundaryRegex, '>\n<')
+    .trim()}\n`
 }
 
 const getSnapshotName = (test: string, name: string): string => {

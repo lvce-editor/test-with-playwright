@@ -47,6 +47,26 @@ test('compareSvgScreenshot accepts an unchanged snapshot', async () => {
   ).resolves.toBeUndefined()
 })
 
+test('compareSvgScreenshot normalizes volatile server URLs and generated mask icon classes', async () => {
+  const options = await createOptions(true)
+  await CaptureSvgScreenshot.compareSvgScreenshot({
+    options,
+    svg: '<svg><text>http://localhost:1234/tests/example.html</text><g class="MaskIconCustomViewabc123"/></svg>',
+    test: 'sample.test.js',
+  })
+
+  await expect(
+    CaptureSvgScreenshot.compareSvgScreenshot({
+      options: { ...options, update: false },
+      svg: '<svg><text>http://localhost:5678/tests/example.html</text><g class="MaskIconCustomViewdef456"/></svg>',
+      test: 'sample.test.js',
+    }),
+  ).resolves.toBeUndefined()
+  await expect(readFile(join(options.directory, 'sample.test.chromium.svg'), 'utf8')).resolves.toContain(
+    'http://localhost:PORT/tests/example.html',
+  )
+})
+
 test('compareSvgScreenshot writes actual output and rejects a changed snapshot', async () => {
   const options = await createOptions(false)
   const snapshotPath = join(options.directory, 'sample.test.chromium.svg')

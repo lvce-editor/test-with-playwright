@@ -30,6 +30,22 @@ const patched = `abc
       }
 def`
 
+const upstreamFixed = `abc
+      _onWebSocketOpened(event) {
+        const socketId = webSocketId(event.frameId, event.wsid);
+        const request2 = this._webSocketRequests.get(event.requestId);
+        const response2 = this._webSocketResponses.get(event.requestId);
+        if (!request2 || !response2) {
+          this._page.frameManager.onWebSocketRequest(socketId);
+          return;
+        }
+        this._webSocketRequests.delete(event.requestId);
+        this._webSocketResponses.delete(event.requestId);
+        this._page.frameManager.onWebSocketRequest(socketId, request2);
+        this._page.frameManager.onWebSocketResponse(socketId, response2);
+      }
+def`
+
 test('patchCoreBundleContent patches firefox worker websocket assertion', () => {
   const result = PatchPlaywrightFirefoxWorkerWebSocket.patchCoreBundleContent(unpatched)
 
@@ -40,6 +56,12 @@ test('patchCoreBundleContent is idempotent', () => {
   const result = PatchPlaywrightFirefoxWorkerWebSocket.patchCoreBundleContent(patched)
 
   expect(result).toBe(patched)
+})
+
+test('patchCoreBundleContent accepts the upstream firefox websocket fix', () => {
+  const result = PatchPlaywrightFirefoxWorkerWebSocket.patchCoreBundleContent(upstreamFixed)
+
+  expect(result).toBe(upstreamFixed)
 })
 
 test('patchCoreBundleContent throws when handler cannot be found', () => {
