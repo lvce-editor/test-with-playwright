@@ -70,3 +70,92 @@ export const test = async () => {}
   expect(result.status).toBe(TestState.Skip)
   expect(result.error).toBe('')
 })
+
+test('runElectronTest reports SVG screenshot capture errors after a passing test', async () => {
+  const { test: testFile, testSrc } = await writeTestModule(`
+export const test = async () => {}
+`)
+  const page = {
+    locator: (): string => 'unused',
+  }
+  const svgScreenshotOptions = {
+    directory: '/tmp/screenshots',
+    name: 'chromium',
+    update: false,
+  }
+
+  const result = await RunElectronTest.runElectronTest({
+    electronApp: {},
+    page: page as any,
+    svgScreenshotOptions,
+    test: testFile,
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({
+    error: expect.stringContaining('SVG screenshot browser script not found'),
+    status: TestState.Fail,
+  })
+})
+
+test('runElectronTest reports errors thrown by a test module', async () => {
+  const { test: testFile, testSrc } = await writeTestModule(`
+export const test = async () => {
+  throw new Error('test failed')
+}
+`)
+
+  const result = await RunElectronTest.runElectronTest({
+    electronApp: {},
+    page: { locator: (): string => 'unused' } as any,
+    test: testFile,
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({
+    error: 'test failed',
+    status: TestState.Fail,
+  })
+})
+
+test('runElectronTest converts non-error test failures to errors', async () => {
+  const { test: testFile, testSrc } = await writeTestModule(`
+export const test = async () => {
+  throw 'test failed'
+}
+`)
+
+  const result = await RunElectronTest.runElectronTest({
+    electronApp: {},
+    page: { locator: (): string => 'unused' } as any,
+    test: testFile,
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({
+    error: 'test failed',
+    status: TestState.Fail,
+  })
+})
+
+test('runElectronTest reports a timeout', async () => {
+  const { test: testFile, testSrc } = await writeTestModule(`
+export const test = async () => new Promise(() => {})
+`)
+
+  const result = await RunElectronTest.runElectronTest({
+    electronApp: {},
+    page: { locator: (): string => 'unused' } as any,
+    test: testFile,
+    testSrc,
+    timeout: 1,
+  })
+
+  expect(result).toMatchObject({
+    error: 'Electron test timed out after 1ms',
+    status: TestState.Fail,
+  })
+})

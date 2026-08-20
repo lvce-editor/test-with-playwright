@@ -19,3 +19,25 @@ test('getElectronLaunchOptions maps runtime config to playwright launch options'
     executablePath: '/workspace/lvce',
   })
 })
+
+test('getElectronLaunchOptions omits undefined process environment values', () => {
+  const originalEnv = process.env
+  process.env = {
+    DEFINED: 'value',
+    OMITTED: undefined,
+  }
+  try {
+    const result = GetElectronLaunchOptions.getElectronLaunchOptions({
+      args: [],
+      env: {},
+      executablePath: '/workspace/lvce',
+      type: 'electron',
+    })
+
+    expect(result.env).toEqual({
+      DEFINED: 'value',
+    })
+  } finally {
+    process.env = originalEnv
+  }
+})

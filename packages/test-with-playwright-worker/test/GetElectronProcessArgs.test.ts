@@ -20,3 +20,12 @@ test('getElectronProcessArgs disables the sandbox for an extracted Linux app', (
     }),
   ).toEqual(['--no-sandbox', '--user-data-dir=/tmp/profile'])
 })
+
+test('getElectronProcessArgs defaults to the current platform', () => {
+  const result = GetElectronProcessArgs.getElectronProcessArgs({
+    args: [],
+    userDataDir: '/tmp/profile',
+  })
+
+  expect(result.at(-1)).toBe('--user-data-dir=/tmp/profile')
+})

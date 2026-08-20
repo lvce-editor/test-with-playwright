@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from '@jest/globals'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import * as CaptureSvgScreenshot from '../src/parts/CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
@@ -92,4 +92,20 @@ test('compareSvgScreenshot rejects a missing snapshot with update instructions',
       test: 'sample.test.js',
     }),
   ).rejects.toThrow('Run with --update-svg-screenshots to create it.')
+})
+
+test('compareSvgScreenshot preserves non-ENOENT read errors', async () => {
+  const options = await createOptions(false)
+  const snapshotPath = join(options.directory, 'sample.test.chromium.svg')
+  await mkdir(snapshotPath)
+
+  await expect(
+    CaptureSvgScreenshot.compareSvgScreenshot({
+      options,
+      svg: '<svg/>',
+      test: 'sample.test.js',
+    }),
+  ).rejects.toMatchObject({
+    code: 'EISDIR',
+  })
 })
