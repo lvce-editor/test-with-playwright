@@ -28,6 +28,14 @@ export const skip = 1
 export const test = async () => {}
 `,
   )
+  await writeFile(
+    join(testSrc, 'test-C.mjs'),
+    `
+export const test = async () => {
+  throw new Error('test failed')
+}
+`,
+  )
   return testSrc
 }
 
@@ -61,5 +69,60 @@ test('runElectronTests filters tests and reports exact results', async () => {
     failed: 0,
     passed: 1,
     skipped: 0,
+  })
+})
+
+test('runElectronTests reports passed, skipped, and failed tests without a filter', async () => {
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+  const testSrc = await createTestSrc()
+
+  await RunElectronTests.runElectronTests({
+    electronApp: {},
+    onFinalResult,
+    onResult,
+    page: {
+      locator: () => 'unused',
+    } as any,
+    tests: ['test-A.mjs', 'test-B.mjs', 'test-C.mjs'],
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(onResult.mock.calls).toHaveLength(3)
+  expect(onFinalResult.mock.calls.at(0)?.[0]).toMatchObject({
+    failed: 1,
+    passed: 1,
+    skipped: 1,
+  })
+})
+
+test('runElectronTests forwards SVG screenshot options', async () => {
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+  const testSrc = await createTestSrc()
+
+  await RunElectronTests.runElectronTests({
+    electronApp: {},
+    filter: 'B',
+    onFinalResult,
+    onResult,
+    page: {
+      locator: () => 'unused',
+    } as any,
+    svgScreenshotOptions: {
+      directory: '/tmp/screenshots',
+      name: 'chromium',
+      update: false,
+    },
+    tests: ['test-A.mjs', 'test-B.mjs'],
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(onFinalResult.mock.calls.at(0)?.[0]).toMatchObject({
+    failed: 0,
+    passed: 0,
+    skipped: 1,
   })
 })

@@ -4,6 +4,29 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import * as RendererWorkerTrace from '../src/parts/RendererWorkerTrace/RendererWorkerTrace.ts'
 
+const createPage = (text: string | undefined): any => {
+  return {
+    evaluate: jest.fn(async (callback: (selector: string) => string | undefined, selector: string) => {
+      const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
+      Object.defineProperty(globalThis, 'document', {
+        configurable: true,
+        value: {
+          querySelector: () => (text === undefined ? null : { textContent: text }),
+        },
+      })
+      try {
+        return callback(selector)
+      } finally {
+        if (originalDocument) {
+          Object.defineProperty(globalThis, 'document', originalDocument)
+        } else {
+          delete (globalThis as any).document
+        }
+      }
+    }),
+  }
+}
+
 test('exportTrace writes browser trace json', async () => {
   const temporaryDirectory = await mkdtemp(join(tmpdir(), 'renderer-worker-trace-'))
   try {
@@ -19,15 +42,13 @@ test('exportTrace writes browser trace json', async () => {
       ],
       version: 1,
     })
-    const page = {
-      evaluate: jest.fn(async (): Promise<string> => text),
-    }
+    const page = createPage(text)
     await RendererWorkerTrace.prepareDirectory(directory)
 
     await expect(
       RendererWorkerTrace.exportTrace({
         directory,
-        page: page as any,
+        page,
         test: 'viewlet.explorer-open.js',
       }),
     ).resolves.toBe(true)
@@ -41,8 +62,22 @@ test('exportTrace writes browser trace json', async () => {
 })
 
 test('exportTrace ignores pages without renderer worker trace data', async () => {
+  const page = createPage(undefined)
+
+  await expect(
+    RendererWorkerTrace.exportTrace({
+      directory: '/tmp/renderer-worker-traces',
+      page,
+      test: 'viewlet.explorer-open.js',
+    }),
+  ).resolves.toBe(false)
+})
+
+test('exportTrace ignores pages that cannot be evaluated', async () => {
   const page = {
-    evaluate: jest.fn(async (): Promise<undefined> => undefined),
+    evaluate: jest.fn(async (): Promise<never> => {
+      throw new Error('page closed')
+    }),
   }
 
   await expect(

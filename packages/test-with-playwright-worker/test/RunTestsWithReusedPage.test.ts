@@ -11,7 +11,26 @@ const createPage = (text: string): any => {
     evaluate: jest.fn(async (): Promise<undefined> => undefined),
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testResults),
-    waitForFunction: jest.fn(async (): Promise<void> => {}),
+    waitForFunction: jest.fn(async (callback: (selector: string) => boolean, selector: string): Promise<void> => {
+      const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
+      try {
+        for (const element of [undefined, { textContent: '' }, { textContent: text }]) {
+          Object.defineProperty(globalThis, 'document', {
+            configurable: true,
+            value: {
+              querySelector: (): typeof element => element,
+            },
+          })
+          callback(selector)
+        }
+      } finally {
+        if (originalDocument) {
+          Object.defineProperty(globalThis, 'document', originalDocument)
+        } else {
+          delete (globalThis as any).document
+        }
+      }
+    }),
   }
 }
 
@@ -139,5 +158,70 @@ test('runTestsWithReusedPage reports invalid json as _all.html failure', async (
     failed: 1,
     passed: 0,
     skipped: 0,
+  })
+})
+
+test.each([
+  ['a non-array result', '{}'],
+  ['a non-object test result', '[null]'],
+  ['an invalid test status', '[{"end":2,"name":"test.js","start":1,"status":"running"}]'],
+  ['a non-string test name', '[{"end":2,"name":1,"start":1,"status":"pass"}]'],
+  ['a non-number end time', '[{"end":"2","name":"test.js","start":1,"status":"pass"}]'],
+  ['a non-finite end time', '[{"end":1e999,"name":"test.js","start":1,"status":"pass"}]'],
+])('runTestsWithReusedPage reports %s as _all.html failure', async (_name, text) => {
+  const page = createPage(text)
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    timeout: 1000,
+  })
+
+  expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({
+    name: '_all.html',
+    status: TestState.Fail,
+  })
+})
+
+test('runTestsWithReusedPage reports empty test results', async () => {
+  const page = createPage('')
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    timeout: 1000,
+  })
+
+  expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({
+    error: 'TestResults is empty',
+    status: TestState.Fail,
+  })
+})
+
+test('runTestsWithReusedPage stringifies non-error navigation failures', async () => {
+  const page = createPage('[]')
+  page.goto.mockRejectedValue('navigation failed')
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    timeout: 1000,
+  })
+
+  expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({
+    error: 'navigation failed',
+    status: TestState.Fail,
   })
 })
