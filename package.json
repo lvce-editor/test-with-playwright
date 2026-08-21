@@ -33,7 +33,7 @@
     "@lvce-editor/eslint-plugin-regex": "^18.6.0",
     "@lvce-editor/eslint-plugin-tsconfig": "^18.6.0",
     "@types/node": "^26.2.0",
-    "eslint": "^10.8.1",
+    "eslint": "^10.9.0",
     "jest": "^30.4.2",
     "knip": "^6.32.2",
     "prettier": "^3.9.6",
