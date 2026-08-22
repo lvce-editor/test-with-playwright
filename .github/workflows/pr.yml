@@ -60,3 +60,4 @@ jobs:
             packages/e2e/fixtures/sample.hello-world/e2e/coverage
             packages/e2e/fixtures/sample.hello-world/e2e/*.svg
           if-no-files-found: ignore
+          include-hidden-files: true
