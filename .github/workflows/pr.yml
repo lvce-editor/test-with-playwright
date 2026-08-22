@@ -32,6 +32,8 @@ jobs:
       - name: npm ci
         run: npm ci
         if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: Patch renderer-process message capture
+        run: node packages/server/postinstall.ts
       - name: Install Chromium and system dependencies
         working-directory: ./packages/test-with-playwright-worker
         run: npx playwright install --with-deps chromium

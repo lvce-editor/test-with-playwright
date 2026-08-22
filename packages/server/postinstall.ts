@@ -82,6 +82,9 @@ const initializeReplacement = `const initialize = search => {
   globalThis.___receivedMessages = state$a.enabled ? [] : undefined;
 };`
 
+const receiverMarker = 'const recordReceivedMessageForE2e = message => {'
+const initializeMarker = 'globalThis.___receivedMessages = state$a.enabled ? [] : undefined;'
+
 const replaceExactlyOnce = (source: string, needle: string, replacement: string, description: string): string => {
   const occurrences = source.split(needle).length - 1
   if (occurrences !== 1) {
@@ -91,9 +94,19 @@ const replaceExactlyOnce = (source: string, needle: string, replacement: string,
 }
 
 const source = await readFile(bundlePath, 'utf8')
-const withReceiverCapture = replaceExactlyOnce(source, receiverNeedle, receiverReplacement, 'message receiver')
-const patched = replaceExactlyOnce(withReceiverCapture, initializeNeedle, initializeReplacement, 'trace initializer')
-await writeFile(bundlePath, patched)
+const receiverMarkerCount = source.split(receiverMarker).length - 1
+const initializeMarkerCount = source.split(initializeMarker).length - 1
+if (receiverMarkerCount === 1 && initializeMarkerCount === 1) {
+  console.info(`[e2e diagnostics] renderer-process bundle already patched at ${bundlePath}`)
+} else if (receiverMarkerCount === 0 && initializeMarkerCount === 0) {
+  const withReceiverCapture = replaceExactlyOnce(source, receiverNeedle, receiverReplacement, 'message receiver')
+  const patched = replaceExactlyOnce(withReceiverCapture, initializeNeedle, initializeReplacement, 'trace initializer')
+  await writeFile(bundlePath, patched)
+} else {
+  throw new Error(
+    `Inconsistent renderer-process patch state: receiver marker ${receiverMarkerCount}, initializer marker ${initializeMarkerCount}`,
+  )
+}
 
 const rendererProcessPackage = JSON.parse(await readFile(rendererProcessPackagePath, 'utf8'))
 console.info(`[e2e diagnostics] patched renderer-process ${rendererProcessPackage.version} at ${bundlePath}`)
