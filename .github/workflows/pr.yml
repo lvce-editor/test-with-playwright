@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        attempt: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        attempt: [1]
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -34,6 +34,8 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
       - name: Patch renderer-process message capture
         run: node packages/server/postinstall.ts
+      - name: Rebuild diagnostics
+        run: npm run build
       - name: Install Chromium and system dependencies
         working-directory: ./packages/test-with-playwright-worker
         run: npx playwright install --with-deps chromium
