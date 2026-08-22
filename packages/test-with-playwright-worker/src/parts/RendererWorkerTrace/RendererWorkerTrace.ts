@@ -9,33 +9,6 @@ const getFileName = (test: string): string => {
   return `${name.slice(0, -extname(name).length)}.json`
 }
 
-const exportReceivedMessages = async ({
-  page,
-  test,
-}: {
-  readonly page: Page
-  readonly test: string
-}): Promise<void> => {
-  const directory = process.env['E2E_DIAGNOSTIC_DIR']
-  if (!directory) {
-    return
-  }
-  let messages: unknown
-  try {
-    messages = await page.evaluate(() => {
-      // @ts-expect-error Test-only renderer-process diagnostic global.
-      return globalThis.___receivedMessages || []
-    })
-  } catch (error) {
-    messages = [{ captureError: String(error) }]
-  }
-  await mkdir(directory, { recursive: true })
-  const name = basename(test, extname(test))
-  const attempt = process.env['E2E_DIAGNOSTIC_ATTEMPT'] || 'unknown'
-  const path = join(directory, `allmessages-${name}-attempt-${attempt}.json`)
-  await writeFile(path, `${JSON.stringify(messages, null, 2)}\n`)
-}
-
 export const prepareDirectory = async (directory: string): Promise<void> => {
   await rm(directory, {
     force: true,
@@ -55,7 +28,6 @@ export const exportTrace = async ({
   readonly page: Page
   readonly test: string
 }): Promise<boolean> => {
-  await exportReceivedMessages({ page, test })
   let text: string | undefined
   try {
     text = await page.evaluate((traceSelector) => {
