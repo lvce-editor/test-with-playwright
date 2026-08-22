@@ -3,13 +3,11 @@
   "version": "0.0.0-dev",
   "main": "index.js",
   "type": "module",
-  "scripts": {
-    "postinstall": "node postinstall.ts"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@lvce-editor/server": "^0.105.20"
+    "@lvce-editor/server": "^0.105.25"
   }
 }

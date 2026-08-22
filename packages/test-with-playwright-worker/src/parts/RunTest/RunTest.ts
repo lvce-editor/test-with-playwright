@@ -1,32 +1,9 @@
 import type { Page } from '@playwright/test'
-import { mkdir, writeFile } from 'node:fs/promises'
-import { basename, extname, join } from 'node:path'
+import { basename } from 'node:path'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
 import * as TestState from '../TestState/TestState.ts'
-
-const saveDiagnosticMessages = async (page: Page, test: string): Promise<void> => {
-  const directory = process.env['E2E_DIAGNOSTIC_DIR']
-  if (!directory) {
-    return
-  }
-  let messages: unknown
-  try {
-    messages = await page.evaluate(() => {
-      // @ts-expect-error Test-only renderer-process diagnostic global.
-      return globalThis.___receivedMessages || []
-    })
-  } catch (error) {
-    messages = [{ captureError: String(error) }]
-  }
-  await mkdir(directory, { recursive: true })
-  const name = basename(test, extname(test))
-  const attempt = process.env['E2E_DIAGNOSTIC_ATTEMPT'] || 'unknown'
-  const path = join(directory, `allmessages-${name}-attempt-${attempt}.json`)
-  await writeFile(path, `${JSON.stringify(messages, null, 2)}\n`)
-  console.info(`[e2e diagnostics] wrote ${path}`)
-}
 
 /**
  * @param {string} absolutePath
@@ -115,7 +92,5 @@ export const runTest = async ({
       start,
       status: TestState.Fail,
     }
-  } finally {
-    await saveDiagnosticMessages(page, test)
   }
 }
