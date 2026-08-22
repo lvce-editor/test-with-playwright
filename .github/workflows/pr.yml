@@ -39,8 +39,10 @@ jobs:
           PLAYWRIGHT_BROWSERS_PATH: 0
       - name: Run sample.hello-world
         working-directory: ./packages/e2e
-        run: npm run e2e -- --runTestsByPath test/sample.hello-world.test.ts
+        run: npm run e2e -- --runTestsByPath test/sample.hello-world.test.ts --testTimeout=60000
         env:
+          E2E_DIAGNOSTIC_ATTEMPT: ${{ matrix.attempt }}
+          E2E_DIAGNOSTIC_DIR: ${{ github.workspace }}/.e2e-artifacts
           PLAYWRIGHT_BROWSERS_PATH: 0
           TEST_WITH_PLAYWRIGHT_BROWSER: chromium
       - name: Upload e2e artifacts
@@ -49,8 +51,8 @@ jobs:
         with:
           name: e2e-attempt-${{ matrix.attempt }}
           path: |
+            .e2e-artifacts/**
             .test-with-playwright
             packages/e2e/fixtures/sample.hello-world/e2e/coverage
             packages/e2e/fixtures/sample.hello-world/e2e/*.svg
           if-no-files-found: ignore
-
