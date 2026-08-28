@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "@lvce-editor/assert": "^1.9.0",
-    "@lvce-editor/rpc": "^6.18.0",
-    "@lvce-editor/rpc-registry": "^9.54.0",
+    "@lvce-editor/rpc": "^6.19.3",
+    "@lvce-editor/rpc-registry": "^9.55.0",
     "@lvce-editor/verror": "^1.7.0",
     "@playwright/test": "1.62.1",
     "dom-to-svg": "^0.12.2",
