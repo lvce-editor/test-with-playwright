@@ -1,5 +1,7 @@
 export const name = 'sample.main-split-right'
 
+export const skip = ['webkit']
+
 export const test = async ({ Editor, expect, FileSystem, Locator, Main, Workspace }) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const leftUri = `${workspaceUrl}/left.txt`

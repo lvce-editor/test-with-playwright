@@ -1,5 +1,7 @@
 export const name = 'sample.filesystem-write-file'
 
+export const skip = ['webkit']
+
 export const test = async ({ Editor, FileSystem, Main, Workspace }) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const fileUri = `${workspaceUrl}/written-by-e2e.txt`

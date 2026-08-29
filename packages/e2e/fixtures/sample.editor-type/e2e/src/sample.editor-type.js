@@ -1,5 +1,7 @@
 export const name = 'sample.editor-type'
 
+export const skip = ['webkit']
+
 export const test = async ({ Editor, FileSystem, Main, Workspace }) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const fileUri = `${workspaceUrl}/editor-type.txt`

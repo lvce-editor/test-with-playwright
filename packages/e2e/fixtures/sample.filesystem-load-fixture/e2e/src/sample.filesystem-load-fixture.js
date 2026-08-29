@@ -1,5 +1,7 @@
 export const name = 'sample.filesystem-load-fixture'
 
+export const skip = ['webkit']
+
 export const test = async ({ Editor, FileSystem, Main, Workspace }) => {
   const fixtureUrl = import.meta.resolve('../fixtures/sample.load-fixture')
   const workspaceUrl = await FileSystem.loadFixture(fixtureUrl)

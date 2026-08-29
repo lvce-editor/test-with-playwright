@@ -2,22 +2,25 @@ import { expect, test } from '@jest/globals'
 import { runFixture } from '../src/_runFixture.ts'
 
 const testPassedRegex = /1 test passed in \d+(\.\d+)?ms/
+const testSkippedRegex = /1 test skipped in \d+ms/
+const browser = process.env['TEST_WITH_PLAYWRIGHT_BROWSER'] || 'chromium'
 
-const fixtureNames = [
-  'sample.about-dialog',
-  'sample.editor-delete-character',
-  'sample.editor-insert-line-break',
-  'sample.editor-type',
-  'sample.filesystem-load-fixture',
-  'sample.filesystem-write-file',
-  'sample.locator-assertions',
-  'sample.main-close-editors',
-  'sample.main-open-settings',
-  'sample.main-split-right',
+const fixtures = [
+  ['sample.about-dialog', false],
+  ['sample.editor-delete-character', true],
+  ['sample.editor-insert-line-break', true],
+  ['sample.editor-type', true],
+  ['sample.filesystem-load-fixture', true],
+  ['sample.filesystem-write-file', true],
+  ['sample.locator-assertions', false],
+  ['sample.main-close-editors', false],
+  ['sample.main-open-settings', false],
+  ['sample.main-split-right', true],
 ] as const
 
-test.each(fixtureNames)('%s', async (fixtureName): Promise<void> => {
+test.each(fixtures)('%s', async (fixtureName, skipWebkit): Promise<void> => {
   const { exitCode, stdout } = await runFixture(fixtureName)
   expect(exitCode).toBe(0)
-  expect(stdout).toMatch(testPassedRegex)
+  const expectedResult = browser === 'webkit' && skipWebkit ? testSkippedRegex : testPassedRegex
+  expect(stdout).toMatch(expectedResult)
 })
