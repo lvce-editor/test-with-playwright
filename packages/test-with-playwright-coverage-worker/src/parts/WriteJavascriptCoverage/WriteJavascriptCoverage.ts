@@ -3,6 +3,8 @@ import IstanbulReport from 'istanbul-lib-report'
 import IstanbulReports from 'istanbul-reports'
 import { mkdir, readFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
+import type { JavascriptCoverageEntry } from '../JavascriptCoverageEntry/JavascriptCoverageEntry.ts'
+import * as CreateJavascriptCoverage from '../CreateJavascriptCoverage/CreateJavascriptCoverage.ts'
 
 const executeReport = (
   coverageMap: CoverageMap,
@@ -13,7 +15,11 @@ const executeReport = (
   IstanbulReports.create(name).execute(context)
 }
 
-export const writeJavascriptCoverage = async (coverageMap: CoverageMap, directory: string): Promise<void> => {
+export const writeJavascriptCoverage = async (
+  entries: readonly JavascriptCoverageEntry[],
+  directory: string,
+): Promise<void> => {
+  const coverageMap = await CreateJavascriptCoverage.createJavascriptCoverage(entries)
   await rm(directory, { force: true, recursive: true })
   await mkdir(directory, { recursive: true })
   executeReport(coverageMap, directory, 'json')

@@ -9,6 +9,7 @@ import { bundleBrowserJs, bundleJs } from './bundleJs.ts'
 const execAsync = promisify(exec)
 
 const packagePath = join(root, 'packages', 'test-with-playwright')
+const packageCoverageWorkerPath = join(root, 'packages', 'test-with-playwright-coverage-worker')
 const packageWorkerPath = join(root, 'packages', 'test-with-playwright-worker')
 
 const getVersion = async (): Promise<string> => {
@@ -71,9 +72,22 @@ const copyWorkerPackageJson = async (version: string): Promise<void> => {
   delete packageJson.dependencies['@lvce-editor/rpc-registry']
   delete packageJson.dependencies['@lvce-editor/verror']
   delete packageJson.dependencies['dom-to-svg']
+  packageJson.dependencies['@lvce-editor/test-with-playwright-coverage-worker'] = version
   packageJson.main = packageJson.main = 'dist/workerMain.js'
   await mkdir(join(root, 'dist', 'test-with-playwright-worker'), { recursive: true })
   await writeJson(join(root, 'dist', 'test-with-playwright-worker', 'package.json'), packageJson)
+}
+
+const copyCoverageWorkerPackageJson = async (version: string): Promise<void> => {
+  const packageJson = await readJson(join(packageCoverageWorkerPath, 'package.json'))
+  packageJson.version = version
+  delete packageJson.scripts
+  delete packageJson.prettier
+  delete packageJson.jest
+  delete packageJson.dependencies['@lvce-editor/rpc']
+  packageJson.main = 'dist/workerMain.js'
+  await mkdir(join(root, 'dist', 'test-with-playwright-coverage-worker'), { recursive: true })
+  await writeJson(join(root, 'dist', 'test-with-playwright-coverage-worker', 'package.json'), packageJson)
 }
 
 const copyCliFiles = async (): Promise<void> => {
@@ -124,6 +138,17 @@ const copyWorkerFiles = async (): Promise<void> => {
   })
 }
 
+const copyCoverageWorkerFiles = async (): Promise<void> => {
+  await cp(join(root, 'LICENSE'), join(root, 'dist', 'test-with-playwright-coverage-worker', 'LICENSE'), {
+    recursive: true,
+    force: true,
+  })
+  await bundleJs({
+    inputFile: join(root, 'packages', 'test-with-playwright-coverage-worker', 'src', 'workerMain.ts'),
+    outputFile: join(root, 'dist', 'test-with-playwright-coverage-worker', 'dist', 'workerMain.js'),
+  })
+}
+
 const cleanDist = async (): Promise<void> => {
   await rm(join(root, 'dist'), { recursive: true, force: true })
 }
@@ -136,6 +161,8 @@ const main = async (): Promise<void> => {
   await createDist()
   await copyPackageJson(version, testWorkerVersion)
   await copyCliFiles()
+  await copyCoverageWorkerPackageJson(version)
+  await copyCoverageWorkerFiles()
   await copyWorkerPackageJson(version)
   await copyWorkerFiles()
   await generateApiTypes()

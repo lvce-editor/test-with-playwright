@@ -21,6 +21,10 @@
       "entry": ["bin/*.js", "src/main.ts", "test/**/*.test.ts"],
       "project": ["bin/*.js", "src/**/*.ts", "test/**/*.ts"]
     },
+    "packages/test-with-playwright-coverage-worker": {
+      "entry": ["src/workerMain.ts", "test/**/*.test.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
     "packages/test-with-playwright-worker": {
       "entry": ["src/workerMain.ts", "src/browser/SvgScreenshot.ts", "test/**/*.test.ts"],
       "project": ["src/**/*.ts", "test/**/*.ts"]
