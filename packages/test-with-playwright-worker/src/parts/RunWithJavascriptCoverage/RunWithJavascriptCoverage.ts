@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test'
 import { join } from 'node:path'
-import * as CreateJavascriptCoverage from '../CreateJavascriptCoverage/CreateJavascriptCoverage.ts'
-import * as WriteJavascriptCoverage from '../WriteJavascriptCoverage/WriteJavascriptCoverage.ts'
+import * as CoverageWorker from '../CoverageWorker/CoverageWorker.ts'
 
 export const runWithJavascriptCoverage = async ({
   coverage,
@@ -23,7 +22,6 @@ export const runWithJavascriptCoverage = async ({
     await run()
   } finally {
     const entries = await page.coverage.stopJSCoverage()
-    const coverageMap = await CreateJavascriptCoverage.createJavascriptCoverage(entries)
-    await WriteJavascriptCoverage.writeJavascriptCoverage(coverageMap, join(cwd, 'coverage'))
+    await CoverageWorker.writeJavascriptCoverage(entries, join(cwd, 'coverage'))
   }
 }
