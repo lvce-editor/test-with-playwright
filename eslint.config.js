@@ -1,14 +1,13 @@
 import { defineConfig } from 'eslint/config'
 import * as config from '@lvce-editor/eslint-config'
 import * as tsconfig from '@lvce-editor/eslint-plugin-tsconfig'
-import * as regex from '@lvce-editor/eslint-plugin-regex'
 
 export default defineConfig([
   ...config.default,
   ...config.recommendedNode,
   ...config.recommendedActions,
+  ...config.recommendedRegex,
   ...tsconfig.default,
-  ...regex.default,
   {
     rules: {
       'n/no-process-exit': 'off',
