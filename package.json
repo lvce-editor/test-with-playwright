@@ -29,8 +29,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.5.0",
-    "@lvce-editor/eslint-config": "^18.8.0",
-    "@lvce-editor/eslint-plugin-regex": "^18.8.0",
+    "@lvce-editor/eslint-config": "^18.9.0",
     "@lvce-editor/eslint-plugin-tsconfig": "^18.8.0",
     "@types/node": "^26.4.0",
     "eslint": "^10.9.1",
