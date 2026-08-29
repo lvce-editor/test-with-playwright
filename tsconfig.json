@@ -5,6 +5,7 @@
     { "path": "./packages/e2e" },
     { "path": "./packages/test-with-playwright" },
     { "path": "./packages/build" },
+    { "path": "./packages/test-with-playwright-coverage-worker" },
     { "path": "./packages/test-with-playwright-worker" }
   ]
 }

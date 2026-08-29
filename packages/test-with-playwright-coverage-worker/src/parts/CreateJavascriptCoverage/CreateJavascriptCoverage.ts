@@ -1,8 +1,8 @@
-import type { Coverage } from '@playwright/test'
 import IstanbulCoverage, { type CoverageMap, type CoverageMapData } from 'istanbul-lib-coverage'
 import v8ToIstanbul from 'v8-to-istanbul'
+import type { JavascriptCoverageEntry } from '../JavascriptCoverageEntry/JavascriptCoverageEntry.ts'
 
-export type JavascriptCoverageEntry = Awaited<ReturnType<Coverage['stopJSCoverage']>>[number]
+export type { JavascriptCoverageEntry } from '../JavascriptCoverageEntry/JavascriptCoverageEntry.ts'
 
 const externalSourceMapCommentRegex =
   /(?:\/\/[#@]\s*sourceMappingURL=(?!data:).*?$|\/\*[#@]\s*sourceMappingURL=(?!data:).*?\*\/)/gm
