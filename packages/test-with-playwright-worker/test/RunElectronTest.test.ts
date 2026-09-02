@@ -94,7 +94,7 @@ export const test = async () => {}
   })
 
   expect(result).toMatchObject({
-    error: expect.stringContaining('SVG screenshot browser script not found'),
+    error: expect.stringContaining('Failed to capture SVG screenshot'),
     status: TestState.Fail,
   })
 })
