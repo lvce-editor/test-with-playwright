@@ -99,9 +99,6 @@ jobs:
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - run: npm publish --access public
-        working-directory: ./dist/test-with-playwright-coverage-worker
-
-      - run: npm publish --access public
         working-directory: ./dist/test-with-playwright-worker
 
       - run: npm publish --access public
