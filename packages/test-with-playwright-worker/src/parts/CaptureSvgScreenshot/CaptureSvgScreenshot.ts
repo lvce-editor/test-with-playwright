@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import { VError } from '@lvce-editor/verror'
 import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -73,7 +74,12 @@ export const captureSvgScreenshot = async ({
   readonly page: Page
   readonly test: string
 }): Promise<void> => {
-  const svg = await capture(page, options.selector)
+  let svg: string
+  try {
+    svg = await capture(page, options.selector)
+  } catch (error) {
+    throw new VError(error, 'Failed to capture SVG screenshot')
+  }
   await compareSvgScreenshot({ options, svg, test })
 }
 

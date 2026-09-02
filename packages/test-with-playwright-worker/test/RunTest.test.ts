@@ -72,7 +72,7 @@ test('runTest reports SVG screenshot capture errors for a passing overlay', asyn
   })
 
   expect(result).toMatchObject({
-    error: expect.stringContaining('SVG screenshot browser script not found'),
+    error: expect.stringContaining('Failed to capture SVG screenshot'),
     name: 'about.open.js',
     status: TestState.Fail,
   })
