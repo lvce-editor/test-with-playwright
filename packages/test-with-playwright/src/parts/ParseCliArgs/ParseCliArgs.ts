@@ -70,8 +70,8 @@ const setOptionalString = (result: ParsedCliArgs, key: keyof ParsedCliArgs, valu
 }
 
 const setFlag = (result: ParsedCliArgs, key: keyof ParsedCliArgs, value: unknown): void => {
-  if (value) {
-    result[key] = true as never
+  if (value !== undefined) {
+    result[key] = (value !== false && value !== 'false') as never
   }
 }
 
@@ -96,21 +96,17 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (runtime) {
     result.runtime = runtime
   }
-  if (parsed.filter) {
+  if (parsed.filter !== undefined) {
     result.filter = String(parsed.filter)
   }
   if (parsed.help || parsed.h) {
     result.help = true
   }
-  if (parsed.headless) {
-    result.headless = true
-  }
+  setFlag(result, 'headless', parsed.headless)
   if (parsed['only-extension']) {
     result.onlyExtension = String(parsed['only-extension'])
   }
-  if (parsed['reuse-page']) {
-    result.reusePage = true
-  }
+  setFlag(result, 'reusePage', parsed['reuse-page'])
   if (parsed['test-path']) {
     result.testPath = String(parsed['test-path'])
   }
@@ -137,9 +133,7 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   if (electronEnv) {
     result.electronEnv = electronEnv
   }
-  if (parsed['trace-focus']) {
-    result.traceFocus = true
-  }
+  setFlag(result, 'traceFocus', parsed['trace-focus'])
   setFlag(result, 'traceRendererWorker', parsed['trace-renderer-worker'])
   setFlag(result, 'updateSvgScreenshots', parsed['update-svg-screenshots'])
   return result

@@ -3,6 +3,8 @@ import * as GetHelpMessage from '../GetHelpMessage/GetHelpMessage.ts'
 import * as GetOptions from '../GetOptions/GetOptions.ts'
 import * as GetRuntimeOptions from '../GetRuntimeOptions/GetRuntimeOptions.ts'
 import * as GetTestWorkerUrl from '../GetTestWorkerPath/GetTestWorkerPath.ts'
+import * as LoadConfig from '../LoadConfig/LoadConfig.ts'
+import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as RunAllTests from '../RunAllTests/RunAllTests.ts'
 
 interface HandleCliArgsParams {
@@ -13,7 +15,12 @@ interface HandleCliArgsParams {
 }
 
 export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<HandleCliArgsParams>): Promise<void> => {
-  const options = GetOptions.getOptions({ argv, env })
+  if (ParseCliArgs.parseCliArgs(argv).help) {
+    console.info(GetHelpMessage.getHelpMessage())
+    return
+  }
+  const config = await LoadConfig.loadConfig(cwd)
+  const options = GetOptions.getOptions({ argv, config, env })
   const {
     browser,
     coverage,
@@ -24,7 +31,6 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     electronVersion,
     filter,
     headless,
-    help,
     onlyExtension,
     reusePage,
     runtime,
@@ -37,10 +43,6 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     traceRendererWorker,
     updateSvgScreenshots,
   } = options
-  if (help) {
-    console.info(GetHelpMessage.getHelpMessage())
-    return
-  }
   const testWorkerUri = GetTestWorkerUrl.getTestWorkerUrl()
   const runtimeOptions = await GetRuntimeOptions.getRuntimeOptions({
     cwd,

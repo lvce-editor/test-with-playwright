@@ -26,12 +26,14 @@ export const runFixture = async (name: string, args: readonly string[] = []): Pr
   if (!existsSync(cwd)) {
     throw new Error('cwd does not exist')
   }
-  const child = fork(binaryPath, ['--headless', '--server-path', serverPath, ...getBrowserArgs(), ...args], {
+  const usesConfig = name === 'sample.hello-world'
+  const serverArgs = usesConfig ? [] : ['--server-path', serverPath]
+  const child = fork(binaryPath, ['--headless', ...serverArgs, ...getBrowserArgs(), ...args], {
     cwd,
     env: {
       ...process.env,
-      ONLY_EXTENSION: '../extension',
-      TEST_PATH: '.',
+      ONLY_EXTENSION: usesConfig ? '' : '../extension',
+      TEST_PATH: usesConfig ? '' : '.',
     },
     stdio: 'pipe',
   })

@@ -25,6 +25,12 @@ Options:
   --electron-env=<env>      Electron environment variable as NAME=value, repeatable
   -h, --help                Show this help message
 
+Configuration:
+  Loads the nearest e2e.config.js from the current directory or its parents.
+  Precedence: defaults < config < environment < CLI.
+  Config paths are relative to the config file; CLI paths use the current directory.
+  Use --no-<flag> to override a configured boolean with false.
+
 Environment:
   ONLY_EXTENSION            Default extension path
   TEST_PATH                 Default test path`
