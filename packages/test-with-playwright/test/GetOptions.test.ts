@@ -211,10 +211,10 @@ test('getOptions requires an SVG screenshot directory with a selector', () => {
 test('CLI overrides config while omitted CLI flags preserve config values', () => {
   const options = GetOptions.getOptions({
     argv: ['--headless', '--timeout=5000', '--electron-arg=--new', '--filter='],
-    config: { headless: false, reusePage: true, timeout: 9000, electronArgs: ['--old'], filter: 'old' },
+    config: { electronArgs: ['--old'], filter: 'old', headless: false, reusePage: true, timeout: 9000 },
     env: {},
   })
-  expect(options).toMatchObject({ headless: true, reusePage: true, timeout: 5000, electronArgs: ['--new'], filter: '' })
+  expect(options).toMatchObject({ electronArgs: ['--new'], filter: '', headless: true, reusePage: true, timeout: 5000 })
 })
 
 test('explicit false CLI flags override configured true values', () => {
@@ -228,9 +228,9 @@ test('explicit false CLI flags override configured true values', () => {
       '--no-update-svg-screenshots',
     ],
     config: {
+      coverage: true,
       headless: true,
       reusePage: true,
-      coverage: true,
       traceFocus: true,
       traceRendererWorker: true,
       updateSvgScreenshots: true,
@@ -238,13 +238,13 @@ test('explicit false CLI flags override configured true values', () => {
     env: {},
   })
   expect(options).toMatchObject({
+    coverage: false,
     headless: false,
     reusePage: false,
-    coverage: false,
+    timeout: 30_000,
     traceFocus: false,
     traceRendererWorker: false,
     updateSvgScreenshots: false,
-    timeout: 30_000,
   })
 })
 
@@ -262,7 +262,7 @@ test('config reusePage selects the longer default timeout', () => {
 })
 
 test('validates combinations after applying CLI overrides', () => {
-  const config = { coverage: true, browser: 'firefox' } as const
+  const config = { browser: 'firefox', coverage: true } as const
   expect(() => GetOptions.getOptions({ argv: [], config, env: {} })).toThrow('only supported with Chromium')
   expect(GetOptions.getOptions({ argv: ['--browser=chromium'], config, env: {} }).browser).toBe('chromium')
 })

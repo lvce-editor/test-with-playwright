@@ -69,3 +69,14 @@ test('patchCoreBundleContent throws when handler cannot be found', () => {
     new Error('Could not patch Playwright Firefox worker WebSocket handler'),
   )
 })
+
+test('patchCoreBundleContent supports Playwright handlers that pass request objects', () => {
+  const input = unpatched
+    .replace('request2.headers', 'request2')
+    .replace('response2.status, response2.statusText, response2.headers', 'response2')
+  const result = PatchPlaywrightFirefoxWorkerWebSocket.patchCoreBundleContent(input)
+  expect(result).toContain('if (!request2 || !response2)')
+  expect(result).toContain('webSocketId(event.frameId, event.wsid), request2);')
+  expect(result).toContain('webSocketId(event.frameId, event.wsid), response2);')
+  expect(PatchPlaywrightFirefoxWorkerWebSocket.patchCoreBundleContent(result)).toBe(result)
+})

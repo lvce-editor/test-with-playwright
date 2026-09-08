@@ -37,11 +37,12 @@ export const validateConfig = (value: unknown): E2eConfig => {
         ? Array.isArray(item) && item.every((entry) => typeof entry === 'string')
         : typeof item === expected
     if (!valid) {
-      throw new TypeError(`expected ${key} to be ${expected === 'array' ? 'an array of strings' : `a ${expected}`}`)
+      const description = expected === 'array' ? 'an array of strings' : `a ${expected}`
+      throw new TypeError(`expected ${key} to be ${description}`)
     }
     if (key === 'timeout' && (!Number.isFinite(item) || item <= 0)) {
       throw new TypeError('expected timeout to be a positive number')
     }
   }
-  return value as E2eConfig
+  return value
 }

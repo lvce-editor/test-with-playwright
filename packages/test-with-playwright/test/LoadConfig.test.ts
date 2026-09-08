@@ -14,7 +14,9 @@ const createDirectory = async (): Promise<string> => {
 }
 
 afterEach(async () => {
-  await Promise.all(directories.splice(0).map((directory) => rm(directory, { recursive: true, force: true })))
+  const current = [...directories]
+  directories.length = 0
+  await Promise.all(current.map((directory) => rm(directory, { force: true, recursive: true })))
 })
 
 test('loads a default object and resolves paths relative to the config file', async () => {

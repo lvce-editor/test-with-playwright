@@ -43,9 +43,21 @@ const upstreamFix = `      _onWebSocketOpened(event) {
         this._page.frameManager.onWebSocketResponse(socketId, response2);
       }`
 
+const useRequestObjects = (content: string): string => {
+  return content
+    .replace('request2.headers', 'request2')
+    .replace('response2.status, response2.statusText, response2.headers', 'response2')
+}
+
+const beforeWithRequestObjects = useRequestObjects(before)
+const afterWithRequestObjects = useRequestObjects(after)
+
 export const patchCoreBundleContent = (content: string): string => {
-  if (content.includes(after) || content.includes(upstreamFix)) {
+  if (content.includes(after) || content.includes(afterWithRequestObjects) || content.includes(upstreamFix)) {
     return content
+  }
+  if (content.includes(beforeWithRequestObjects)) {
+    return content.split(beforeWithRequestObjects).join(afterWithRequestObjects)
   }
   if (!content.includes(before)) {
     throw new Error('Could not patch Playwright Firefox worker WebSocket handler')

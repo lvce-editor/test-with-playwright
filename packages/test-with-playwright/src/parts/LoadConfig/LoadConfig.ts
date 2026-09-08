@@ -15,7 +15,8 @@ const pathOptions = [
 
 const isFile = async (path: string): Promise<boolean> => {
   try {
-    return (await stat(path)).isFile()
+    const result = await stat(path)
+    return result.isFile()
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return false
@@ -24,24 +25,28 @@ const isFile = async (path: string): Promise<boolean> => {
   }
 }
 
+const importConfig = async (path: string): Promise<E2eConfig> => {
+  try {
+    const module = await import(pathToFileURL(path).href)
+    const config = { ...ValidateConfig.validateConfig(module.default) }
+    for (const key of pathOptions) {
+      if (config[key] !== undefined) {
+        config[key] = resolve(dirname(path), config[key])
+      }
+    }
+    return config
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`[test-with-playwright] failed to load ${path}: ${message}`, { cause: error })
+  }
+}
+
 export const loadConfig = async (cwd: string): Promise<E2eConfig> => {
   let directory = resolve(cwd)
   while (true) {
     const path = join(directory, 'e2e.config.js')
     if (await isFile(path)) {
-      try {
-        const module = await import(pathToFileURL(path).href)
-        const config = { ...ValidateConfig.validateConfig(module.default) }
-        for (const key of pathOptions) {
-          if (config[key] !== undefined) {
-            config[key] = resolve(directory, config[key])
-          }
-        }
-        return config
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-        throw new Error(`[test-with-playwright] failed to load ${path}: ${message}`, { cause: error })
-      }
+      return importConfig(path)
     }
     const parent = dirname(directory)
     if (parent === directory) {
