@@ -1,3 +1,4 @@
+import type { E2eConfig } from '../E2eConfig/E2eConfig.ts'
 import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as ParseEnv from '../ParseEnv/ParseEnv.ts'
 
@@ -50,6 +51,7 @@ const defaultOptions: Options = {
 
 interface GetOptionsParams {
   argv: string[]
+  config?: E2eConfig
   env: NodeJS.ProcessEnv
 }
 
@@ -67,39 +69,38 @@ const validateRendererWorkerTrace = (traceRendererWorker: boolean | undefined, r
   }
 }
 
-export const getOptions = ({ argv, env }: Readonly<GetOptionsParams>): Options => {
+export const getOptions = ({ argv, config = {}, env }: Readonly<GetOptionsParams>): Options => {
   const parsedEnv = ParseEnv.parseEnv(env)
-  const parsedArgs = ParseCliArgs.parseCliArgs(argv)
-  if (parsedArgs.browser !== undefined && !isBrowser(parsedArgs.browser)) {
-    throw new Error(`[test-with-playwright] unsupported browser: ${parsedArgs.browser}`)
+  const mergedOptions = { ...config, ...parsedEnv, ...ParseCliArgs.parseCliArgs(argv) }
+  if (mergedOptions.browser !== undefined && !isBrowser(mergedOptions.browser)) {
+    throw new Error(`[test-with-playwright] unsupported browser: ${mergedOptions.browser}`)
   }
-  if (parsedArgs.runtime !== undefined && !isRuntime(parsedArgs.runtime)) {
-    throw new Error(`[test-with-playwright] unsupported runtime: ${parsedArgs.runtime}`)
+  if (mergedOptions.runtime !== undefined && !isRuntime(mergedOptions.runtime)) {
+    throw new Error(`[test-with-playwright] unsupported runtime: ${mergedOptions.runtime}`)
   }
-  const browser = parsedArgs.browser ?? defaultOptions.browser
-  const runtime = parsedArgs.runtime ?? defaultOptions.runtime
-  if (parsedArgs.coverage && runtime === 'browser' && browser !== 'chromium') {
+  const browser = mergedOptions.browser ?? defaultOptions.browser
+  const runtime = mergedOptions.runtime ?? defaultOptions.runtime
+  if (mergedOptions.coverage && runtime === 'browser' && browser !== 'chromium') {
     throw new Error('[test-with-playwright] --coverage is only supported with Chromium-based browsers')
   }
-  if (parsedArgs.reusePage && runtime === 'electron') {
+  if (mergedOptions.reusePage && runtime === 'electron') {
     throw new Error('[test-with-playwright] --reuse-page is only supported with --runtime=browser')
   }
-  validateRendererWorkerTrace(parsedArgs.traceRendererWorker, runtime)
-  if (parsedArgs.reusePage && parsedArgs.svgScreenshotDir) {
+  validateRendererWorkerTrace(mergedOptions.traceRendererWorker, runtime)
+  if (mergedOptions.reusePage && mergedOptions.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --svg-screenshot-dir is not supported with --reuse-page')
   }
-  if (parsedArgs.updateSvgScreenshots && !parsedArgs.svgScreenshotDir) {
+  if (mergedOptions.updateSvgScreenshots && !mergedOptions.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --update-svg-screenshots requires --svg-screenshot-dir')
   }
-  if (parsedArgs.svgScreenshotSelector && !parsedArgs.svgScreenshotDir) {
+  if (mergedOptions.svgScreenshotSelector && !mergedOptions.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --svg-screenshot-selector requires --svg-screenshot-dir')
   }
-  const reusePage = parsedArgs.reusePage ?? defaultOptions.reusePage
-  const timeout = parsedArgs.timeout ?? (reusePage ? reusePageDefaultTimeout : defaultTimeout)
+  const reusePage = mergedOptions.reusePage ?? defaultOptions.reusePage
+  const timeout = mergedOptions.timeout ?? (reusePage ? reusePageDefaultTimeout : defaultTimeout)
   return {
     ...defaultOptions,
-    ...parsedEnv,
-    ...parsedArgs,
+    ...mergedOptions,
     browser,
     reusePage,
     runtime,

@@ -207,3 +207,62 @@ test('getOptions requires an SVG screenshot directory with a selector', () => {
     }),
   ).toThrow(new Error('[test-with-playwright] --svg-screenshot-selector requires --svg-screenshot-dir'))
 })
+
+test('CLI overrides config while omitted CLI flags preserve config values', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--headless', '--timeout=5000', '--electron-arg=--new', '--filter='],
+    config: { headless: false, reusePage: true, timeout: 9000, electronArgs: ['--old'], filter: 'old' },
+    env: {},
+  })
+  expect(options).toMatchObject({ headless: true, reusePage: true, timeout: 5000, electronArgs: ['--new'], filter: '' })
+})
+
+test('explicit false CLI flags override configured true values', () => {
+  const options = GetOptions.getOptions({
+    argv: [
+      '--no-headless',
+      '--reuse-page=false',
+      '--no-coverage',
+      '--no-trace-focus',
+      '--no-trace-renderer-worker',
+      '--no-update-svg-screenshots',
+    ],
+    config: {
+      headless: true,
+      reusePage: true,
+      coverage: true,
+      traceFocus: true,
+      traceRendererWorker: true,
+      updateSvgScreenshots: true,
+    },
+    env: {},
+  })
+  expect(options).toMatchObject({
+    headless: false,
+    reusePage: false,
+    coverage: false,
+    traceFocus: false,
+    traceRendererWorker: false,
+    updateSvgScreenshots: false,
+    timeout: 30_000,
+  })
+})
+
+test('environment overrides config and CLI overrides environment', () => {
+  const options = GetOptions.getOptions({
+    argv: ['--test-path=cli-tests'],
+    config: { onlyExtension: 'config-extension', testPath: 'config-tests' },
+    env: { ONLY_EXTENSION: 'env-extension', TEST_PATH: 'env-tests' },
+  })
+  expect(options).toMatchObject({ onlyExtension: 'env-extension', testPath: 'cli-tests' })
+})
+
+test('config reusePage selects the longer default timeout', () => {
+  expect(GetOptions.getOptions({ argv: [], config: { reusePage: true }, env: {} }).timeout).toBe(600_000)
+})
+
+test('validates combinations after applying CLI overrides', () => {
+  const config = { coverage: true, browser: 'firefox' } as const
+  expect(() => GetOptions.getOptions({ argv: [], config, env: {} })).toThrow('only supported with Chromium')
+  expect(GetOptions.getOptions({ argv: ['--browser=chromium'], config, env: {} }).browser).toBe('chromium')
+})

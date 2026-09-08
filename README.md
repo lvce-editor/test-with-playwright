@@ -25,6 +25,38 @@ test('sample.hello-world', async () => {
 })
 ```
 
+## Configuration
+
+Create `e2e.config.js` with a default options object. `defineConfig` is optional and provides editor completion and type checking:
+
+```js
+import { defineConfig } from '@lvce-editor/test-with-playwright'
+
+export default defineConfig({
+  onlyExtension: '../extension',
+  testPath: '.',
+  serverPath: '../../node_modules/@lvce-editor/server/bin/server.js',
+  reusePage: true,
+})
+```
+
+The runner searches the current directory and its parents, using the nearest `e2e.config.js`. Paths in the config resolve relative to that file. CLI and environment paths remain relative to the working directory. Without a config file, existing CLI usage works as before.
+
+All test options below are supported with camelCase names (`onlyExtension`, `testPath`, `traceRendererWorker`, etc.). Use `runtime: 'electron'` for `--electron`, and string arrays for `electronArgs` and `electronEnv`. `help` is CLI-only. The `E2eConfig` type is also exported for JSDoc or TypeScript annotations.
+
+Precedence, from lowest to highest: built-in defaults, config, environment variables, explicit CLI arguments. CLI arrays replace configured arrays. Use `--no-headless` (or `--headless=false`) to override `headless: true`; the same applies to other boolean test options.
+
+```json
+{
+  "scripts": {
+    "e2e": "test-with-playwright",
+    "e2e:headless": "test-with-playwright --headless"
+  }
+}
+```
+
+`npm run e2e -- --headless` also loads the config and overrides only `headless`.
+
 ## CLI Flags
 
 - `--runtime`: `browser` (default) or `electron`
