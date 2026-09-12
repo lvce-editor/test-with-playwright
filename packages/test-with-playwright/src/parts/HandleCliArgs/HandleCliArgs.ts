@@ -60,9 +60,8 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     commandMap,
     coverage,
     cwd,
-    filter,
+    ...(filter !== undefined && { filter }),
     headless,
-    // @ts-ignore
     onlyExtension,
     reusePage,
     runtimeOptions,
@@ -77,7 +76,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     testPath,
     testWorkerUri,
     timeout,
-    traceFocus,
+    ...(traceFocus !== undefined && { traceFocus }),
     traceRendererWorker,
   })
 }

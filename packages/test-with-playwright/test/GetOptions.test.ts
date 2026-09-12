@@ -266,3 +266,8 @@ test('validates combinations after applying CLI overrides', () => {
   expect(() => GetOptions.getOptions({ argv: [], config, env: {} })).toThrow('only supported with Chromium')
   expect(GetOptions.getOptions({ argv: ['--browser=chromium'], config, env: {} }).browser).toBe('chromium')
 })
+
+test('defaults to no extension when none is configured', () => {
+  const options = GetOptions.getOptions({ argv: [], env: {} })
+  expect(options.onlyExtension).toBe('')
+})

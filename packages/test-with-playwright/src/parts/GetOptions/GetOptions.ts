@@ -15,11 +15,10 @@ interface Options {
   electronEnv?: string[]
   electronPath?: string
   electronVersion?: string
-  extensionPath: string
   filter?: string
   headless: boolean
   help: boolean
-  onlyExtension?: string
+  onlyExtension: string
   reusePage: boolean
   runtime: Runtime
   serverPath?: string
@@ -38,9 +37,9 @@ const reusePageDefaultTimeout = 600_000
 const defaultOptions: Options = {
   browser: 'chromium',
   coverage: false,
-  extensionPath: '',
   headless: false,
   help: false,
+  onlyExtension: '',
   reusePage: false,
   runtime: 'browser',
   testPath: '',
