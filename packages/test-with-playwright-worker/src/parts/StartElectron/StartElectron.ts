@@ -51,16 +51,16 @@ const createElectronLaunch = ({
   readonly signal: AbortSignal
   readonly userDataDir: string
 }): ElectronLaunch => {
-  let disposed = false
-  const dispose = async (): Promise<void> => {
-    if (disposed) {
-      return
+  let disposal: Promise<void> | undefined
+  const dispose = (): Promise<void> => {
+    if (disposal) {
+      return disposal
     }
-    disposed = true
     signal.removeEventListener('abort', handleAbort)
     process.off('SIGINT', handleSigint)
     process.off('SIGTERM', handleSigterm)
-    await closeElectron({ electronApp, userDataDir })
+    disposal = closeElectron({ electronApp, userDataDir })
+    return disposal
   }
   const handleAbort = (): void => {
     void dispose()

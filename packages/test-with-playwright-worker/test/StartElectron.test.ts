@@ -47,7 +47,7 @@ const prepareLaunch = (mode: string): any => {
     },
     signal: controller.signal,
   })
-  return { close, page, pending, state }
+  return { close, controller, page, pending, state }
 }
 
 test('keeps settings during the scenario and removes the isolated profile on disposal', async () => {
@@ -70,3 +70,23 @@ test.each(['launch failure', 'first window failure', 'cancel during launch'])(
     await expect(access(state.profile)).rejects.toThrow()
   },
 )
+
+test('disposal awaits cleanup already started by cancellation', async () => {
+  const { close, controller, pending, state } = prepareLaunch('success')
+  const app = await pending
+  const closing = Promise.withResolvers<void>()
+  close.mockImplementation(() => closing.promise)
+  controller.abort()
+  const disposal = app[Symbol.asyncDispose]()
+  let settled = false
+  const observedDisposal = (async (): Promise<void> => {
+    await disposal
+    settled = true
+  })()
+  await Promise.resolve()
+  expect(settled).toBe(false)
+  closing.resolve()
+  await observedDisposal
+  expect(close).toHaveBeenCalledTimes(1)
+  await expect(access(state.profile)).rejects.toThrow()
+})
