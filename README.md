@@ -71,6 +71,7 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--coverage`: collect JavaScript coverage with Chromium and write Istanbul reports to `coverage`
 - `--trace-focus`: add `traceFocus=true` to test URLs
+- `--trace-renderer-worker`: save renderer-worker command traces in `renderer-worker-traces/`
 - `--svg-screenshot-dir`: compare a self-contained SVG screenshot after each passing test with the browser-specific snapshot in this directory
 - `--svg-screenshot-selector`: capture only the first matching element, such as `.Explorer`; defaults to the application body
 - `--update-svg-screenshots`: create or update SVG screenshots in `--svg-screenshot-dir`
@@ -86,8 +87,20 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 - JavaScript coverage is available for Chromium-based browser and Electron runs. It prints a coverage table and writes `coverage/coverage-final.json`, `coverage/coverage-summary.json`, `coverage/coverage.txt`, and `coverage/lcov.info`.
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
+- Electron isolates `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_CACHE_HOME` and `XDG_STATE_HOME` beneath its temporary profile, overriding inherited values and `--electron-env` for these paths. The actual home directory is preserved. Profiles are removed after shutdown, including failed or cancelled launches.
 - `--electron-path` skips downloading and is useful for custom local builds.
 - SVG screenshots are not supported with `--reuse-page`, because that mode exposes only the final application state.
+
+## Renderer Worker Traces
+
+Use a server runtime containing the traced-test URL fix (`@lvce-editor/server` 0.115.5 or newer):
+
+```sh
+npm run e2e -- --headless --trace-renderer-worker
+npm run e2e -- --headless --reuse-page --trace-renderer-worker
+```
+
+Fresh-page runs write one JSON file per test; reused-page runs write `_all.json`. Each file contains an ordered `entries` array of renderer-worker commands with timestamps, directions and parameters. Check that the array is nonempty and includes the scenario's commands before relying on a capture. Save needed traces before starting another trace-enabled run, which clears the output directory.
 
 ## SVG Screenshot Tests
 

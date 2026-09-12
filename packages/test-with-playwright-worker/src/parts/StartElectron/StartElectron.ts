@@ -110,6 +110,7 @@ export const startElectron = async ({
       executablePath: launchOptions.executablePath,
       timeout: electronLaunchTimeout,
     })
+    signal.throwIfAborted()
     const page = await electronApp.firstWindow({ timeout: electronLaunchTimeout })
     signal.throwIfAborted()
     return createElectronLaunch({ electronApp, page, signal, userDataDir })
