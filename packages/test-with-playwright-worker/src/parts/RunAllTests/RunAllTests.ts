@@ -2,6 +2,7 @@ import { get } from '@lvce-editor/rpc-registry'
 import { join } from 'node:path'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as Assert from '../Assert/Assert.ts'
+import * as BrowserTraceTimeline from '../BrowserTraceTimeline/BrowserTraceTimeline.ts'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 import * as GetTests from '../GetTests/GetTests.ts'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
@@ -118,6 +119,9 @@ export const runAllTests = async (
     testPath,
   })
   try {
+    if (traceRendererWorker) {
+      await page.addInitScript(BrowserTraceTimeline.install)
+    }
     if (reusePage) {
       await RunWithJavascriptCoverage.runWithJavascriptCoverage({
         coverage,

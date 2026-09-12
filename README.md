@@ -100,7 +100,7 @@ npm run e2e -- --headless --trace-renderer-worker
 npm run e2e -- --headless --reuse-page --trace-renderer-worker
 ```
 
-Fresh-page runs write one JSON file per test; reused-page runs write `_all.json`. Each file contains an ordered `entries` array of renderer-worker commands with timestamps, directions and parameters. Check that the array is nonempty and includes the scenario's commands before relying on a capture. Save needed traces before starting another trace-enabled run, which clears the output directory.
+Fresh-page runs write one JSON file per test; reused-page runs write `_all.json`. Each file retains the runtime’s `entries` array and adds a `timeline` with message-port and worker traffic, input events and DOM mutations. Timeline entries have a shared sequence number, timestamp and channel ID for RPC traffic, so view render patches can be correlated with input and DOM changes. This is browser observation order; MutationObserver batches changes rather than timestamping each individual mutation. Check that `timeline.entries` includes the scenario’s commands, inputs and render mutations before relying on a capture. The timeline retains its most recent 5,000 events and reports `dropped` events. RPC payloads are bounded text previews (8,192 characters, with individual strings limited to 2,048) and carry a `truncated` flag; DOM records also contain bounded node summaries and original counts. Save needed traces before starting another trace-enabled run, which clears the output directory.
 
 ## SVG Screenshot Tests
 

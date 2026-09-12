@@ -8,7 +8,7 @@ const createPage = (text: string): any => {
     waitFor: jest.fn(async (): Promise<void> => {}),
   }
   return {
-    evaluate: jest.fn(async (): Promise<undefined> => undefined),
+    evaluate: jest.fn(async (): Promise<object> => ({ text: undefined, timeline: undefined })),
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testResults),
     waitForFunction: jest.fn(async (callback: (selector: string) => boolean, selector: string): Promise<void> => {
@@ -101,7 +101,7 @@ test('runTestsWithReusedPage navigates once and reports parsed results', async (
   })
 })
 
-test('runTestsWithReusedPage enables and exports renderer worker tracing', async () => {
+test('runTestsWithReusedPage enables renderer worker tracing and requests export', async () => {
   const page = createPage(
     JSON.stringify([
       {

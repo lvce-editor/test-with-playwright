@@ -28,18 +28,22 @@ export const exportTrace = async ({
   readonly page: Page
   readonly test: string
 }): Promise<boolean> => {
-  let text: string | undefined
+  let capture: { text: string | undefined; timeline: object | undefined }
   try {
-    text = await page.evaluate((traceSelector) => {
-      return globalThis.document.querySelector<HTMLScriptElement>(traceSelector)?.textContent || undefined
+    capture = await page.evaluate((traceSelector) => {
+      return {
+        text: globalThis.document.querySelector<HTMLScriptElement>(traceSelector)?.textContent || undefined,
+        timeline: (globalThis as any).__lvceTraceTimeline?.(),
+      }
     }, selector)
   } catch {
     return false
   }
-  if (!text) {
+  if (!capture.text && !capture.timeline) {
     return false
   }
-  JSON.parse(text)
-  await writeFile(join(directory, getFileName(test)), `${text}\n`)
+  const trace = capture.text ? JSON.parse(capture.text) : { entries: [], version: 1 }
+  if (capture.timeline) trace.timeline = capture.timeline
+  await writeFile(join(directory, getFileName(test)), `${JSON.stringify(trace)}\n`)
   return true
 }
