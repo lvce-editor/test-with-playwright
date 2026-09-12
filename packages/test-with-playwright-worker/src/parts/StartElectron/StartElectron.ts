@@ -51,16 +51,16 @@ const createElectronLaunch = ({
   readonly signal: AbortSignal
   readonly userDataDir: string
 }): ElectronLaunch => {
-  let disposed = false
-  const dispose = async (): Promise<void> => {
-    if (disposed) {
-      return
+  let disposal: Promise<void> | undefined
+  const dispose = (): Promise<void> => {
+    if (disposal) {
+      return disposal
     }
-    disposed = true
     signal.removeEventListener('abort', handleAbort)
     process.off('SIGINT', handleSigint)
     process.off('SIGTERM', handleSigterm)
-    await closeElectron({ electronApp, userDataDir })
+    disposal = closeElectron({ electronApp, userDataDir })
+    return disposal
   }
   const handleAbort = (): void => {
     void dispose()
@@ -97,11 +97,12 @@ export const startElectron = async ({
   readonly runtimeOptions: ElectronRuntimeOptions
   readonly signal: AbortSignal
 }): Promise<ElectronLaunch> => {
-  const launchOptions = GetElectronLaunchOptions.getElectronLaunchOptions(runtimeOptions)
   const userDataDir = await mkdtemp(join(tmpdir(), 'test-with-playwright-electron-'))
-  const args = GetElectronProcessArgs.getElectronProcessArgs({ args: launchOptions.args, userDataDir })
   let electronApp: ElectronApp | undefined
   try {
+    signal.throwIfAborted()
+    const launchOptions = GetElectronLaunchOptions.getElectronLaunchOptions(runtimeOptions, userDataDir)
+    const args = GetElectronProcessArgs.getElectronProcessArgs({ args: launchOptions.args, userDataDir })
     const { _electron } = await import('@playwright/test')
     electronApp = await _electron.launch({
       args: [...args],
@@ -109,7 +110,9 @@ export const startElectron = async ({
       executablePath: launchOptions.executablePath,
       timeout: electronLaunchTimeout,
     })
+    signal.throwIfAborted()
     const page = await electronApp.firstWindow({ timeout: electronLaunchTimeout })
+    signal.throwIfAborted()
     return createElectronLaunch({ electronApp, page, signal, userDataDir })
   } catch (error) {
     if (electronApp) {
