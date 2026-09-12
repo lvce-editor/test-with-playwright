@@ -4,19 +4,28 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import * as RendererWorkerTrace from '../src/parts/RendererWorkerTrace/RendererWorkerTrace.ts'
 
-const createPage = (text: string | undefined): any => {
+const createPage = (text: string | undefined, timeline?: object): any => {
   return {
     evaluate: jest.fn(async (callback: (selector: string) => string | undefined, selector: string) => {
       const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
-      Object.defineProperty(globalThis, 'document', {
-        configurable: true,
-        value: {
-          querySelector: () => (text === undefined ? null : { textContent: text }),
+      const originalTimeline = Object.getOwnPropertyDescriptor(globalThis, '__lvceTraceTimeline')
+      Object.defineProperties(globalThis, {
+        __lvceTraceTimeline: { configurable: true, value: () => timeline },
+        document: {
+          configurable: true,
+          value: {
+            querySelector: () => (text === undefined ? null : { textContent: text }),
+          },
         },
       })
       try {
         return callback(selector)
       } finally {
+        if (originalTimeline) {
+          Object.defineProperty(globalThis, '__lvceTraceTimeline', originalTimeline)
+        } else {
+          delete (globalThis as any).__lvceTraceTimeline
+        }
         if (originalDocument) {
           Object.defineProperty(globalThis, 'document', originalDocument)
         } else {
@@ -88,3 +97,23 @@ test('exportTrace ignores pages that cannot be evaluated', async () => {
     }),
   ).resolves.toBe(false)
 })
+
+test.each([undefined, '{"version":1,"entries":[]}'])(
+  'exports the timeline even without runtime trace data: %s',
+  async (text) => {
+    const directory = await mkdtemp(join(tmpdir(), 'trace-timeline-'))
+    const timeline = { entries: [{ kind: 'rpc-received', payload: 'render', sequence: 0 }], version: 1 }
+    try {
+      const result = await RendererWorkerTrace.exportTrace({
+        directory,
+        page: createPage(text, timeline),
+        test: 'sample.js',
+      })
+      expect(result).toBe(true)
+      const output = JSON.parse(await readFile(join(directory, 'sample.json'), 'utf8'))
+      expect(output).toEqual({ entries: [], timeline, version: 1 })
+    } finally {
+      await rm(directory, { force: true, recursive: true })
+    }
+  },
+)
