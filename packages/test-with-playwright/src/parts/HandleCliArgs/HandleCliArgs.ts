@@ -62,7 +62,6 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     cwd,
     filter,
     headless,
-    // @ts-ignore
     onlyExtension,
     reusePage,
     runtimeOptions,
