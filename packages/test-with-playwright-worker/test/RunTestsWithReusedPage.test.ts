@@ -74,7 +74,7 @@ test('runTestsWithReusedPage navigates once and reports parsed results', async (
   expect(page.goto).toHaveBeenCalledTimes(1)
   expect(page.goto).toHaveBeenCalledWith('http://localhost:1234/tests/_all.html?traceFocus=true&filter=A', {
     timeout: 1000,
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
   })
   expect(page.locator).toHaveBeenCalledWith('.TestResults')
   expect(page.waitForFunction).toHaveBeenCalledTimes(1)
@@ -147,7 +147,7 @@ test('runTestsWithReusedPage reports invalid json as _all.html failure', async (
   expect(page.goto).toHaveBeenCalledTimes(1)
   expect(page.goto).toHaveBeenCalledWith('http://localhost:1234/tests/_all.html', {
     timeout: 1000,
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
   })
   expect(onResult.mock.calls).toHaveLength(1)
   expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({
