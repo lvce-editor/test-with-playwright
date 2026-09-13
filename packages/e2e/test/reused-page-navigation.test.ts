@@ -22,8 +22,8 @@ test('reused page reports results while a background request remains pending', a
     })
     await page.route('**/tests/_all.html', async (route) => {
       await route.fulfill({
-        contentType: 'text/html',
         body: `<script>fetch('/pending')</script><div class="TestResults">[{"name":"example.js","status":"pass","start":0,"end":1}]</div>`,
+        contentType: 'text/html',
       })
     })
     const results: any[] = []
