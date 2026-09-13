@@ -1,7 +1,11 @@
 import { expect, test } from '@jest/globals'
 import { chromium, firefox, webkit } from '@playwright/test'
-import * as TestState from '../../test-with-playwright-worker/src/parts/TestState/TestState.ts'
-import * as RunTestsWithReusedPage from '../../test-with-playwright-worker/src/parts/RunTestsWithReusedPage/RunTestsWithReusedPage.ts'
+
+const workerSource = new URL('../../test-with-playwright-worker/src/parts/', import.meta.url)
+const RunTestsWithReusedPage = await import(
+  new URL('RunTestsWithReusedPage/RunTestsWithReusedPage.ts', workerSource).href
+)
+const TestState = await import(new URL('TestState/TestState.ts', workerSource).href)
 
 test('reused page reports results while a background request remains pending', async () => {
   const browserName = process.env['TEST_WITH_PLAYWRIGHT_BROWSER'] || 'chromium'
@@ -25,7 +29,7 @@ test('reused page reports results while a background request remains pending', a
     const results: any[] = []
     await RunTestsWithReusedPage.runTestsWithReusedPage({
       onFinalResult: async () => {},
-      onResult: async (result) => {
+      onResult: async (result: any) => {
         results.push(result)
       },
       page,
