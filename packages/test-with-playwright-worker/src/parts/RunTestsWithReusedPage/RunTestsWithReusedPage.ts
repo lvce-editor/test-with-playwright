@@ -163,7 +163,7 @@ export const runTestsWithReusedPage = async ({
     const url = getAllTestsUrl(port, filter, traceFocus ?? false, rendererWorkerTraceDirectory !== undefined)
     await page.goto(url, {
       timeout,
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     })
     const text = await readTestResultsText(page, timeout)
     results = parseTestResults(text)
