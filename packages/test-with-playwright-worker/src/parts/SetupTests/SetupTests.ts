@@ -11,6 +11,7 @@ import * as StartServer from '../StartServer/StartServer.ts'
 export const setupTests = async ({
   browser,
   headless,
+  link,
   onlyExtension,
   serverPath,
   signal,
@@ -19,6 +20,7 @@ export const setupTests = async ({
   readonly browser: 'chromium' | 'firefox' | 'webkit'
   readonly signal: AbortSignal
   readonly headless: boolean
+  readonly link?: readonly string[]
   readonly onlyExtension: string
   readonly testPath: string
   readonly serverPath?: string
@@ -30,7 +32,14 @@ export const setupTests = async ({
     signal,
   })
   const resolvedServerPath = await GetServerPath.getServerPath(serverPath)
-  const child = await StartServer.startServer({ onlyExtension, port, serverPath: resolvedServerPath, signal, testPath })
+  const child = await StartServer.startServer({
+    ...(link && link.length > 0 && { link }),
+    onlyExtension,
+    port,
+    serverPath: resolvedServerPath,
+    signal,
+    testPath,
+  })
   return {
     browser: browserInstance,
     child,

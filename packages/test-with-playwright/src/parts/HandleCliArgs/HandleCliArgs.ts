@@ -31,6 +31,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     electronVersion,
     filter,
     headless,
+    link,
     onlyExtension,
     reusePage,
     runtime,
@@ -52,6 +53,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     ...(electronPath && { electronPath }),
     ...(electronVersion && { electronVersion }),
     runtime,
+    ...(link && link.length > 0 && { link }),
     ...(serverPath && { serverPath }),
   })
 

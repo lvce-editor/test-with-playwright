@@ -16,6 +16,7 @@ import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
 
 export interface BrowserRuntimeOptions {
+  readonly link?: readonly string[]
   readonly serverPath?: string
   readonly type: 'browser'
 }
@@ -115,6 +116,7 @@ export const runAllTests = async (
     headless,
     onlyExtension: extensionPath,
     ...(runtimeOptions.serverPath && { serverPath: runtimeOptions.serverPath }),
+    ...(runtimeOptions.link && runtimeOptions.link.length > 0 && { link: runtimeOptions.link }),
     signal,
     testPath,
   })

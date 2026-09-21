@@ -1,24 +1,30 @@
 import { fork } from 'node:child_process'
 
+export const getServerArgs = (link: readonly string[] | undefined): string[] => {
+  return link?.flatMap((path) => ['--link', path]) || []
+}
+
 /**
  *
  * @param {{signal:AbortSignal, port:number, serverPath:string, onlyExtension:string, testPath:string}} param0
  * @returns
  */
 export const startServer = async ({
+  link,
   onlyExtension,
   port,
   serverPath,
   signal,
   testPath,
 }: {
+  link?: readonly string[]
   onlyExtension: string
   port: number
   serverPath: string
   signal: AbortSignal
   testPath: string
 }): Promise<any> => {
-  const child = fork(serverPath, {
+  const child = fork(serverPath, getServerArgs(link), {
     // signal,
     env: {
       ...process.env,

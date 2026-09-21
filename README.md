@@ -34,6 +34,7 @@ import { defineConfig } from '@lvce-editor/test-with-playwright'
 
 export default defineConfig({
   onlyExtension: '../extension',
+  link: ['../extension', '../linked fixture'],
   testPath: '.',
   serverPath: '../../node_modules/@lvce-editor/server/bin/server.js',
   reusePage: true,
@@ -43,6 +44,8 @@ export default defineConfig({
 The runner searches the current directory and its parents, using the nearest `e2e.config.js`. Paths in the config resolve relative to that file. CLI and environment paths remain relative to the working directory. Without a config file, existing CLI usage works as before.
 
 All test options below are supported with camelCase names (`onlyExtension`, `testPath`, `traceRendererWorker`, etc.). Use `runtime: 'electron'` for `--electron`, and string arrays for `electronArgs` and `electronEnv`. `help` is CLI-only. The `E2eConfig` type is also exported for JSDoc or TypeScript annotations.
+
+Use `link` to pass one or more extension directories to the browser server. Link paths resolve relative to `e2e.config.js`, and each path is forwarded as an individual `--link` argument, so paths containing spaces are supported.
 
 Precedence, from lowest to highest: built-in defaults, config, environment variables, explicit CLI arguments. CLI arrays replace configured arrays. Use `--no-headless` (or `--headless=false`) to override `headless: true`; the same applies to other boolean test options.
 

@@ -9,11 +9,13 @@ interface GetRuntimeOptionsOptions {
   readonly electronEnv?: readonly string[]
   readonly electronPath?: string
   readonly electronVersion?: string
+  readonly link?: readonly string[]
   readonly runtime?: string
   readonly serverPath?: string
 }
 
 interface BrowserRuntimeOptions {
+  readonly link?: readonly string[]
   readonly serverPath?: string
   readonly type: 'browser'
 }
@@ -43,10 +45,20 @@ const parseElectronEnv = (electronEnv: readonly string[] | undefined): Record<st
   return env
 }
 
-const getBrowserRuntimeOptions = (serverPath: string | undefined): BrowserRuntimeOptions => {
+const getBrowserRuntimeOptions = (
+  serverPath: string | undefined,
+  link: readonly string[] | undefined,
+): BrowserRuntimeOptions => {
   if (serverPath) {
     return {
+      ...(link && link.length > 0 && { link }),
       serverPath,
+      type: 'browser',
+    }
+  }
+  if (link && link.length > 0) {
+    return {
+      link,
       type: 'browser',
     }
   }
@@ -62,6 +74,7 @@ export const getRuntimeOptions = async ({
   electronEnv,
   electronPath,
   electronVersion,
+  link,
   runtime,
   serverPath,
 }: GetRuntimeOptionsOptions): Promise<BrowserRuntimeOptions | ElectronRuntimeOptions> => {
@@ -69,7 +82,7 @@ export const getRuntimeOptions = async ({
     throw new Error(`[test-with-playwright] unsupported runtime: ${runtime}`)
   }
   if (runtime !== 'electron') {
-    return getBrowserRuntimeOptions(serverPath)
+    return getBrowserRuntimeOptions(serverPath, link)
   }
   const cacheDir = resolve(cwd, electronCacheDir || '.test-with-playwright/electron')
   const version =

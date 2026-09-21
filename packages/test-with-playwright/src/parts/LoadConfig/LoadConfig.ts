@@ -34,6 +34,9 @@ const importConfig = async (path: string): Promise<E2eConfig> => {
         config[key] = resolve(dirname(path), config[key])
       }
     }
+    if (config.link !== undefined) {
+      config.link = config.link.map((linkPath) => resolve(dirname(path), linkPath))
+    }
     return config
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
