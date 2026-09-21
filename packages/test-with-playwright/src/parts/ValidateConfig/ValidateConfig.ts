@@ -10,6 +10,7 @@ const optionTypes = {
   electronVersion: 'string',
   filter: 'string',
   headless: 'boolean',
+  link: 'array',
   onlyExtension: 'string',
   reusePage: 'boolean',
   runtime: 'string',

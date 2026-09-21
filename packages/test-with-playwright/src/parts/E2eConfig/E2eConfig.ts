@@ -8,6 +8,7 @@ export interface E2eConfig {
   electronVersion?: string
   filter?: string
   headless?: boolean
+  link?: string[]
   onlyExtension?: string
   reusePage?: boolean
   runtime?: 'browser' | 'electron'

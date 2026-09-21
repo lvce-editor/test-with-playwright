@@ -18,6 +18,7 @@ interface Options {
   filter?: string
   headless: boolean
   help: boolean
+  link?: string[]
   onlyExtension: string
   reusePage: boolean
   runtime: Runtime

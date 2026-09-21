@@ -2,7 +2,11 @@ import { expect, test } from '@jest/globals'
 import { defineConfig } from '../src/api.ts'
 
 test('defineConfig returns typed options without starting the CLI', () => {
-  expect(defineConfig({ browser: 'firefox', headless: true })).toEqual({ browser: 'firefox', headless: true })
+  expect(defineConfig({ browser: 'firefox', headless: true, link: ['./extension'] })).toEqual({
+    browser: 'firefox',
+    headless: true,
+    link: ['./extension'],
+  })
 })
 
 test('defineConfig rejects invalid options during type checking', () => {

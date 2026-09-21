@@ -23,12 +23,13 @@ test('loads a default object and resolves paths relative to the config file', as
   const directory = await createDirectory()
   await writeFile(
     join(directory, 'e2e.config.js'),
-    "export default { testPath: './tests', onlyExtension: './extension', serverPath: './server.js', headless: false, reusePage: true }",
+    "export default { testPath: './tests', onlyExtension: './extension', link: ['./extension', './linked fixture'], serverPath: './server.js', headless: false, reusePage: true }",
   )
   const child = join(directory, 'packages', 'e2e')
   await mkdir(child, { recursive: true })
   expect(await LoadConfig.loadConfig(child)).toEqual({
     headless: false,
+    link: [join(directory, 'extension'), join(directory, 'linked fixture')],
     onlyExtension: join(directory, 'extension'),
     reusePage: true,
     serverPath: join(directory, 'server.js'),
@@ -59,6 +60,7 @@ test.each([
   'export default { timeout: 0 }',
   'export default { timeout: Infinity }',
   'export default { electronArgs: [1] }',
+  'export default { link: [1] }',
   'export default {',
   "import './missing.js'; export default {}",
 ])('reports the config path for invalid or broken configs: %s', async (source) => {

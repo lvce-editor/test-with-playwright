@@ -2,6 +2,7 @@ import { defineConfig } from '../../../../../dist/test-with-playwright/dist/api.
 
 export default defineConfig({
   headless: false,
+  link: ['../extension', '../linked fixture'],
   onlyExtension: '../extension',
   serverPath: '../../../../../node_modules/@lvce-editor/server/src/server.js',
   testPath: '.',

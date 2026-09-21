@@ -14,6 +14,18 @@ test('getRuntimeOptions returns browser runtime by default', async () => {
   })
 })
 
+test('getRuntimeOptions passes configured links to the browser runtime', async () => {
+  const result = await GetRuntimeOptions.getRuntimeOptions({
+    cwd: '/workspace/e2e',
+    link: ['/workspace/extension', '/workspace/linked extension'],
+  })
+
+  expect(result).toEqual({
+    link: ['/workspace/extension', '/workspace/linked extension'],
+    type: 'browser',
+  })
+})
+
 test('getRuntimeOptions returns electron runtime with path override', async () => {
   const result = await GetRuntimeOptions.getRuntimeOptions({
     cwd: '/workspace/e2e',
