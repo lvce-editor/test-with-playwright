@@ -1,4 +1,5 @@
 import { fork } from 'node:child_process'
+import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 
 export const getServerArgs = (link: readonly string[] | undefined): string[] => {
   return link?.flatMap((path) => ['--link', path]) || []
@@ -28,6 +29,7 @@ export const startServer = async ({
     // signal,
     env: {
       ...process.env,
+      HOST: TestServerHost.testServerHost,
       ONLY_EXTENSION: onlyExtension,
       PORT: String(port),
       TEST_PATH: testPath,

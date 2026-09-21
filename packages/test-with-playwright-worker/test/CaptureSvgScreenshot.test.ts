@@ -58,7 +58,7 @@ test('compareSvgScreenshot normalizes volatile server URLs and generated mask ic
   await expect(
     CaptureSvgScreenshot.compareSvgScreenshot({
       options: { ...options, update: false },
-      svg: '<svg><text>http://localhost:5678/tests/example.html</text><g class="MaskIconCustomViewdef456"/></svg>',
+      svg: '<svg><text>http://127.0.0.1:5678/tests/example.html</text><g class="MaskIconCustomViewdef456"/></svg>',
       test: 'sample.test.js',
     }),
   ).resolves.toBeUndefined()

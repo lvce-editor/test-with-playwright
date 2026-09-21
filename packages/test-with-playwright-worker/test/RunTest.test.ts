@@ -23,19 +23,19 @@ const createPage = ({
 
 test('getUrlFromTestFile enables renderer worker tracing', () => {
   expect(getUrlFromTestFile('viewlet.explorer-open.js', 3000, false, true)).toBe(
-    'http://localhost:3000/tests/viewlet.explorer-open.html?traceRendererWorker=true',
+    'http://127.0.0.1:3000/tests/viewlet.explorer-open.html?traceRendererWorker=true',
   )
 })
 
 test('getUrlFromTestFile combines tracing options', () => {
   expect(getUrlFromTestFile('viewlet.explorer-open.js', 3000, true, true)).toBe(
-    'http://localhost:3000/tests/viewlet.explorer-open.html?traceFocus=true&traceRendererWorker=true',
+    'http://127.0.0.1:3000/tests/viewlet.explorer-open.html?traceFocus=true&traceRendererWorker=true',
   )
 })
 
 test('getUrlFromTestFile omits tracing options when disabled', () => {
   expect(getUrlFromTestFile('viewlet.explorer-open.js', 3000, false, false)).toBe(
-    'http://localhost:3000/tests/viewlet.explorer-open.html',
+    'http://127.0.0.1:3000/tests/viewlet.explorer-open.html',
   )
 })
 
@@ -45,9 +45,9 @@ test('navigateToTest waits for the DOM instead of network idle', async () => {
     goto,
   }
 
-  await navigateToTest(page as any, 'http://localhost:3000/tests/about.open.html')
+  await navigateToTest(page as any, 'http://127.0.0.1:3000/tests/about.open.html')
 
-  expect(goto).toHaveBeenCalledWith('http://localhost:3000/tests/about.open.html', {
+  expect(goto).toHaveBeenCalledWith('http://127.0.0.1:3000/tests/about.open.html', {
     waitUntil: 'domcontentloaded',
   })
 })
