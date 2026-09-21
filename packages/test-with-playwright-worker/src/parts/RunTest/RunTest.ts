@@ -3,6 +3,7 @@ import { basename } from 'node:path'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
+import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 /**
@@ -18,7 +19,7 @@ export const getUrlFromTestFile = (
 ): string => {
   const baseName = basename(absolutePath)
   const htmlFileName = baseName.slice(0, -'.js'.length) + '.html'
-  const url = new URL(`http://localhost:${port}/tests/${htmlFileName}`)
+  const url = new URL(`http://${TestServerHost.testServerHost}:${port}/tests/${htmlFileName}`)
   if (traceFocus) {
     url.searchParams.set('traceFocus', 'true')
   }

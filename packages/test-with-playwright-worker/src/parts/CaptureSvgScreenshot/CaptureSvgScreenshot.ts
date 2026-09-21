@@ -9,7 +9,7 @@ import * as IsEnoentError from '../IsEnoentError/IsEnoentError.ts'
 const browserScriptCache: { promise?: Promise<string> } = {}
 const fileExtensionRegex = /\.[^.]+$/
 const generatedMaskIconClassRegex = /\bMaskIconCustomView[a-z0-9]+\b/g
-const localServerUrlRegex = /http:\/\/localhost:\d+/g
+const localServerUrlRegex = /http:\/\/(?:localhost|127\.0\.0\.1):\d+/g
 const tagBoundaryRegex = />\s*</g
 
 const getBrowserScriptCandidates = (): readonly string[] => {

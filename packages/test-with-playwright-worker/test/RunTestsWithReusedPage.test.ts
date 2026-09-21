@@ -72,7 +72,7 @@ test('runTestsWithReusedPage navigates once and reports parsed results', async (
   })
 
   expect(page.goto).toHaveBeenCalledTimes(1)
-  expect(page.goto).toHaveBeenCalledWith('http://localhost:1234/tests/_all.html?traceFocus=true&filter=A', {
+  expect(page.goto).toHaveBeenCalledWith('http://127.0.0.1:1234/tests/_all.html?traceFocus=true&filter=A', {
     timeout: 1000,
     waitUntil: 'domcontentloaded',
   })
@@ -125,7 +125,7 @@ test('runTestsWithReusedPage enables renderer worker tracing and requests export
   })
 
   expect(page.goto).toHaveBeenCalledWith(
-    'http://localhost:1234/tests/_all.html?traceRendererWorker=true',
+    'http://127.0.0.1:1234/tests/_all.html?traceRendererWorker=true',
     expect.anything(),
   )
   expect(page.evaluate).toHaveBeenCalledTimes(1)
@@ -145,7 +145,7 @@ test('runTestsWithReusedPage reports invalid json as _all.html failure', async (
   })
 
   expect(page.goto).toHaveBeenCalledTimes(1)
-  expect(page.goto).toHaveBeenCalledWith('http://localhost:1234/tests/_all.html', {
+  expect(page.goto).toHaveBeenCalledWith('http://127.0.0.1:1234/tests/_all.html', {
     timeout: 1000,
     waitUntil: 'domcontentloaded',
   })

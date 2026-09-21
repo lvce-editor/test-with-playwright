@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
+import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 interface TestResult {
@@ -31,7 +32,7 @@ const getAllTestsUrl = (
   traceFocus: boolean,
   traceRendererWorker: boolean,
 ): string => {
-  const url = new URL(`http://localhost:${port}/tests/_all.html`)
+  const url = new URL(`http://${TestServerHost.testServerHost}:${port}/tests/_all.html`)
   if (traceFocus) {
     url.searchParams.set('traceFocus', 'true')
   }
