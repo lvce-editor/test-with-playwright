@@ -1,4 +1,5 @@
 import type { chromium as PlaywrightChromium } from '@playwright/test'
+import * as GetBrowserLaunchArgs from '../GetBrowserLaunchArgs/GetBrowserLaunchArgs.ts'
 import * as PatchPlaywrightFirefoxWorkerWebSocket from '../PatchPlaywrightFirefoxWorkerWebSocket/PatchPlaywrightFirefoxWorkerWebSocket.ts'
 
 type Browser = 'chromium' | 'firefox' | 'webkit'
@@ -35,6 +36,7 @@ export const startBrowser = async ({
   }
   const launcher = await getLauncher(browser)
   const browserInstance = await launcher.launch({
+    args: GetBrowserLaunchArgs.getBrowserLaunchArgs(browser),
     headless,
   })
   const page = await browserInstance.newPage()
