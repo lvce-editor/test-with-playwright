@@ -90,6 +90,7 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 - JavaScript coverage is available for Chromium-based browser and Electron runs. It prints a coverage table and writes `coverage/coverage-final.json`, `coverage/coverage-summary.json`, `coverage/coverage.txt`, and `coverage/lcov.info`.
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
+- Chromium uses a fresh temporary disk-backed profile for each run. This avoids a Chromium 153 crash when reading OPFS filesystem handles from in-memory IndexedDB. Playwright removes the profile when the context closes, and teardown awaits that cleanup.
 - Electron isolates `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_CACHE_HOME` and `XDG_STATE_HOME` beneath its temporary profile, overriding inherited values and `--electron-env` for these paths. The actual home directory is preserved. Profiles are removed after shutdown, including failed or cancelled launches.
 - `--electron-path` skips downloading and is useful for custom local builds.
 - SVG screenshots are not supported with `--reuse-page`, because that mode exposes only the final application state.

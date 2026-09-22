@@ -111,7 +111,7 @@ export const runAllTests = async (
     })
     return
   }
-  const { child, page, port } = await SetupTests.setupTests({
+  const { child, dispose, page, port } = await SetupTests.setupTests({
     browser,
     headless,
     onlyExtension: extensionPath,
@@ -171,9 +171,13 @@ export const runAllTests = async (
       },
     })
   } finally {
-    await TearDownTests.tearDownTests({
-      child,
-      controller,
-    })
+    try {
+      await TearDownTests.tearDownTests({
+        child,
+        controller,
+      })
+    } finally {
+      await dispose()
+    }
   }
 }

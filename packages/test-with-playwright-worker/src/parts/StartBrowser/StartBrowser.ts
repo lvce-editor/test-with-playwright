@@ -30,24 +30,38 @@ export const startBrowser = async ({
   readonly browser: Browser
   readonly signal: AbortSignal
   readonly headless: boolean
-}): Promise<{ browser: any; page: any }> => {
+}): Promise<{ browser: any; page: any; dispose: () => Promise<void> }> => {
   if (browser === 'firefox') {
     await PatchPlaywrightFirefoxWorkerWebSocket.patchPlaywrightFirefoxWorkerWebSocket()
   }
   const launcher = await getLauncher(browser)
-  const browserInstance = await launcher.launch({
+  signal.throwIfAborted()
+  const options = {
     args: GetBrowserLaunchArgs.getBrowserLaunchArgs(browser),
     headless,
-  })
-  const page = await browserInstance.newPage()
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  signal.addEventListener('abort', async () => {
-    await page.close()
-    await browserInstance.close()
-  })
-  // @ts-ignore
-  return {
-    browser: browserInstance,
-    page,
+  }
+  // Chromium 153 crashes when restoring OPFS handles from its in-memory IndexedDB backend.
+  // An empty userDataDir gives each run a temporary disk-backed profile managed by Playwright.
+  const browserInstance =
+    browser === 'chromium' ? await launcher.launchPersistentContext('', options) : await launcher.launch(options)
+  let disposal: Promise<void> | undefined
+  const dispose = (): Promise<void> => {
+    signal.removeEventListener('abort', handleAbort)
+    disposal ||= browserInstance.close()
+    return disposal
+  }
+  const handleAbort = (): void => {
+    // The caller awaits disposal during teardown, including any cleanup error.
+    void dispose().catch(() => {})
+  }
+  signal.addEventListener('abort', handleAbort, { once: true })
+  try {
+    signal.throwIfAborted()
+    const page = await browserInstance.newPage()
+    signal.throwIfAborted()
+    return { browser: browserInstance, dispose, page }
+  } catch (error) {
+    await dispose()
+    throw error
   }
 }
