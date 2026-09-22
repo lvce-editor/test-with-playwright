@@ -44,7 +44,7 @@
     }
   },
   "dependencies": {
-    "@lvce-editor/rpc": "^6.19.3",
+    "@lvce-editor/rpc": "^6.21.0",
     "minimist": "^1.2.8"
   },
   "devDependencies": {
