@@ -44,7 +44,7 @@
     }
   },
   "dependencies": {
-    "@lvce-editor/rpc": "^6.19.3",
+    "@lvce-editor/rpc": "^6.21.0",
     "istanbul-lib-coverage": "^3.2.2",
     "istanbul-lib-report": "^3.0.1",
     "istanbul-reports": "^3.2.0",
