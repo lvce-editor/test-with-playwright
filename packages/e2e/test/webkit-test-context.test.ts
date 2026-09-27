@@ -74,5 +74,7 @@ if (process.env['TEST_WITH_PLAYWRIGHT_BROWSER'] === 'webkit') {
     }
   })
 } else {
-  test.skip('WebKit context isolation requires WebKit', () => {})
+  test.skip('WebKit context isolation requires WebKit', () => {
+    expect(process.env['TEST_WITH_PLAYWRIGHT_BROWSER']).toBe('webkit')
+  })
 }
