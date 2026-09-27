@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
+import * as BrowserTraceTimeline from '../BrowserTraceTimeline/BrowserTraceTimeline.ts'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import * as RunTest from '../RunTest/RunTest.ts'
 import * as TestState from '../TestState/TestState.ts'
@@ -55,22 +56,35 @@ export const runTests = async ({
   // Filter tests if a filter is provided
   const filteredTests = filter ? tests.filter((test) => test.includes(filter)) : tests
   for (const test of filteredTests) {
-    const result = await RunTest.runTest({
-      page,
-      port,
-      test,
-      testSrc,
-      timeout,
-      traceFocus: traceFocus ?? false,
-      traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
-      ...(svgScreenshotOptions && { svgScreenshotOptions }),
-    })
-    if (rendererWorkerTraceDirectory) {
-      await RendererWorkerTrace.exportTrace({
-        directory: rendererWorkerTraceDirectory,
-        page,
+    // WebKit can hang when navigation tears down the previous test's workers.
+    // Close an isolated context instead of navigating a live worker document.
+    const browser = page.context().browser()
+    const context = browser?.browserType().name() === 'webkit' ? await browser.newContext() : undefined
+    let result
+    try {
+      const testPage = context ? await context.newPage() : page
+      if (context && rendererWorkerTraceDirectory) {
+        await testPage.addInitScript(BrowserTraceTimeline.install)
+      }
+      result = await RunTest.runTest({
+        page: testPage,
+        port,
         test,
+        testSrc,
+        timeout,
+        traceFocus: traceFocus ?? false,
+        traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
+        ...(svgScreenshotOptions && { svgScreenshotOptions }),
       })
+      if (rendererWorkerTraceDirectory) {
+        await RendererWorkerTrace.exportTrace({
+          directory: rendererWorkerTraceDirectory,
+          page: testPage,
+          test,
+        })
+      }
+    } finally {
+      await context?.close()
     }
     await onResult(result)
     // @ts-ignore
