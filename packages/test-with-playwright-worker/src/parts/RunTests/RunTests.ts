@@ -1,6 +1,5 @@
 import type { Page } from '@playwright/test'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
-import * as BrowserTraceTimeline from '../BrowserTraceTimeline/BrowserTraceTimeline.ts'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import * as RunTest from '../RunTest/RunTest.ts'
 import * as TestState from '../TestState/TestState.ts'
@@ -64,7 +63,8 @@ export const runTests = async ({
     try {
       const testPage = context ? await context.newPage() : page
       if (context && rendererWorkerTraceDirectory) {
-        await testPage.addInitScript(BrowserTraceTimeline.install)
+        const { install } = await import('../BrowserTraceTimeline/BrowserTraceTimeline.ts')
+        await testPage.addInitScript(install)
       }
       result = await RunTest.runTest({
         page: testPage,

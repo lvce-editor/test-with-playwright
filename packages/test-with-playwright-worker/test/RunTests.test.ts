@@ -9,10 +9,13 @@ const createHarness = (browserName = 'webkit'): any => {
     const overlay = {
       _apiName: 'Locator',
       _expect: jest.fn(async () => ({ matches: true })),
-      getAttribute: jest.fn(async () => 'pass'),
+      getAttribute: jest.fn(async () => (browserName === 'skip' ? 'skip' : 'pass')),
       textContent: jest.fn(async () => ''),
     }
     return {
+      addInitScript: jest.fn(async () => {
+        events.push(`trace-init ${id}`)
+      }),
       context: () => ({ browser: () => browser }),
       goto: jest.fn(async () => {
         events.push(`navigate ${id}`)
@@ -96,4 +99,47 @@ test.each(['chromium', 'firefox'])('%s keeps using the supplied page', async (br
   await RunTests.runTests(options)
   expect(browser.newContext).not.toHaveBeenCalled()
   expect(page.goto).toHaveBeenCalledTimes(2)
+})
+
+test('a persistent Chromium context without a Browser keeps the supplied page', async () => {
+  const { options, page } = createHarness()
+  page.context = (): { browser: () => null } => ({ browser: (): null => null })
+  await RunTests.runTests(options)
+  expect(page.goto).toHaveBeenCalledTimes(2)
+})
+
+test('filtered-out tests do not create contexts or report results', async () => {
+  const { browser, options } = createHarness()
+  await RunTests.runTests({ ...options, filter: 'missing' })
+  expect(browser.newContext).not.toHaveBeenCalled()
+  expect(options.onResult).not.toHaveBeenCalled()
+  expect(options.onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ failed: 0, passed: 0, skipped: 0 }))
+})
+
+test('skipped overlays are counted without being reported as passes', async () => {
+  const { options } = createHarness('skip')
+  await RunTests.runTests(options)
+  expect(options.onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ failed: 0, passed: 0, skipped: 2 }))
+})
+
+test('tracing exports from the supplied page for non-WebKit browsers', async () => {
+  const { events, options, page } = createHarness('firefox')
+  page.evaluate = jest.fn(async (): Promise<object> => {
+    events.push('trace-export')
+    return { text: undefined, timeline: undefined }
+  })
+  await RunTests.runTests({ ...options, rendererWorkerTraceDirectory: '/unused', traceFocus: true })
+  expect(events).toEqual(['navigate 0', 'trace-export', 'result', 'navigate 0', 'trace-export', 'result'])
+  expect(page.addInitScript).not.toHaveBeenCalled()
+})
+
+test('screenshot capture failures still close the WebKit context', async () => {
+  const { contexts, options } = createHarness()
+  await RunTests.runTests({
+    ...options,
+    svgScreenshotOptions: { directory: '/unused', name: 'webkit', update: false },
+    tests: ['first.js'],
+  })
+  expect(contexts[0].close).toHaveBeenCalledTimes(1)
+  expect(options.onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ failed: 1, passed: 0, skipped: 0 }))
 })
