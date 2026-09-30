@@ -4,6 +4,8 @@ export const getHelpMessage = (): string => {
 Options:
   --browser=<browser>       Browser to run tests in: chromium, firefox, or webkit
   --coverage                Collect JavaScript coverage and write Istanbul reports
+  --coverage-target          Collect Chromium worker coverage for a matching script URL
+  --coverage-threshold       Enforce the worker line coverage percentage (requires a target)
   --runtime=<runtime>       Runtime to run tests in: browser or electron
   --electron                Run tests in Electron and infer the matching Lvce version
   --filter=<pattern>        Only run tests matching the filter

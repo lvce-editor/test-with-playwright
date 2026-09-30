@@ -21,6 +21,22 @@ export interface BrowserRuntimeOptions {
   readonly type: 'browser'
 }
 
+const assertCoverageOptions = (
+  coverageTarget: string | undefined,
+  coverageInclude: string | undefined,
+  coverageThreshold: number | undefined,
+): void => {
+  if (coverageTarget !== undefined) {
+    Assert.string(coverageTarget)
+  }
+  if (coverageInclude !== undefined) {
+    Assert.string(coverageInclude)
+  }
+  if (coverageThreshold !== undefined) {
+    Assert.number(coverageThreshold)
+  }
+}
+
 export interface ElectronRuntimeOptions {
   readonly args: readonly string[]
   readonly env: Record<string, string>
@@ -55,6 +71,9 @@ export const runAllTests = async (
   reusePage: boolean,
   svgScreenshotOptions: SvgScreenshotOptions | undefined,
   coverage: boolean,
+  coverageInclude: string | undefined,
+  coverageTarget: string | undefined,
+  coverageThreshold: number | undefined,
   traceRendererWorker: boolean,
 ): Promise<void> => {
   Assert.string(extensionPath)
@@ -66,6 +85,7 @@ export const runAllTests = async (
   Assert.object(runtimeOptions)
   Assert.boolean(reusePage)
   Assert.boolean(coverage)
+  assertCoverageOptions(coverageTarget, coverageInclude, coverageThreshold)
   Assert.boolean(traceRendererWorker)
   if (svgScreenshotOptions !== undefined) {
     Assert.object(svgScreenshotOptions)
@@ -93,6 +113,9 @@ export const runAllTests = async (
     })
     await RunWithJavascriptCoverage.runWithJavascriptCoverage({
       coverage,
+      ...(coverageTarget !== undefined && { coverageTarget }),
+      ...(coverageInclude !== undefined && { coverageInclude }),
+      ...(coverageThreshold !== undefined && { coverageThreshold }),
       cwd,
       page: electron.page,
       run: async () => {
@@ -127,6 +150,9 @@ export const runAllTests = async (
     if (reusePage) {
       await RunWithJavascriptCoverage.runWithJavascriptCoverage({
         coverage,
+        ...(coverageTarget !== undefined && { coverageTarget }),
+        ...(coverageInclude !== undefined && { coverageInclude }),
+        ...(coverageThreshold !== undefined && { coverageThreshold }),
         cwd,
         page,
         run: async () => {

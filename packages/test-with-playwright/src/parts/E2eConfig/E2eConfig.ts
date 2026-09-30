@@ -1,6 +1,9 @@
 export interface E2eConfig {
   browser?: 'chromium' | 'firefox' | 'webkit'
   coverage?: boolean
+  coverageInclude?: string
+  coverageTarget?: string
+  coverageThreshold?: number
   electronArgs?: string[]
   electronCacheDir?: string
   electronEnv?: string[]

@@ -38,6 +38,9 @@ export default defineConfig({
   testPath: '.',
   serverPath: '../../node_modules/@lvce-editor/server/bin/server.js',
   reusePage: true,
+  coverageTarget: 'aboutWorkerMain.js',
+  coverageInclude: 'packages/about-view/src/',
+  coverageThreshold: 75,
 })
 ```
 
@@ -73,6 +76,9 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 - `--timeout`: test timeout in milliseconds, defaults to `30000` or `600000` with `--reuse-page`
 - `--browser`: browser engine to launch: `chromium`, `firefox`, or `webkit`
 - `--coverage`: collect JavaScript coverage with Chromium and write Istanbul reports to `coverage`
+- `coverageTarget`: collect coverage from matching Chromium dedicated-worker script URLs (config option)
+- `coverageInclude`: restrict worker reports and their threshold to source paths containing this text (config option)
+- `coverageThreshold`: require this worker line-coverage percentage from 0 to 100 (config option)
 - `--trace-focus`: add `traceFocus=true` to test URLs
 - `--trace-renderer-worker`: save renderer-worker command traces in `renderer-worker-traces/`
 - `--svg-screenshot-dir`: compare a self-contained SVG screenshot after each passing test with the browser-specific snapshot in this directory
@@ -88,6 +94,7 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 
 - `browser` keeps the server-backed HTML test execution flow.
 - JavaScript coverage is available for Chromium-based browser and Electron runs. It prints a coverage table and writes `coverage/coverage-final.json`, `coverage/coverage-summary.json`, `coverage/coverage.txt`, and `coverage/lcov.info`.
+- `coverageTarget` pauses a matching dedicated worker before its script runs, then writes source-mapped Istanbul reports under `coverage/worker` and applies `coverageThreshold` to line coverage. `coverageInclude` can restrict both the report and threshold to source-map paths for one project. Missing worker coverage fails the run. Firefox and WebKit still run normally; they print a notice and skip worker collection and its threshold because their worker debugging protocols are not supported.
 - `--reuse-page` is browser-only. It loads `/tests/_all.html` once and reads JSON results from a hidden `.TestResults` element.
 - `electron` downloads or reuses the matching Lvce Electron app, launches it with Playwright and a temporary user data directory, and runs each test module against the first window.
 - Chromium uses a fresh temporary disk-backed profile for each run. This avoids a Chromium 153 crash when reading OPFS filesystem handles from in-memory IndexedDB. Playwright removes the profile when the context closes, and teardown awaits that cleanup.

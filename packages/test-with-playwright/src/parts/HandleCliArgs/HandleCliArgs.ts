@@ -14,6 +14,28 @@ interface HandleCliArgsParams {
   env: NodeJS.ProcessEnv
 }
 
+const getCoverageOptions = ({
+  coverageInclude,
+  coverageTarget,
+  coverageThreshold,
+}: {
+  readonly coverageInclude?: string | undefined
+  readonly coverageTarget?: string | undefined
+  readonly coverageThreshold?: number | undefined
+}): { coverageInclude?: string; coverageTarget?: string; coverageThreshold?: number } => {
+  const options: { coverageInclude?: string; coverageTarget?: string; coverageThreshold?: number } = {}
+  if (coverageInclude) {
+    options.coverageInclude = coverageInclude
+  }
+  if (coverageTarget) {
+    options.coverageTarget = coverageTarget
+  }
+  if (coverageThreshold !== undefined) {
+    options.coverageThreshold = coverageThreshold
+  }
+  return options
+}
+
 export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<HandleCliArgsParams>): Promise<void> => {
   if (ParseCliArgs.parseCliArgs(argv).help) {
     console.info(GetHelpMessage.getHelpMessage())
@@ -24,6 +46,9 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
   const {
     browser,
     coverage,
+    coverageInclude,
+    coverageTarget,
+    coverageThreshold,
     electronArgs,
     electronCacheDir,
     electronEnv,
@@ -61,6 +86,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     browser,
     commandMap,
     coverage,
+    ...getCoverageOptions({ coverageInclude, coverageTarget, coverageThreshold }),
     cwd,
     ...(filter !== undefined && { filter }),
     headless,

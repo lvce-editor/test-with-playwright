@@ -6,6 +6,9 @@ interface RunAllTestsParams {
   browser: 'chromium' | 'firefox' | 'webkit'
   commandMap: any
   coverage: boolean
+  coverageInclude?: string
+  coverageTarget?: string
+  coverageThreshold?: number
   cwd: string
   filter?: string
   headless: boolean
@@ -29,6 +32,9 @@ export const runAllTests = async ({
   browser,
   commandMap,
   coverage,
+  coverageInclude,
+  coverageTarget,
+  coverageThreshold,
   cwd,
   filter,
   headless,
@@ -64,6 +70,9 @@ export const runAllTests = async ({
     reusePage,
     svgScreenshotOptions,
     coverage,
+    coverageInclude,
+    coverageTarget,
+    coverageThreshold,
     traceRendererWorker,
   )
   await rpc.dispose()
