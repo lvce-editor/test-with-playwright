@@ -3,6 +3,9 @@ import parseArgv from 'minimist'
 interface ParsedCliArgs {
   browser?: string
   coverage?: boolean
+  coverageInclude?: string
+  coverageTarget?: string
+  coverageThreshold?: number
   electronArgs?: string[]
   electronCacheDir?: string
   electronEnv?: string[]
@@ -52,6 +55,14 @@ const toPositiveNumber = (value: unknown, name: string): number => {
   return number
 }
 
+const toPercentage = (value: unknown): number => {
+  const number = Number(toCliString(value))
+  if (!Number.isFinite(number) || number < 0 || number > 100) {
+    throw new TypeError('expected --coverage-threshold to be a percentage from 0 to 100')
+  }
+  return number
+}
+
 const setOptionalPositiveNumber = (
   result: ParsedCliArgs,
   key: keyof ParsedCliArgs,
@@ -92,6 +103,11 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
     result.browser = String(parsed.browser)
   }
   setFlag(result, 'coverage', parsed.coverage)
+  setOptionalString(result, 'coverageTarget', parsed['coverage-target'])
+  setOptionalString(result, 'coverageInclude', parsed['coverage-include'])
+  if (parsed['coverage-threshold'] !== undefined) {
+    result.coverageThreshold = toPercentage(parsed['coverage-threshold'])
+  }
   const runtime = getRuntime(parsed)
   if (runtime) {
     result.runtime = runtime

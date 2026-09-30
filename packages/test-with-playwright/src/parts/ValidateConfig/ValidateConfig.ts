@@ -3,6 +3,9 @@ import type { E2eConfig } from '../E2eConfig/E2eConfig.ts'
 const optionTypes = {
   browser: 'string',
   coverage: 'boolean',
+  coverageInclude: 'string',
+  coverageTarget: 'string',
+  coverageThreshold: 'number',
   electronArgs: 'array',
   electronCacheDir: 'string',
   electronEnv: 'array',

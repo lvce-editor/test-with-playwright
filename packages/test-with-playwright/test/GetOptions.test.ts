@@ -46,6 +46,53 @@ test('getOptions reads coverage from cli args', () => {
   expect(options.coverage).toBe(true)
 })
 
+test('getOptions reads worker coverage from config', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    config: { coverageTarget: 'aboutWorkerMain.js', coverageThreshold: 75 },
+    env: {},
+  })
+
+  expect(options).toMatchObject({ coverageTarget: 'aboutWorkerMain.js', coverageThreshold: 75 })
+})
+
+test('getOptions skips worker coverage for non-Chromium browser runs', () => {
+  const options = GetOptions.getOptions({
+    argv: [],
+    config: {
+      browser: 'firefox',
+      coverageInclude: 'packages/about-view/src/',
+      coverageTarget: 'aboutWorkerMain.js',
+      coverageThreshold: 75,
+    },
+    env: {},
+  })
+  expect(options.browser).toBe('firefox')
+  expect(options).not.toHaveProperty('coverageInclude')
+  expect(options).not.toHaveProperty('coverageTarget')
+  expect(options).not.toHaveProperty('coverageThreshold')
+})
+
+test('getOptions validates worker coverage runtime and threshold', () => {
+  expect(() =>
+    GetOptions.getOptions({ argv: [], config: { coverageTarget: 'aboutWorkerMain.js', runtime: 'electron' }, env: {} }),
+  ).toThrow('coverageTarget is only supported with the browser runtime')
+  expect(() =>
+    GetOptions.getOptions({
+      argv: [],
+      config: { coverageTarget: 'aboutWorkerMain.js', coverageThreshold: 101 },
+      env: {},
+    }),
+  ).toThrow('coverageThreshold must be a number from 0 to 100')
+  expect(() =>
+    GetOptions.getOptions({
+      argv: [],
+      config: { coverageThreshold: 80 },
+      env: {},
+    }),
+  ).toThrow('coverageThreshold requires coverageTarget')
+})
+
 test('getOptions rejects coverage in Firefox', () => {
   expect(() =>
     GetOptions.getOptions({
