@@ -107,4 +107,7 @@ test('normalizeCoveragePath removes the temporary server root', () => {
     '/packages/renderer-process/dist/main.js',
   )
   expect(CreateJavascriptCoverage.normalizeCoveragePath('/src/example.js')).toBe('/src/example.js')
+  expect(CreateJavascriptCoverage.normalizeCoveragePath('D:\\0b98511\\packages\\about-view\\src\\example.ts')).toBe(
+    '/packages/about-view/src/example.ts',
+  )
 })

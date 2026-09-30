@@ -8,6 +8,7 @@ const externalSourceMapCommentRegex =
   /(?:\/\/[#@]\s*sourceMappingURL=(?!data:).*?$|\/\*[#@]\s*sourceMappingURL=(?!data:).*?\*\/)/gm
 const externalSourceMapUrlRegex = /(?:\/\/[#@]|\/\*[#@])\s*sourceMappingURL=(?!data:)([^\s*]+)/
 const temporaryServerRootRegex = /^\/[a-f\d]{7,}(?=\/(?:js|packages)\/)/
+const windowsDrivePrefixRegex = /^[a-z]:/i
 
 const getExternalSourceMap = async (source: string, url: string): Promise<{ sourcemap: object } | undefined> => {
   const sourceMapUrl = source.match(externalSourceMapUrlRegex)?.[1]
@@ -22,7 +23,7 @@ const getExternalSourceMap = async (source: string, url: string): Promise<{ sour
 }
 
 export const normalizeCoveragePath = (path: string): string => {
-  return path.replace(temporaryServerRootRegex, '')
+  return path.replaceAll('\\', '/').replace(windowsDrivePrefixRegex, '').replace(temporaryServerRootRegex, '')
 }
 
 const normalizeCoverageData = (coverageData: CoverageMapData): CoverageMapData => {
