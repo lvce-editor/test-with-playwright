@@ -6,7 +6,20 @@ export type { JavascriptCoverageEntry } from '../JavascriptCoverageEntry/Javascr
 
 const externalSourceMapCommentRegex =
   /(?:\/\/[#@]\s*sourceMappingURL=(?!data:).*?$|\/\*[#@]\s*sourceMappingURL=(?!data:).*?\*\/)/gm
+const externalSourceMapUrlRegex = /(?:\/\/[#@]|\/\*[#@])\s*sourceMappingURL=(?!data:)([^\s*]+)/
 const temporaryServerRootRegex = /^\/[a-f\d]{7,}(?=\/(?:js|packages)\/)/
+
+const getExternalSourceMap = async (source: string, url: string): Promise<{ sourcemap: object } | undefined> => {
+  const sourceMapUrl = source.match(externalSourceMapUrlRegex)?.[1]
+  if (!sourceMapUrl) {
+    return undefined
+  }
+  const response = await fetch(new URL(sourceMapUrl, url))
+  if (!response.ok) {
+    throw new Error(`[test-with-playwright] failed to fetch worker source map ${sourceMapUrl}: ${response.status}`)
+  }
+  return { sourcemap: (await response.json()) as object }
+}
 
 export const normalizeCoveragePath = (path: string): string => {
   return path.replace(temporaryServerRootRegex, '')
@@ -44,8 +57,9 @@ const addEntryToCoverageMap = async (coverageMap: CoverageMap, entry: Javascript
   if (!entry.source || !entry.url || isTestScript(entry.url)) {
     return
   }
+  const sourceMap = await getExternalSourceMap(entry.source, entry.url)
   const source = entry.source.replaceAll(externalSourceMapCommentRegex, '')
-  const converter = v8ToIstanbul(getCoveragePath(entry.url), 0, { source })
+  const converter = v8ToIstanbul(getCoveragePath(entry.url), 0, { source, ...(sourceMap && { sourceMap }) })
   await converter.load()
   converter.applyCoverage(entry.functions)
   coverageMap.merge(normalizeCoverageData(converter.toIstanbul()))
