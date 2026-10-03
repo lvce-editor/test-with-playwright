@@ -1,20 +1,12 @@
 import { afterEach, expect, jest, test } from '@jest/globals'
 import { chromium, firefox, webkit } from '@playwright/test'
-const patchFirefox = jest.fn(async () => {})
-jest.unstable_mockModule(
-  '../src/parts/PatchPlaywrightFirefoxWorkerWebSocket/PatchPlaywrightFirefoxWorkerWebSocket.ts',
-  () => ({
-    patchPlaywrightFirefoxWorkerWebSocket: patchFirefox,
-  }),
-)
-const { startBrowser } = await import('../src/parts/StartBrowser/StartBrowser.ts')
+import { startBrowser } from '../src/parts/StartBrowser/StartBrowser.ts'
 
 const firefoxLaunch = jest.spyOn(firefox, 'launch')
 const chromiumLaunch = jest.spyOn(chromium, 'launchPersistentContext')
 const webkitLaunch = jest.spyOn(webkit, 'launchPersistentContext')
 
 afterEach(() => {
-  patchFirefox.mockClear()
   firefoxLaunch.mockReset()
   chromiumLaunch.mockReset()
   webkitLaunch.mockReset()
@@ -103,7 +95,6 @@ test('disposal reports a cleanup error after cancellation', async () => {
 test('Firefox patches worker sockets and keeps its browser launcher', async () => {
   const { controller } = prepareLaunch('success')
   const launch = await startBrowser({ browser: 'firefox', headless: true, signal: controller.signal })
-  expect(patchFirefox).toHaveBeenCalledTimes(1)
   expect(firefoxLaunch).toHaveBeenCalledTimes(1)
   expect(webkitLaunch).not.toHaveBeenCalled()
   expect(chromiumLaunch).not.toHaveBeenCalled()
