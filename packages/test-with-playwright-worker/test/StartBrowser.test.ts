@@ -3,7 +3,7 @@ import { chromium, webkit } from '@playwright/test'
 import { startBrowser } from '../src/parts/StartBrowser/StartBrowser.ts'
 
 const chromiumLaunch = jest.spyOn(chromium, 'launchPersistentContext')
-const webkitLaunch = jest.spyOn(webkit, 'launch')
+const webkitLaunch = jest.spyOn(webkit, 'launchPersistentContext')
 
 afterEach(() => {
   chromiumLaunch.mockReset()
@@ -42,10 +42,10 @@ test('Chromium uses a temporary persistent context and disposes it once', async 
   expect(close).toHaveBeenCalledTimes(1)
 })
 
-test('WebKit retains its normal browser launcher', async () => {
+test('WebKit uses a temporary persistent context for OPFS', async () => {
   const { controller } = prepareLaunch('success')
   const launch = await startBrowser({ browser: 'webkit', headless: true, signal: controller.signal })
-  expect(webkitLaunch).toHaveBeenCalledTimes(1)
+  expect(webkitLaunch).toHaveBeenCalledWith('', expect.objectContaining({ headless: true }))
   expect(chromiumLaunch).not.toHaveBeenCalled()
   await launch.dispose()
 })

@@ -41,9 +41,10 @@ export const startBrowser = async ({
     headless,
   }
   // Chromium 153 crashes when restoring OPFS handles from its in-memory IndexedDB backend.
+  // WebKit also rejects OPFS access in an ephemeral context.
   // An empty userDataDir gives each run a temporary disk-backed profile managed by Playwright.
   const browserInstance =
-    browser === 'chromium' ? await launcher.launchPersistentContext('', options) : await launcher.launch(options)
+    browser === 'firefox' ? await launcher.launch(options) : await launcher.launchPersistentContext('', options)
   let disposal: Promise<void> | undefined
   const dispose = (): Promise<void> => {
     signal.removeEventListener('abort', handleAbort)
