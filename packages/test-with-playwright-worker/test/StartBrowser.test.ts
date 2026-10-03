@@ -1,11 +1,13 @@
 import { afterEach, expect, jest, test } from '@jest/globals'
-import { chromium, webkit } from '@playwright/test'
+import { chromium, firefox, webkit } from '@playwright/test'
 import { startBrowser } from '../src/parts/StartBrowser/StartBrowser.ts'
 
+const firefoxLaunch = jest.spyOn(firefox, 'launch')
 const chromiumLaunch = jest.spyOn(chromium, 'launchPersistentContext')
-const webkitLaunch = jest.spyOn(webkit, 'launch')
+const webkitLaunch = jest.spyOn(webkit, 'launchPersistentContext')
 
 afterEach(() => {
+  firefoxLaunch.mockReset()
   chromiumLaunch.mockReset()
   webkitLaunch.mockReset()
 })
@@ -28,6 +30,7 @@ const prepareLaunch = (mode: string): any => {
     return instance
   })
   webkitLaunch.mockResolvedValue(instance as any)
+  firefoxLaunch.mockResolvedValue(instance as any)
   return { close, controller, instance, page }
 }
 
@@ -42,10 +45,10 @@ test('Chromium uses a temporary persistent context and disposes it once', async 
   expect(close).toHaveBeenCalledTimes(1)
 })
 
-test('WebKit retains its normal browser launcher', async () => {
+test('WebKit uses a temporary persistent context for OPFS', async () => {
   const { controller } = prepareLaunch('success')
   const launch = await startBrowser({ browser: 'webkit', headless: true, signal: controller.signal })
-  expect(webkitLaunch).toHaveBeenCalledTimes(1)
+  expect(webkitLaunch).toHaveBeenCalledWith('', expect.objectContaining({ headless: true }))
   expect(chromiumLaunch).not.toHaveBeenCalled()
   await launch.dispose()
 })
@@ -87,4 +90,13 @@ test('disposal reports a cleanup error after cancellation', async () => {
   close.mockRejectedValue(new Error('close failed'))
   controller.abort()
   await expect(launch.dispose()).rejects.toThrow('close failed')
+})
+
+test('Firefox patches worker sockets and keeps its browser launcher', async () => {
+  const { controller } = prepareLaunch('success')
+  const launch = await startBrowser({ browser: 'firefox', headless: true, signal: controller.signal })
+  expect(firefoxLaunch).toHaveBeenCalledTimes(1)
+  expect(webkitLaunch).not.toHaveBeenCalled()
+  expect(chromiumLaunch).not.toHaveBeenCalled()
+  await launch.dispose()
 })
