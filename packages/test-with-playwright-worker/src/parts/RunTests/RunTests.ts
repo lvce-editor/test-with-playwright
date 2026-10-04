@@ -22,6 +22,7 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
  * @param {{testSrc:string, tests:string[], filter?: string, headless:boolean, page: import('@playwright/test').Page, port:number, timeout:number, onResult:any, onFinalResult:any}} param0
  */
 export const runTests = async ({
+  browser = 'chromium',
   filter,
   headless,
   onFinalResult,
@@ -35,6 +36,7 @@ export const runTests = async ({
   timeout,
   traceFocus,
 }: {
+  readonly browser?: string
   readonly testSrc: string
   readonly tests: readonly string[]
   readonly filter?: string
@@ -56,6 +58,7 @@ export const runTests = async ({
   const filteredTests = filter ? tests.filter((test) => test.includes(filter)) : tests
   for (const test of filteredTests) {
     const result = await RunTest.runTest({
+      browser,
       page,
       port,
       test,

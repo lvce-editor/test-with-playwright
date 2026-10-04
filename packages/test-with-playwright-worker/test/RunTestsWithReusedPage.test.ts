@@ -225,3 +225,28 @@ test('runTestsWithReusedPage stringifies non-error navigation failures', async (
     status: TestState.Fail,
   })
 })
+
+test('WebKit reused page waits for commit and reads completed results', async () => {
+  const page = createPage(
+    JSON.stringify([{ end: 2, error: 'scenario failed', name: 'test.js', start: 1, status: 'fail' }]),
+  )
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    browser: 'webkit',
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    timeout: 1000,
+  })
+
+  expect(page.goto).toHaveBeenCalledWith('http://127.0.0.1:1234/tests/_all.html', {
+    timeout: 1000,
+    waitUntil: 'commit',
+  })
+  expect(page.waitForFunction).toHaveBeenCalledTimes(1)
+  expect(onResult).toHaveBeenCalledWith(expect.objectContaining({ error: 'scenario failed', status: TestState.Fail }))
+  expect(onFinalResult).toHaveBeenCalledWith(expect.objectContaining({ failed: 1, passed: 0 }))
+})

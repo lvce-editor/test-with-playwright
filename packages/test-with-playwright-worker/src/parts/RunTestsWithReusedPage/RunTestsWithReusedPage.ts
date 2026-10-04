@@ -140,6 +140,7 @@ const readTestResultsText = async (page: Page, timeout: number): Promise<string>
 }
 
 export const runTestsWithReusedPage = async ({
+  browser,
   filter,
   onFinalResult,
   onResult,
@@ -149,6 +150,7 @@ export const runTestsWithReusedPage = async ({
   timeout,
   traceFocus,
 }: {
+  readonly browser?: string
   readonly filter?: string
   readonly onFinalResult: (result: any) => Promise<void>
   readonly onResult: (result: any) => Promise<void>
@@ -164,7 +166,7 @@ export const runTestsWithReusedPage = async ({
     const url = getAllTestsUrl(port, filter, traceFocus ?? false, rendererWorkerTraceDirectory !== undefined)
     await page.goto(url, {
       timeout,
-      waitUntil: 'domcontentloaded',
+      waitUntil: browser === 'webkit' ? 'commit' : 'domcontentloaded',
     })
     const text = await readTestResultsText(page, timeout)
     results = parseTestResults(text)

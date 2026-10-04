@@ -157,6 +157,7 @@ export const runAllTests = async (
         page,
         run: async () => {
           await RunTestsWithReusedPage.runTestsWithReusedPage({
+            browser,
             ...filterOption,
             onFinalResult,
             onResult,
@@ -179,6 +180,7 @@ export const runAllTests = async (
       page,
       run: async () => {
         await RunTests.runTests({
+          browser,
           ...filterOption,
           headless,
           onFinalResult,
