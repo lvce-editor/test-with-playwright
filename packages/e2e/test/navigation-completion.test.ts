@@ -20,7 +20,7 @@ test.each(['pass', 'fail'])('navigation waits for scenario completion and preser
       await route.fulfill({
         body: `<script>window.domReady = false; document.addEventListener('DOMContentLoaded', () => { window.domReady = true })</script>
           ${browserName === 'webkit' ? '<script defer src="/pending.js"></script>' : ''}
-          <div id="TestOverlay" data-state="${state}">${state === 'fail' ? 'scenario failed' : ''}</div>`,
+          <div id="TestOverlay" data-state="${state}">${state === 'fail' ? 'scenario failed' : 'scenario passed'}</div>`,
         contentType: 'text/html',
       })
     })
@@ -40,14 +40,12 @@ test.each(['pass', 'fail'])('navigation waits for scenario completion and preser
     })
     expect(results).toEqual([
       expect.objectContaining({
-        error: state === 'fail' ? 'scenario failed' : '',
+        error: state === 'fail' ? 'scenario failed' : 'scenario passed',
         name: 'example.js',
         status: state === 'fail' ? TestState.Fail : TestState.Pass,
       }),
     ])
-    if (browserName === 'webkit') {
-      expect(await page.evaluate(() => (window as any).domReady)).toBe(false)
-    }
+    expect(await page.evaluate(() => (globalThis as any).domReady)).toBe(browserName !== 'webkit')
   } finally {
     await browser.close()
   }

@@ -228,7 +228,7 @@ test('runTestsWithReusedPage stringifies non-error navigation failures', async (
 
 test('WebKit reused page waits for commit and reads completed results', async () => {
   const page = createPage(
-    JSON.stringify([{ end: 2, name: 'test.js', start: 1, status: 'fail', error: 'scenario failed' }]),
+    JSON.stringify([{ end: 2, error: 'scenario failed', name: 'test.js', start: 1, status: 'fail' }]),
   )
   const onResult = jest.fn(async (_result: any): Promise<void> => {})
   const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
