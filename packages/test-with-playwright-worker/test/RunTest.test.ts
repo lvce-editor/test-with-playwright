@@ -152,3 +152,41 @@ test('runTest stringifies non-error failures', async () => {
     status: TestState.Fail,
   })
 })
+
+test.each(['chromium', 'firefox', 'webkit'])(
+  'runTest waits for %s navigation and still reports scenario failure',
+  async (browser) => {
+    const page = createPage({ state: 'fail', text: 'scenario failed' })
+
+    const result = await runTest({
+      browser,
+      page,
+      port: 3000,
+      test: 'about.open.js',
+      testSrc: '/tmp/tests',
+      timeout: 1000,
+    })
+
+    expect(page.goto).toHaveBeenCalledWith('http://127.0.0.1:3000/tests/about.open.html', {
+      waitUntil: browser === 'webkit' ? 'commit' : 'domcontentloaded',
+    })
+    expect(page.locator).toHaveBeenCalledWith('#TestOverlay')
+    expect(result).toMatchObject({ error: 'scenario failed', status: TestState.Fail })
+  },
+)
+
+test('WebKit commit still fails when the completion overlay cannot be read', async () => {
+  const page = createPage()
+  page.locator().textContent.mockRejectedValue(new Error('completion overlay unavailable'))
+
+  const result = await runTest({
+    browser: 'webkit',
+    page,
+    port: 3000,
+    test: 'about.open.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({ error: 'completion overlay unavailable', status: TestState.Fail })
+})

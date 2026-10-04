@@ -29,13 +29,14 @@ export const getUrlFromTestFile = (
   return url.href
 }
 
-export const navigateToTest = async (page: Page, url: string): Promise<void> => {
+export const navigateToTest = async (page: Page, url: string, browser?: string): Promise<void> => {
   await page.goto(url, {
-    waitUntil: 'domcontentloaded',
+    waitUntil: browser === 'webkit' ? 'commit' : 'domcontentloaded',
   })
 }
 
 export const runTest = async ({
+  browser,
   page,
   port,
   svgScreenshotOptions,
@@ -45,6 +46,7 @@ export const runTest = async ({
   traceFocus,
   traceRendererWorker,
 }: {
+  readonly browser?: string
   readonly test: string
   readonly page: Page
   readonly testSrc: string
@@ -58,7 +60,7 @@ export const runTest = async ({
   try {
     const { expect } = await import('@playwright/test')
     const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
-    await navigateToTest(page, url)
+    await navigateToTest(page, url, browser)
     const testOverlay = page.locator('#TestOverlay')
     await expect(testOverlay).toBeVisible({
       timeout,
