@@ -7,10 +7,10 @@ const createTestPage = (state: string): TestPage => {
   const overlay = {
     getAttribute: jest.fn(async (): Promise<string> => state),
     textContent: jest.fn(async (): Promise<string> => 'scenario result'),
-    waitFor: jest.fn(async (): Promise<void> => {}),
+    waitFor: jest.fn(async (_result: any): Promise<void> => {}),
   }
   return {
-    dispose: jest.fn(async (): Promise<void> => {}),
+    dispose: jest.fn(async (_result: any): Promise<void> => {}),
     page: {
       goto: jest.fn(async (): Promise<void> => {
         if (navigated) throw new Error('previous renderer is unavailable')
@@ -35,8 +35,8 @@ test('isolated pages preserve failures and dispose before the next scenario with
     }
     return second
   })
-  const onResult = jest.fn(async (): Promise<void> => {})
-  const onFinalResult = jest.fn(async (): Promise<void> => {})
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
 
   await runTests({
     browser: 'webkit',
@@ -69,7 +69,7 @@ test('isolated pages preserve failures and dispose before the next scenario with
 
 test('caller-owned page is preserved when no page factory is provided', async () => {
   const resource = createTestPage('pass')
-  const onResult = jest.fn(async (): Promise<void> => {})
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
   await runTests({
     headless: true,
     onFinalResult: async (): Promise<void> => {},
