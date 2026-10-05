@@ -1,5 +1,6 @@
 import { expect, test } from '@jest/globals'
-import { chromium, firefox, webkit } from '@playwright/test'
+import { chromium, firefox, webkit, type Response } from '@playwright/test'
+import { setTimeout as delay } from 'node:timers/promises'
 
 const source = new URL('../../test-with-playwright-worker/src/parts/RunTests/RunTests.ts', import.meta.url)
 const { runTests } = await import(source.href)
@@ -47,6 +48,65 @@ test.each(['pass', 'fail'])('navigation waits for scenario completion and preser
     ])
     expect(await page.evaluate(() => (globalThis as any).domReady)).toBe(browserName !== 'webkit')
   } finally {
+    await browser.close()
+  }
+})
+
+test('completion wait reports a timeout when the renderer stops responding', async () => {
+  const browserName = process.env['TEST_WITH_PLAYWRIGHT_BROWSER'] || 'chromium'
+  const browserType = { chromium, firefox, webkit }[browserName]
+  if (!browserType) {
+    throw new Error(`Unsupported browser: ${browserName}`)
+  }
+  const browser = await browserType.launch({ headless: true })
+  const deadline = new AbortController()
+  try {
+    const page = await browser.newPage()
+    await page.route('**/tests/example.html', async (route) => {
+      await route.fulfill({ body: '<div id="TestOverlay" data-state="pass">passed</div>', contentType: 'text/html' })
+    })
+    const goto = page.goto.bind(page)
+    page.goto = async (url, options): Promise<Response | null> => {
+      const response = await goto(url, options)
+      await page.evaluate(() => {
+        // Fault injection starts the infinite loop after evaluate returns.
+        // eslint-disable-next-line e2e/no-timeouts
+        setTimeout(() => {
+          while (true) {
+            // Deliberately freeze the real renderer before the completion wait starts.
+          }
+        }, 0)
+      })
+      await delay(100)
+      return response
+    }
+    const results: any[] = []
+    const enforceDeadline = async (): Promise<never> => {
+      await delay(8000, undefined, { signal: deadline.signal })
+      throw new Error('Completion wait ignored its timeout')
+    }
+    await Promise.race([
+      runTests({
+        browser: browserName,
+        headless: true,
+        onFinalResult: async () => {},
+        onResult: async (result: any) => {
+          results.push(result)
+        },
+        page,
+        port: 1234,
+        tests: ['example.js'],
+        testSrc: '/tests',
+        timeout: 1000,
+      }),
+      enforceDeadline(),
+    ])
+    expect(results).toEqual([
+      expect.objectContaining({ error: expect.stringContaining('Timeout 1000ms exceeded'), status: TestState.Fail }),
+    ])
+    expect(results[0].end - results[0].start).toBeLessThan(5000)
+  } finally {
+    deadline.abort()
     await browser.close()
   }
 })
