@@ -51,7 +51,10 @@ export const startWorkerJavascriptCoverage = async (
   const entries = new Map<string, JavascriptCoverageEntry>()
   const pendingEntries = new Set<Promise<void>>()
   const timers = new Map<string, NodeJS.Timeout>()
-  const pendingCommands = new Map<number, { reject: (error: Error) => void; resolve: (value: any) => void }>()
+  const pendingCommands = new Map<
+    number,
+    { reject: (error: Error) => void; resolve: (value: any) => void; sessionId: string }
+  >()
   let commandId = 0
   let collectionError: Error | undefined
   let stopped = false
@@ -85,7 +88,7 @@ export const startWorkerJavascriptCoverage = async (
   const sendToTarget = (sessionId: string, method: string, params: object = {}): Promise<any> => {
     const id = ++commandId
     const command = new Promise<any>((resolve, reject) => {
-      pendingCommands.set(id, { reject, resolve })
+      pendingCommands.set(id, { reject, resolve, sessionId })
     })
     void session
       .send('Target.sendMessageToTarget', {
@@ -108,12 +111,14 @@ export const startWorkerJavascriptCoverage = async (
       await sendToTarget(sessionId, 'Debugger.enable')
       await sendToTarget(sessionId, 'Profiler.enable')
       await sendToTarget(sessionId, 'Profiler.startPreciseCoverage', { callCount: true, detailed: true })
-      const timer = setInterval(() => {
-        trackPromise(pendingEntries, readTargetCoverage(sendToTarget, sessionId, entries), (error) => {
-          recordCollectionError(error)
-        })
-      }, 50)
-      timers.set(sessionId, timer)
+      if (!stopped && sessions.has(sessionId)) {
+        const timer = setInterval(() => {
+          trackPromise(pendingEntries, readTargetCoverage(sendToTarget, sessionId, entries), (error) => {
+            recordCollectionError(error)
+          })
+        }, 50)
+        timers.set(sessionId, timer)
+      }
     }
     await sendToTarget(sessionId, 'Runtime.runIfWaitingForDebugger')
     if (matches) {
@@ -124,6 +129,10 @@ export const startWorkerJavascriptCoverage = async (
   const onAttached = (target: AttachedTarget): void => {
     trackPromise(tasks, handleAttachedTarget(target), async (error: unknown) => {
       recordCollectionError(error)
+      const message = error instanceof Error ? error.message : String(error)
+      if (message.includes('No session with given id') || message.includes('Target closed')) {
+        return
+      }
       try {
         await sendToTarget(target.sessionId, 'Runtime.runIfWaitingForDebugger')
       } catch {
@@ -133,8 +142,11 @@ export const startWorkerJavascriptCoverage = async (
   }
 
   const onDetached = ({ sessionId }: { readonly sessionId: string }): void => {
-    if (!sessions.has(sessionId)) {
-      return
+    for (const [id, pending] of pendingCommands) {
+      if (pending.sessionId === sessionId) {
+        pendingCommands.delete(id)
+        pending.reject(new Error('Target closed'))
+      }
     }
     sessions.delete(sessionId)
     const timer = timers.get(sessionId)
@@ -156,13 +168,11 @@ export const startWorkerJavascriptCoverage = async (
       }
       stopped = true
       session.off('Target.attachedToTarget', onAttached)
-      session.off('Target.detachedFromTarget', onDetached)
       try {
         for (const timer of timers.values()) {
           clearInterval(timer)
         }
         timers.clear()
-        await session.send('Target.setAutoAttach', { autoAttach: false, flatten: false, waitForDebuggerOnStart: false })
         while (tasks.size > 0) {
           await Promise.all(tasks)
         }
@@ -196,8 +206,18 @@ export const startWorkerJavascriptCoverage = async (
         }
         return result
       } finally {
-        session.off('Target.receivedMessageFromTarget', onReceivedMessage)
-        await session.detach()
+        try {
+          // Disabling auto-attach detaches worker sessions, so finish all coverage commands first.
+          await session.send('Target.setAutoAttach', {
+            autoAttach: false,
+            flatten: false,
+            waitForDebuggerOnStart: false,
+          })
+        } finally {
+          session.off('Target.detachedFromTarget', onDetached)
+          session.off('Target.receivedMessageFromTarget', onReceivedMessage)
+          await session.detach()
+        }
       }
     },
   }

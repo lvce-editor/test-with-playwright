@@ -1,9 +1,11 @@
-import { expect, test } from '@jest/globals'
+import { expect, jest, test } from '@jest/globals'
 import { EventEmitter } from 'node:events'
 import * as WorkerJavascriptCoverage from '../src/parts/WorkerJavascriptCoverage/WorkerJavascriptCoverage.ts'
 
 class MockCDPSession extends EventEmitter {
   readonly calls: { method: string; params: object }[] = []
+
+  withheldMethod = ''
 
   errorMethod = ''
 
@@ -30,6 +32,9 @@ class MockCDPSession extends EventEmitter {
         throw this.rejectOuterMessage
       }
       this.calls.push({ method: targetMethod, params: targetParams })
+      if (targetMethod === this.withheldMethod) {
+        return {}
+      }
       let result: Record<string, unknown> = {}
       if (targetMethod === 'Profiler.takePreciseCoverage') {
         result = { result: this.coverageResult }
@@ -283,5 +288,71 @@ test('clears periodic collection timers when coverage stops', async (): Promise<
   )
   await attachWorker(session)
   await new Promise<void>((resolve) => setTimeout(resolve, 10))
+  await expect(coverage.stop()).resolves.toHaveLength(1)
+})
+
+test('keeps worker sessions attached until the final snapshot and profiler stop finish', async (): Promise<void> => {
+  const session = new MockCDPSession()
+  const coverage = await WorkerJavascriptCoverage.startWorkerJavascriptCoverage(
+    createPage(session),
+    'aboutWorkerMain.js',
+  )
+  await attachWorker(session)
+  await coverage.stop()
+
+  const methods = session.calls.map(({ method }) => method)
+  expect(methods.lastIndexOf('Target.setAutoAttach')).toBeGreaterThan(
+    methods.lastIndexOf('Profiler.stopPreciseCoverage'),
+  )
+})
+
+test('settles an outstanding coverage command when its worker detaches without a reply', async (): Promise<void> => {
+  const session = new MockCDPSession()
+  const coverage = await WorkerJavascriptCoverage.startWorkerJavascriptCoverage(
+    createPage(session),
+    'aboutWorkerMain.js',
+  )
+  await attachWorker(session)
+  session.withheldMethod = 'Profiler.takePreciseCoverage'
+  const stopped = coverage.stop()
+  await new Promise<void>((resolve) => setImmediate(resolve))
+  session.emit('Target.detachedFromTarget', { sessionId: 'worker-1' })
+
+  await expect(stopped).resolves.toHaveLength(1)
+  expect(session.listenerCount('Target.detachedFromTarget')).toBe(0)
+})
+
+test('does not start polling when worker initialization finishes after stop begins', async (): Promise<void> => {
+  const session = new MockCDPSession()
+  const coverage = await WorkerJavascriptCoverage.startWorkerJavascriptCoverage(
+    createPage(session),
+    'aboutWorkerMain.js',
+  )
+  const polling = jest.spyOn(globalThis, 'setInterval')
+  try {
+    session.emit('Target.attachedToTarget', {
+      sessionId: 'worker-1',
+      targetInfo: { type: 'worker', url: 'http://localhost/aboutWorkerMain.js' },
+    })
+    await expect(coverage.stop()).resolves.toHaveLength(1)
+    expect(polling).not.toHaveBeenCalled()
+  } finally {
+    polling.mockRestore()
+  }
+})
+
+test('settles a detached unrelated worker resume without cancelling other worker commands', async (): Promise<void> => {
+  const session = new MockCDPSession()
+  const coverage = await WorkerJavascriptCoverage.startWorkerJavascriptCoverage(
+    createPage(session),
+    'aboutWorkerMain.js',
+  )
+  await attachWorker(session)
+  session.withheldMethod = 'Runtime.runIfWaitingForDebugger'
+  session.emit('Target.attachedToTarget', {
+    sessionId: 'other-worker',
+    targetInfo: { type: 'worker', url: 'http://localhost/otherWorker.js' },
+  })
+  session.emit('Target.detachedFromTarget', { sessionId: 'other-worker' })
   await expect(coverage.stop()).resolves.toHaveLength(1)
 })
