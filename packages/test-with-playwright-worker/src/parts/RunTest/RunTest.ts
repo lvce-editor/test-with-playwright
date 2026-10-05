@@ -58,11 +58,11 @@ export const runTest = async ({
 }): Promise<any> => {
   const start = performance.now()
   try {
-    const { expect } = await import('@playwright/test')
     const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
     await navigateToTest(page, url, browser)
     const testOverlay = page.locator('#TestOverlay')
-    await expect(testOverlay).toBeVisible({
+    await testOverlay.waitFor({
+      state: 'visible',
       timeout,
     })
     const text = await testOverlay.textContent()

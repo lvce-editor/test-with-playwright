@@ -10,10 +10,9 @@ const createPage = ({
   readonly text?: string | null
 } = {}): any => {
   const testOverlay = {
-    _apiName: 'Locator',
-    _expect: jest.fn(async () => ({ matches: true })),
     getAttribute: jest.fn(async (): Promise<string> => state),
     textContent: jest.fn(async (): Promise<string | null> => text),
+    waitFor: jest.fn(async (): Promise<void> => {}),
   }
   return {
     goto: jest.fn(async (): Promise<void> => {}),
