@@ -10,7 +10,7 @@ const createTestPage = (state: string): TestPage => {
     waitFor: jest.fn(async (_result: any): Promise<void> => {}),
   }
   return {
-    dispose: jest.fn(async (_result: any): Promise<void> => {}),
+    dispose: jest.fn(async (): Promise<void> => {}),
     page: {
       goto: jest.fn(async (): Promise<void> => {
         if (navigated) throw new Error('previous renderer is unavailable')
