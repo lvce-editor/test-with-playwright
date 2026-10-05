@@ -68,16 +68,15 @@ test('completion wait reports a timeout when the renderer stops responding', asy
     const goto = page.goto.bind(page)
     page.goto = async (url, options): Promise<Response | null> => {
       const response = await goto(url, options)
-      await page.evaluate(() => {
-        // Fault injection blocks the renderer past the completion deadline, then allows browser cleanup.
-        // eslint-disable-next-line e2e/no-timeouts
-        setTimeout(() => {
+      // Start fault injection without awaiting the evaluation that deliberately blocks the renderer.
+      void page
+        .evaluate(() => {
           const end = performance.now() + 4000
           while (performance.now() < end) {
             // Deliberately freeze the real renderer before the completion wait starts.
           }
-        }, 0)
-      })
+        })
+        .catch(() => {})
       await delay(100)
       return response
     }
