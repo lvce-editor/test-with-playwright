@@ -4,6 +4,11 @@ import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace
 import * as RunTest from '../RunTest/RunTest.ts'
 import * as TestState from '../TestState/TestState.ts'
 
+export interface TestPage {
+  readonly dispose: () => Promise<void>
+  readonly page: Page
+}
+
 const getResultCounts = (status: number): { failed: number; passed: number; skipped: number } => {
   switch (status) {
     case TestState.Fail:
@@ -23,6 +28,7 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
  */
 export const runTests = async ({
   browser = 'chromium',
+  createPage,
   filter,
   headless,
   onFinalResult,
@@ -37,6 +43,7 @@ export const runTests = async ({
   traceFocus,
 }: {
   readonly browser?: string
+  readonly createPage?: () => Promise<TestPage>
   readonly testSrc: string
   readonly tests: readonly string[]
   readonly filter?: string
@@ -57,30 +64,36 @@ export const runTests = async ({
   // Filter tests if a filter is provided
   const filteredTests = filter ? tests.filter((test) => test.includes(filter)) : tests
   for (const test of filteredTests) {
-    const result = await RunTest.runTest({
-      browser,
-      page,
-      port,
-      test,
-      testSrc,
-      timeout,
-      traceFocus: traceFocus ?? false,
-      traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
-      ...(svgScreenshotOptions && { svgScreenshotOptions }),
-    })
-    if (rendererWorkerTraceDirectory) {
-      await RendererWorkerTrace.exportTrace({
-        directory: rendererWorkerTraceDirectory,
-        page,
+    const testPage = await createPage?.()
+    const currentPage = testPage?.page ?? page
+    try {
+      const result = await RunTest.runTest({
+        browser,
+        page: currentPage,
+        port,
         test,
+        testSrc,
+        timeout,
+        traceFocus: traceFocus ?? false,
+        traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
+        ...(svgScreenshotOptions && { svgScreenshotOptions }),
       })
+      if (rendererWorkerTraceDirectory) {
+        await RendererWorkerTrace.exportTrace({
+          directory: rendererWorkerTraceDirectory,
+          page: currentPage,
+          test,
+        })
+      }
+      await onResult(result)
+      // @ts-ignore
+      const resultCounts = getResultCounts(result.status)
+      failed += resultCounts.failed
+      passed += resultCounts.passed
+      skipped += resultCounts.skipped
+    } finally {
+      await testPage?.dispose()
     }
-    await onResult(result)
-    // @ts-ignore
-    const resultCounts = getResultCounts(result.status)
-    failed += resultCounts.failed
-    passed += resultCounts.passed
-    skipped += resultCounts.skipped
   }
   const end = performance.now()
   await onFinalResult({

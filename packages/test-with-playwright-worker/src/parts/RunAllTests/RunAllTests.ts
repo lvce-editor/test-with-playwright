@@ -12,6 +12,7 @@ import * as RunTests from '../RunTests/RunTests.ts'
 import * as RunTestsWithReusedPage from '../RunTestsWithReusedPage/RunTestsWithReusedPage.ts'
 import * as RunWithJavascriptCoverage from '../RunWithJavascriptCoverage/RunWithJavascriptCoverage.ts'
 import * as SetupTests from '../SetupTests/SetupTests.ts'
+import * as StartBrowser from '../StartBrowser/StartBrowser.ts'
 import * as StartElectron from '../StartElectron/StartElectron.ts'
 import * as TearDownTests from '../TearDownTests/TearDownTests.ts'
 
@@ -174,6 +175,27 @@ export const runAllTests = async (
       return
     }
     const tests = await GetTests.getTests(testSrc)
+    let initialBrowserAvailable = true
+    const createPage =
+      browser === 'webkit'
+        ? async (): Promise<RunTests.TestPage> => {
+            signal.throwIfAborted()
+            if (initialBrowserAvailable) {
+              initialBrowserAvailable = false
+              return { dispose, page }
+            }
+            const nextBrowser = await StartBrowser.startBrowser({ browser, headless, signal })
+            try {
+              if (traceRendererWorker) {
+                await nextBrowser.page.addInitScript(BrowserTraceTimeline.install)
+              }
+              return nextBrowser
+            } catch (error) {
+              await nextBrowser.dispose()
+              throw error
+            }
+          }
+        : undefined
     await RunWithJavascriptCoverage.runWithJavascriptCoverage({
       coverage,
       cwd,
@@ -181,6 +203,7 @@ export const runAllTests = async (
       run: async () => {
         await RunTests.runTests({
           browser,
+          ...(createPage && { createPage }),
           ...filterOption,
           headless,
           onFinalResult,
