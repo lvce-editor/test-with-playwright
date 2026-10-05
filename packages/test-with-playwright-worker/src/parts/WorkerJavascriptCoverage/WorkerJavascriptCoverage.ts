@@ -143,10 +143,11 @@ export const startWorkerJavascriptCoverage = async (
 
   const onDetached = ({ sessionId }: { readonly sessionId: string }): void => {
     for (const [id, pending] of pendingCommands) {
-      if (pending.sessionId === sessionId) {
-        pendingCommands.delete(id)
-        pending.reject(new Error('Target closed'))
+      if (pending.sessionId !== sessionId) {
+        continue
       }
+      pendingCommands.delete(id)
+      pending.reject(new Error('Target closed'))
     }
     sessions.delete(sessionId)
     const timer = timers.get(sessionId)
