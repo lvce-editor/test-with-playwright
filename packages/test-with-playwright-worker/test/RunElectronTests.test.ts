@@ -46,6 +46,7 @@ test('runElectronTests filters tests and reports exact results', async () => {
 
   await RunElectronTests.runElectronTests({
     electronApp: {},
+    failOnConsoleMessages: false,
     filter: 'A',
     onFinalResult,
     onResult,
@@ -79,6 +80,7 @@ test('runElectronTests reports passed, skipped, and failed tests without a filte
 
   await RunElectronTests.runElectronTests({
     electronApp: {},
+    failOnConsoleMessages: false,
     onFinalResult,
     onResult,
     page: {
@@ -104,6 +106,7 @@ test('runElectronTests forwards SVG screenshot options', async () => {
 
   await RunElectronTests.runElectronTests({
     electronApp: {},
+    failOnConsoleMessages: false,
     filter: 'B',
     onFinalResult,
     onResult,

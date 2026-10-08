@@ -3,14 +3,30 @@ import * as RunTestsWithReusedPage from '../src/parts/RunTestsWithReusedPage/Run
 import * as TestState from '../src/parts/TestState/TestState.ts'
 
 const createPage = (text: string): any => {
+  const listeners = new Map<string, Set<(value: any) => void>>()
   const testResults = {
     textContent: jest.fn(async (): Promise<string> => text),
     waitFor: jest.fn(async (): Promise<void> => {}),
   }
   return {
+    emit: (event: string, value: any): void => {
+      const eventListeners = listeners.get(event) || []
+      for (const listener of eventListeners) {
+        listener(value)
+      }
+    },
     evaluate: jest.fn(async (): Promise<object> => ({ text: undefined, timeline: undefined })),
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testResults),
+    off: jest.fn((event: string, listener: (value: any) => void) => listeners.get(event)?.delete(listener)),
+    on: jest.fn((event: string, listener: (value: any) => void) => {
+      let eventListeners = listeners.get(event)
+      if (!eventListeners) {
+        eventListeners = new Set()
+        listeners.set(event, eventListeners)
+      }
+      eventListeners.add(listener)
+    }),
     waitForFunction: jest.fn(async (callback: (selector: string) => boolean, selector: string): Promise<void> => {
       const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
       try {
@@ -33,6 +49,38 @@ const createPage = (text: string): any => {
     }),
   }
 }
+
+test('runTestsWithReusedPage reports console messages as an aggregate failure', async () => {
+  const page = createPage(JSON.stringify([{ end: 5, name: 'test-A.js', start: 1, status: 'pass' }]))
+  page.goto.mockImplementation(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 4, lineNumber: 2, url: 'http://127.0.0.1/test.js' }),
+      text: () => 'warning from reused page',
+      type: () => 'warning',
+    })
+  })
+  const onResult = jest.fn(async (_result: any): Promise<void> => {})
+  const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
+
+  await RunTestsWithReusedPage.runTestsWithReusedPage({
+    failOnConsoleMessages: true,
+    onFinalResult,
+    onResult,
+    page,
+    port: 1234,
+    timeout: 1000,
+  })
+
+  expect(onResult.mock.calls).toHaveLength(2)
+  expect(onResult.mock.calls.at(0)?.[0]).toMatchObject({ name: 'test-A.js', status: TestState.Pass })
+  expect(onResult.mock.calls.at(1)?.[0]).toMatchObject({
+    error: expect.stringContaining('console warning: warning from reused page'),
+    name: '_all.html (console messages)',
+    status: TestState.Fail,
+  })
+  expect(onFinalResult.mock.calls.at(0)?.[0]).toMatchObject({ failed: 1, passed: 1 })
+  expect(page.off).toHaveBeenCalledTimes(2)
+})
 
 test('runTestsWithReusedPage navigates once and reports parsed results', async () => {
   const page = createPage(

@@ -11,6 +11,7 @@ const optionTypes = {
   electronEnv: 'array',
   electronPath: 'string',
   electronVersion: 'string',
+  failOnConsoleMessages: 'boolean',
   filter: 'string',
   headless: 'boolean',
   link: 'array',

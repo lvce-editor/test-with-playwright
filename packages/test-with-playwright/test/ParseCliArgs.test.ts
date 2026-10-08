@@ -48,6 +48,15 @@ test('parseCliArgs reads reuse page flag', () => {
   })
 })
 
+test('parseCliArgs reads fail on console messages flag', () => {
+  expect(ParseCliArgs.parseCliArgs(['--fail-on-console-messages'])).toEqual({
+    failOnConsoleMessages: true,
+  })
+  expect(ParseCliArgs.parseCliArgs(['--no-fail-on-console-messages'])).toEqual({
+    failOnConsoleMessages: false,
+  })
+})
+
 test('parseCliArgs reads renderer worker trace flag', () => {
   const result = ParseCliArgs.parseCliArgs(['--trace-renderer-worker'])
 

@@ -41,6 +41,7 @@ test('isolated pages preserve failures and dispose before the next scenario with
   await runTests({
     browser: 'webkit',
     createPage,
+    failOnConsoleMessages: false,
     headless: true,
     onFinalResult,
     onResult,
@@ -71,6 +72,7 @@ test('caller-owned page is preserved when no page factory is provided', async ()
   const resource = createTestPage('pass')
   const onResult = jest.fn(async (_result: any): Promise<void> => {})
   await runTests({
+    failOnConsoleMessages: false,
     headless: true,
     onFinalResult: async (): Promise<void> => {},
     onResult,
@@ -94,6 +96,7 @@ test('isolated page is disposed when reporting fails', async () => {
   await expect(
     runTests({
       createPage: async (): Promise<TestPage> => resource,
+      failOnConsoleMessages: false,
       headless: true,
       onFinalResult: async (): Promise<void> => {},
       onResult: async (): Promise<void> => {

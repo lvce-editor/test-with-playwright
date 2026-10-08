@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import * as PageMessages from '../PageMessages/PageMessages.ts'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
 import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
@@ -141,6 +142,7 @@ const readTestResultsText = async (page: Page, timeout: number): Promise<string>
 
 export const runTestsWithReusedPage = async ({
   browser,
+  failOnConsoleMessages,
   filter,
   onFinalResult,
   onResult,
@@ -152,6 +154,7 @@ export const runTestsWithReusedPage = async ({
 }: {
   readonly browser?: string
   readonly filter?: string
+  readonly failOnConsoleMessages?: boolean
   readonly onFinalResult: (result: any) => Promise<void>
   readonly onResult: (result: any) => Promise<void>
   readonly page: Page
@@ -161,6 +164,7 @@ export const runTestsWithReusedPage = async ({
   readonly traceFocus?: boolean
 }): Promise<void> => {
   const start = performance.now()
+  const pageMessages = failOnConsoleMessages ? PageMessages.createPageMessages(page) : undefined
   let results: readonly TestResult[]
   try {
     const url = getAllTestsUrl(port, filter, traceFocus ?? false, rendererWorkerTraceDirectory !== undefined)
@@ -173,12 +177,28 @@ export const runTestsWithReusedPage = async ({
   } catch (error) {
     results = [getFailedAllTestsResult(error, start)]
   }
-  if (rendererWorkerTraceDirectory) {
-    await RendererWorkerTrace.exportTrace({
-      directory: rendererWorkerTraceDirectory,
-      page,
-      test: '_all.html',
-    })
+  try {
+    if (rendererWorkerTraceDirectory) {
+      await RendererWorkerTrace.exportTrace({
+        directory: rendererWorkerTraceDirectory,
+        page,
+        test: '_all.html',
+      })
+    }
+  } finally {
+    pageMessages?.dispose()
+  }
+  if (pageMessages && pageMessages.messages.length > 0) {
+    results = [
+      ...results,
+      {
+        end: performance.now(),
+        error: PageMessages.formatPageMessages(pageMessages.messages),
+        name: '_all.html (console messages)',
+        start,
+        status: TestState.Fail,
+      },
+    ]
   }
   let failed = 0
   let passed = 0

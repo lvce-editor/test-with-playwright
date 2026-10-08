@@ -11,6 +11,7 @@ interface ParsedCliArgs {
   electronEnv?: string[]
   electronPath?: string
   electronVersion?: string
+  failOnConsoleMessages?: boolean
   filter?: string
   headless?: boolean
   help?: boolean
@@ -119,6 +120,7 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
     result.help = true
   }
   setFlag(result, 'headless', parsed.headless)
+  setFlag(result, 'failOnConsoleMessages', parsed['fail-on-console-messages'])
   if (parsed['only-extension']) {
     result.onlyExtension = String(parsed['only-extension'])
   }

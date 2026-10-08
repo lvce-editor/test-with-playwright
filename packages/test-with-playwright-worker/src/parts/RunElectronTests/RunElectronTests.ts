@@ -18,6 +18,7 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
 
 export const runElectronTests = async ({
   electronApp,
+  failOnConsoleMessages,
   filter,
   onFinalResult,
   onResult,
@@ -29,6 +30,7 @@ export const runElectronTests = async ({
 }: {
   readonly electronApp: any
   readonly filter?: string
+  readonly failOnConsoleMessages: boolean
   readonly onFinalResult: (result: any) => Promise<void>
   readonly onResult: (result: any) => Promise<void>
   readonly page: Page
@@ -45,6 +47,7 @@ export const runElectronTests = async ({
   for (const test of filteredTests) {
     const result = await RunElectronTest.runElectronTest({
       electronApp,
+      failOnConsoleMessages,
       page,
       test,
       testSrc,

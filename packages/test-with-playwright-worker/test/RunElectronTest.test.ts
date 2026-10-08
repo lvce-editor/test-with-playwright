@@ -51,6 +51,53 @@ export const test = async ({ Locator, electronApp }) => {
   expect(result.name).toBe(testFile)
 })
 
+test('runElectronTest fails on console errors and uncaught page errors', async () => {
+  const { test: testFile, testSrc } = await writeTestModule(`
+export const test = async () => {}
+`)
+  const listeners = new Map<string, Set<(value: any) => void>>()
+  const page = {
+    locator: (): string => 'unused',
+    off: (event: string, listener: (value: any) => void): void => {
+      listeners.get(event)?.delete(listener)
+    },
+    on: (event: string, listener: (value: any) => void): void => {
+      let eventListeners = listeners.get(event)
+      if (!eventListeners) {
+        eventListeners = new Set()
+        listeners.set(event, eventListeners)
+      }
+      eventListeners.add(listener)
+      if (event === 'console') {
+        listener({
+          location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+          text: () => 'electron console error',
+          type: () => 'error',
+        })
+      } else {
+        listener(new Error('electron page error'))
+      }
+    },
+  }
+
+  const result = await RunElectronTest.runElectronTest({
+    electronApp: {},
+    failOnConsoleMessages: true,
+    page: page as any,
+    test: testFile,
+    testSrc,
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({
+    error: expect.stringContaining('console error: electron console error'),
+    status: TestState.Fail,
+  })
+  expect(result.error).toContain('uncaught page error: Error: electron page error')
+  expect(listeners.get('console')?.size).toBe(0)
+  expect(listeners.get('pageerror')?.size).toBe(0)
+})
+
 test('runElectronTest marks skipped modules as skipped', async () => {
   const { test: testFile, testSrc } = await writeTestModule(`
 export const skip = 1

@@ -10,6 +10,7 @@ interface RunAllTestsParams {
   coverageTarget?: string
   coverageThreshold?: number
   cwd: string
+  failOnConsoleMessages: boolean
   filter?: string
   headless: boolean
   onlyExtension: string
@@ -36,6 +37,7 @@ export const runAllTests = async ({
   coverageTarget,
   coverageThreshold,
   cwd,
+  failOnConsoleMessages,
   filter,
   headless,
   onlyExtension,
@@ -74,6 +76,7 @@ export const runAllTests = async ({
     coverageTarget,
     coverageThreshold,
     traceRendererWorker,
+    failOnConsoleMessages,
   )
   await rpc.dispose()
 }

@@ -4,6 +4,7 @@ export const getHelpMessage = (): string => {
 Options:
   --browser=<browser>       Browser to run tests in: chromium, firefox, or webkit
   --coverage                Collect JavaScript coverage and write Istanbul reports
+  --fail-on-console-messages Fail tests with console warnings, errors, or uncaught page errors
   --coverage-target          Collect Chromium worker coverage for a matching script URL
   --coverage-threshold       Enforce the worker line coverage percentage (requires a target)
   --runtime=<runtime>       Runtime to run tests in: browser or electron

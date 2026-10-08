@@ -9,14 +9,30 @@ const createPage = ({
   readonly state?: string
   readonly text?: string | null
 } = {}): any => {
+  const listeners = new Map<string, Set<(value: any) => void>>()
   const testOverlay = {
     getAttribute: jest.fn(async (): Promise<string> => state),
     textContent: jest.fn(async (): Promise<string | null> => text),
     waitFor: jest.fn(async (): Promise<void> => {}),
   }
   return {
+    emit: (event: string, value: any): void => {
+      const eventListeners = listeners.get(event) || []
+      for (const listener of eventListeners) {
+        listener(value)
+      }
+    },
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testOverlay),
+    off: jest.fn((event: string, listener: (value: any) => void) => listeners.get(event)?.delete(listener)),
+    on: jest.fn((event: string, listener: (value: any) => void) => {
+      let eventListeners = listeners.get(event)
+      if (!eventListeners) {
+        eventListeners = new Set()
+        listeners.set(event, eventListeners)
+      }
+      eventListeners.add(listener)
+    }),
   }
 }
 
@@ -89,6 +105,144 @@ test('runTest reports a passing overlay without an SVG screenshot', async () => 
   })
 
   expect(result.status).toBe(TestState.Pass)
+})
+
+test('runTest fails on console warnings, errors, and uncaught page errors and removes listeners', async () => {
+  const page = createPage()
+  page.goto.mockImplementation(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 3, lineNumber: 2, url: 'http://127.0.0.1/test.js' }),
+      text: () => 'warning text',
+      type: () => 'warning',
+    })
+    page.emit('console', {
+      location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+      text: () => 'error text',
+      type: () => 'error',
+    })
+    page.emit('pageerror', new Error('uncaught test error'))
+    page.emit('pageerror', { message: 'uncaught error without stack' })
+  })
+
+  const result = await runTest({
+    failOnConsoleMessages: true,
+    page,
+    port: 3000,
+    test: 'about.open.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(result).toMatchObject({
+    error: expect.stringContaining('Browser console messages:'),
+    status: TestState.Fail,
+  })
+  expect(result.error).toContain('console warning: warning text (http://127.0.0.1/test.js:2:3)')
+  expect(result.error).toContain('console error: error text')
+  expect(result.error).toContain('uncaught page error: Error: uncaught test error')
+  expect(result.error).toContain('uncaught page error: uncaught error without stack')
+  expect(page.off).toHaveBeenCalledTimes(2)
+  expect(page.emit).toBeDefined()
+})
+
+test('runTest ignores console events when failOnConsoleMessages is disabled', async () => {
+  const page = createPage()
+  page.goto.mockImplementation(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+      text: () => 'warning text',
+      type: () => 'warning',
+    })
+  })
+
+  const result = await runTest({
+    page,
+    port: 3000,
+    test: 'about.open.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(result.status).toBe(TestState.Pass)
+  expect(page.on).not.toHaveBeenCalled()
+})
+
+test('runTest ignores ordinary console output when failOnConsoleMessages is enabled', async () => {
+  const page = createPage()
+  page.goto.mockImplementation(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+      text: () => 'ordinary log output',
+      type: () => 'log',
+    })
+  })
+
+  const result = await runTest({
+    failOnConsoleMessages: true,
+    page,
+    port: 3000,
+    test: 'about.open.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(result.status).toBe(TestState.Pass)
+  expect(page.off).toHaveBeenCalledTimes(2)
+})
+
+test('runTest retains scenario failures alongside console diagnostics', async () => {
+  const page = createPage({ state: 'fail', text: 'scenario failed' })
+  page.goto.mockImplementation(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+      text: () => 'console failure',
+      type: () => 'error',
+    })
+  })
+
+  const result = await runTest({
+    failOnConsoleMessages: true,
+    page,
+    port: 3000,
+    test: 'about.open.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(result.error).toContain('scenario failed\nBrowser console messages:')
+  expect(result.error).toContain('console error: console failure')
+  expect(result.status).toBe(TestState.Fail)
+})
+
+test('runTest does not carry console messages into the next test', async () => {
+  const page = createPage()
+  page.goto.mockImplementationOnce(async () => {
+    page.emit('console', {
+      location: () => ({ columnNumber: 0, lineNumber: 0, url: '' }),
+      text: () => 'first test warning',
+      type: () => 'warning',
+    })
+  })
+
+  const firstResult = await runTest({
+    failOnConsoleMessages: true,
+    page,
+    port: 3000,
+    test: 'first.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+  const secondResult = await runTest({
+    failOnConsoleMessages: true,
+    page,
+    port: 3000,
+    test: 'second.js',
+    testSrc: '/tmp/tests',
+    timeout: 1000,
+  })
+
+  expect(firstResult).toMatchObject({ error: expect.stringContaining('first test warning'), status: TestState.Fail })
+  expect(secondResult).toMatchObject({ error: '', status: TestState.Pass })
 })
 
 test('runTest reports a failed overlay without capturing a screenshot', async () => {

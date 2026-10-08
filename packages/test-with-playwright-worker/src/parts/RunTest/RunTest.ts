@@ -3,6 +3,7 @@ import { basename } from 'node:path'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
+import * as PageMessages from '../PageMessages/PageMessages.ts'
 import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -37,6 +38,7 @@ export const navigateToTest = async (page: Page, url: string, browser?: string):
 
 export const runTest = async ({
   browser,
+  failOnConsoleMessages,
   page,
   port,
   svgScreenshotOptions,
@@ -54,9 +56,12 @@ export const runTest = async ({
   readonly timeout: number
   readonly traceFocus?: boolean
   readonly traceRendererWorker?: boolean
+  readonly failOnConsoleMessages?: boolean
   readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<any> => {
   const start = performance.now()
+  const pageMessages = failOnConsoleMessages ? PageMessages.createPageMessages(page) : undefined
+  let result: any
   try {
     const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
     await navigateToTest(page, url, browser)
@@ -77,7 +82,7 @@ export const runTest = async ({
       })
     }
     const end = performance.now()
-    return {
+    result = {
       // @ts-ignore
       ...testState,
       end,
@@ -88,12 +93,23 @@ export const runTest = async ({
   } catch (error) {
     const end = performance.now()
     const message = error instanceof Error ? error.message : String(error)
-    return {
+    result = {
       end,
       error: message,
       name: test,
       start,
       status: TestState.Fail,
     }
+  } finally {
+    pageMessages?.dispose()
   }
+  if (pageMessages && pageMessages.messages.length > 0) {
+    const messages = PageMessages.formatPageMessages(pageMessages.messages)
+    result = {
+      ...result,
+      error: result.error ? `${result.error}\n${messages}` : messages,
+      status: TestState.Fail,
+    }
+  }
+  return result
 }
