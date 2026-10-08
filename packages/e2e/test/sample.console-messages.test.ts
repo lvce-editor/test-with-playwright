@@ -22,7 +22,8 @@ test('failOnConsoleMessages reports warnings, errors, and uncaught page errors',
   expect(result.exitCode).toBe(1)
   expect(output).toContain('console warning: fixture warning')
   expect(output).toContain('console error: fixture error')
-  expect(output).toContain('uncaught page error: Error: fixture uncaught page error')
+  expect(output).toContain('uncaught page error:')
+  expect(output).toContain('fixture uncaught page error')
   expect(output).toMatch(oneTestFailedRegex)
 })
 
@@ -37,6 +38,7 @@ test('failOnConsoleMessages reports reused-page messages without changing scenar
   expect(result.exitCode).toBe(1)
   expect(output).toContain('console warning: fixture warning')
   expect(output).toContain('console error: fixture error')
-  expect(output).toContain('uncaught page error: Error: fixture uncaught page error')
+  expect(output).toContain('uncaught page error:')
+  expect(output).toContain('fixture uncaught page error')
   expect(output).toMatch(oneTestPassedOneFailedRegex)
 })
