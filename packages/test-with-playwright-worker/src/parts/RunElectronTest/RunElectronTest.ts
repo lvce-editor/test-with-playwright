@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
+import * as PageMessages from '../PageMessages/PageMessages.ts'
 import * as TestState from '../TestState/TestState.ts'
 
 interface ElectronTestModule {
@@ -41,6 +42,7 @@ const withTimeout = async <T>(promise: Promise<T>, timeout: number): Promise<T> 
 
 export const runElectronTest = async ({
   electronApp,
+  failOnConsoleMessages,
   page,
   svgScreenshotOptions,
   test,
@@ -52,55 +54,70 @@ export const runElectronTest = async ({
   readonly test: string
   readonly testSrc: string
   readonly timeout: number
+  readonly failOnConsoleMessages?: boolean
   readonly svgScreenshotOptions?: SvgScreenshotOptions
 }): Promise<any> => {
   const start = performance.now()
+  const pageMessages = failOnConsoleMessages ? PageMessages.createPageMessages(page) : undefined
+  let result: any
   try {
     const testModule = await importTestModule(testSrc, test)
     if (testModule.skip) {
       const end = performance.now()
-      return {
+      result = {
         end,
         error: '',
         name: test,
         start,
         status: TestState.Skip,
       }
-    }
-    const { expect } = await import('@playwright/test')
-    await withTimeout(
-      testModule.test({
-        electronApp,
-        expect,
-        Locator: page.locator.bind(page),
-        page,
-      }),
-      timeout,
-    )
-    if (svgScreenshotOptions) {
-      await CaptureSvgScreenshot.captureSvgScreenshot({
-        options: svgScreenshotOptions,
-        page,
-        test,
-      })
-    }
-    const end = performance.now()
-    return {
-      end,
-      error: '',
-      name: test,
-      start,
-      status: TestState.Pass,
+    } else {
+      const { expect } = await import('@playwright/test')
+      await withTimeout(
+        testModule.test({
+          electronApp,
+          expect,
+          Locator: page.locator.bind(page),
+          page,
+        }),
+        timeout,
+      )
+      if (svgScreenshotOptions) {
+        await CaptureSvgScreenshot.captureSvgScreenshot({
+          options: svgScreenshotOptions,
+          page,
+          test,
+        })
+      }
+      const end = performance.now()
+      result = {
+        end,
+        error: '',
+        name: test,
+        start,
+        status: TestState.Pass,
+      }
     }
   } catch (error) {
     const end = performance.now()
     const message = error instanceof Error ? error.message : String(error)
-    return {
+    result = {
       end,
       error: message,
       name: test,
       start,
       status: TestState.Fail,
     }
+  } finally {
+    pageMessages?.dispose()
   }
+  if (pageMessages && pageMessages.messages.length > 0) {
+    const messages = PageMessages.formatPageMessages(pageMessages.messages)
+    result = {
+      ...result,
+      error: result.error ? `${result.error}\n${messages}` : messages,
+      status: TestState.Fail,
+    }
+  }
+  return result
 }

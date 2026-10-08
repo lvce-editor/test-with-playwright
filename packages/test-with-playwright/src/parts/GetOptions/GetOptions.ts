@@ -18,6 +18,7 @@ interface Options {
   electronEnv?: string[]
   electronPath?: string
   electronVersion?: string
+  failOnConsoleMessages: boolean
   filter?: string
   headless: boolean
   help: boolean
@@ -41,6 +42,7 @@ const reusePageDefaultTimeout = 600_000
 const defaultOptions: Options = {
   browser: 'chromium',
   coverage: false,
+  failOnConsoleMessages: false,
   headless: false,
   help: false,
   onlyExtension: '',

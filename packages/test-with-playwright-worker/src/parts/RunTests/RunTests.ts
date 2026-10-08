@@ -29,6 +29,7 @@ const getResultCounts = (status: number): { failed: number; passed: number; skip
 export const runTests = async ({
   browser = 'chromium',
   createPage,
+  failOnConsoleMessages,
   filter,
   headless,
   onFinalResult,
@@ -47,6 +48,7 @@ export const runTests = async ({
   readonly testSrc: string
   readonly tests: readonly string[]
   readonly filter?: string
+  readonly failOnConsoleMessages: boolean
   readonly headless: boolean
   readonly page: Page
   readonly port: number
@@ -69,6 +71,7 @@ export const runTests = async ({
     try {
       const result = await RunTest.runTest({
         browser,
+        failOnConsoleMessages,
         page: currentPage,
         port,
         test,

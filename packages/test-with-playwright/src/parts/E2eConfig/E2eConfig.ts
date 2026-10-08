@@ -9,6 +9,7 @@ export interface E2eConfig {
   electronEnv?: string[]
   electronPath?: string
   electronVersion?: string
+  failOnConsoleMessages?: boolean
   filter?: string
   headless?: boolean
   link?: string[]

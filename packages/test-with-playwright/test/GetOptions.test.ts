@@ -37,6 +37,23 @@ test('getOptions defaults coverage to false', () => {
   expect(options.coverage).toBe(false)
 })
 
+test('getOptions defaults failOnConsoleMessages to false', () => {
+  expect(GetOptions.getOptions({ argv: [], env: {} }).failOnConsoleMessages).toBe(false)
+})
+
+test('getOptions reads failOnConsoleMessages from config and cli args', () => {
+  expect(
+    GetOptions.getOptions({ argv: [], config: { failOnConsoleMessages: true }, env: {} }).failOnConsoleMessages,
+  ).toBe(true)
+  expect(
+    GetOptions.getOptions({
+      argv: ['--no-fail-on-console-messages'],
+      config: { failOnConsoleMessages: true },
+      env: {},
+    }).failOnConsoleMessages,
+  ).toBe(false)
+})
+
 test('getOptions reads coverage from cli args', () => {
   const options = GetOptions.getOptions({
     argv: ['--coverage'],

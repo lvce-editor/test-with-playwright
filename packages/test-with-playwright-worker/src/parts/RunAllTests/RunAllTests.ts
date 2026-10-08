@@ -76,6 +76,7 @@ export const runAllTests = async (
   coverageTarget: string | undefined,
   coverageThreshold: number | undefined,
   traceRendererWorker: boolean,
+  failOnConsoleMessages: boolean,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -88,6 +89,7 @@ export const runAllTests = async (
   Assert.boolean(coverage)
   assertCoverageOptions(coverageTarget, coverageInclude, coverageThreshold)
   Assert.boolean(traceRendererWorker)
+  Assert.boolean(failOnConsoleMessages)
   if (svgScreenshotOptions !== undefined) {
     Assert.object(svgScreenshotOptions)
   }
@@ -123,6 +125,7 @@ export const runAllTests = async (
         await RunElectronTests.runElectronTests({
           ...filterOption,
           electronApp: electron.electronApp,
+          failOnConsoleMessages,
           onFinalResult,
           onResult,
           page: electron.page,
@@ -160,6 +163,7 @@ export const runAllTests = async (
           await RunTestsWithReusedPage.runTestsWithReusedPage({
             browser,
             ...filterOption,
+            failOnConsoleMessages,
             onFinalResult,
             onResult,
             page,
@@ -203,6 +207,7 @@ export const runAllTests = async (
       run: async () => {
         await RunTests.runTests({
           browser,
+          failOnConsoleMessages,
           ...(createPage && { createPage }),
           ...filterOption,
           headless,
