@@ -5,6 +5,27 @@ import * as WorkerJavascriptCoverage from '../src/parts/WorkerJavascriptCoverage
 class MockCDPSession extends EventEmitter {
   readonly calls: { method: string; params: object }[] = []
 
+  sourceReplyDelay = 0
+
+  readonly completedReplies = new Set<string>()
+
+  async waitForReply(method: string): Promise<void> {
+    if (this.completedReplies.has(method)) {
+      return
+    }
+    await new Promise<void>((resolve) => {
+      const listener = (completed: string): void => {
+        if (completed !== method) {
+        	return;
+        }
+
+        this.off('Mock.reply', listener)
+        resolve()
+      }
+      this.on('Mock.reply', listener)
+    })
+  }
+
   withheldMethod = ''
 
   errorMethod = ''
@@ -44,12 +65,19 @@ class MockCDPSession extends EventEmitter {
       if (this.errorMethod === targetMethod) {
         result = { error: { message: this.errorMessage } }
       }
-      setImmediate(() => {
+      const reply = (): void => {
         this.emit('Target.receivedMessageFromTarget', {
           message: JSON.stringify(result.error ? { error: result.error, id } : { id, result }),
           sessionId: (params as any).sessionId,
         })
-      })
+        this.completedReplies.add(targetMethod)
+        this.emit('Mock.reply', targetMethod)
+      }
+      if (targetMethod === 'Debugger.getScriptSource' && this.sourceReplyDelay) {
+        setTimeout(reply, this.sourceReplyDelay)
+      } else {
+        setImmediate(reply)
+      }
       return {}
     }
     this.calls.push({ method, params })
@@ -208,11 +236,14 @@ test('handles protocol replies without an id or for an unknown command', async (
 
 test('ignores detached workers during final collection', async (): Promise<void> => {
   const session = new MockCDPSession()
+  session.sourceReplyDelay = 30
   const coverage = await WorkerJavascriptCoverage.startWorkerJavascriptCoverage(
     createPage(session),
     'aboutWorkerMain.js',
   )
   await attachWorker(session)
+  // Detach only after the first snapshot is collected, even under a slow CDP reply.
+  await session.waitForReply('Debugger.getScriptSource')
   session.emit('Target.detachedFromTarget', { sessionId: 'worker-1' })
   await expect(coverage.stop()).resolves.toHaveLength(1)
 })
