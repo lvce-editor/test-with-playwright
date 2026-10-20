@@ -18,7 +18,7 @@ test.each([
   'file:///tmp/a.svg',
   'a\\b.svg',
   '',
-  'a.png',
+  'a.jpg',
   'a//b.svg',
   './a.svg',
   'a\0.svg',

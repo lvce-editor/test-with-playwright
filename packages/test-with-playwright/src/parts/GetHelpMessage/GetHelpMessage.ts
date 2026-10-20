@@ -20,7 +20,8 @@ Options:
   --timeout=<ms>            Test timeout in milliseconds
   --trace-focus             Log focus changes while tests run
   --trace-renderer-worker   Write renderer/worker command traces to renderer-worker-traces/
-  --update-svg-screenshots  Create or update expected SVG screenshots
+  --update-screenshots      Create or update expected locator screenshots (PNG or SVG)
+  --update-svg-screenshots  Alias for --update-screenshots
   --electron-path=<path>    Path to an existing Electron app executable
   --electron-version=<ver>  Override the inferred Lvce release version
   --electron-cache-dir=<p>  Directory for downloaded Electron apps

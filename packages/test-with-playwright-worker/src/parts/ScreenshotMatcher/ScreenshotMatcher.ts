@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test'
 import { lstat } from 'node:fs/promises'
 import { dirname, isAbsolute, join, resolve } from 'node:path'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
+import * as ComparePngScreenshot from '../ComparePngScreenshot/ComparePngScreenshot.ts'
 import * as IsEnoentError from '../IsEnoentError/IsEnoentError.ts'
 
 const installed = new WeakSet<Page>()
@@ -9,14 +10,16 @@ const installed = new WeakSet<Page>()
 export const resolveFixture = async (directory: string, uri: unknown): Promise<string> => {
   if (
     typeof uri !== 'string' ||
-    !uri.endsWith('.svg') ||
+    (!uri.endsWith('.svg') && !uri.endsWith('.png')) ||
     isAbsolute(uri) ||
     uri.includes('\\') ||
     uri.includes(':') ||
     uri.includes('\0') ||
     uri.split('/').some((part) => !part || part === '.' || part === '..')
   ) {
-    throw new Error(`[SCREENSHOT_INVALID_URI] Expected a relative .svg path inside e2e/fixtures: ${String(uri)}`)
+    throw new Error(
+      `[SCREENSHOT_INVALID_URI] Expected a relative .svg or .png path inside e2e/fixtures: ${String(uri)}`,
+    )
   }
   let current = resolve(directory)
   for (const part of ['', ...uri.split('/')]) {
@@ -52,13 +55,19 @@ export const install = async (page: Page, testPath: string, update: boolean): Pr
         if (!element.asElement()) {
           throw new Error(`[SCREENSHOT_ELEMENT_NOT_FOUND] ${String(uri)}`)
         }
-        const svg = await CaptureSvgScreenshot.capture(frame, element.asElement()!)
-        await CaptureSvgScreenshot.compareSvgScreenshot({
-          fixturePath,
-          options: { directory: dirname(fixturePath), name: '', update },
-          svg,
-          test: '',
-        })
+        if (fixturePath.endsWith('.png')) {
+          await resolveFixture(directory, `${String(uri)}.actual.png`)
+          const png = await element.asElement()!.screenshot({ animations: 'disabled', caret: 'hide' })
+          await ComparePngScreenshot.compare(fixturePath, png, update)
+        } else {
+          const svg = await CaptureSvgScreenshot.capture(frame, element.asElement()!)
+          await CaptureSvgScreenshot.compareSvgScreenshot({
+            fixturePath,
+            options: { directory: dirname(fixturePath), name: '', update },
+            svg,
+            test: '',
+          })
+        }
       } finally {
         await element.dispose()
       }

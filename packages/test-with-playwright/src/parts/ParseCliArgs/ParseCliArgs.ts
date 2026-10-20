@@ -153,6 +153,6 @@ export const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
   setFlag(result, 'traceFocus', parsed['trace-focus'])
   setFlag(result, 'traceRendererWorker', parsed['trace-renderer-worker'])
-  setFlag(result, 'updateSvgScreenshots', parsed['update-svg-screenshots'])
+  setFlag(result, 'updateSvgScreenshots', parsed['update-screenshots'] ?? parsed['update-svg-screenshots'])
   return result
 }

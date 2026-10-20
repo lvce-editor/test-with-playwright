@@ -14,13 +14,15 @@ const TestState = await import(new URL('TestState/TestState.ts', workerParts).hr
 
 // Serve the renderer-side protocol in a small document so capture and filesystem
 // failures are exercised through the real Playwright binding, before final results.
-const html = (reused: boolean, changed: boolean): string => `<!doctype html>
-<style>button { width: ${changed ? 150 : 100}px; height: 30px; }</style><button>About</button>
+const html = (reused: boolean, changed: boolean, format: string): string => `<!doctype html>
+<style>button { width: ${changed && format === 'svg' ? 150 : 100}px; height: 30px; }button::before { content: ''; display: inline-block; width: 20px; height: 20px; background: red;
+mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Crect width='20' height='${changed ? 10 : 20}'/%3E%3C/svg%3E"); }
+</style><button>About</button>
 <script>
 (async () => {
   let status = 'pass', error = '';
   globalThis.lvceScreenshotTargets = new Map([['target', document.querySelector('button')]]);
-  try { await globalThis.lvceMatchScreenshot('about.svg', 'target'); }
+  try { await globalThis.lvceMatchScreenshot('about.${format}', 'target'); }
   catch (e) { status = 'fail'; error = e.message; }
   const output = document.createElement('div');
   output.id = 'TestOverlay'; output.dataset.state = status;
@@ -34,7 +36,12 @@ const html = (reused: boolean, changed: boolean): string => `<!doctype html>
 })();
 </script>`
 
-test.each([false, true])('awaitable SVG capture works with reused page=%s', async (reused) => {
+test.each([
+  [false, 'svg'],
+  [true, 'svg'],
+  [false, 'png'],
+  [true, 'png'],
+] as const)('awaitable %s capture with format=%s', async (reused, format) => {
   const directory = await mkdtemp(join(tmpdir(), 'matcher-e2e-'))
   const browserName = process.env['TEST_WITH_PLAYWRIGHT_BROWSER'] || 'chromium'
   const browserType = { chromium, firefox, webkit }[browserName]
@@ -47,7 +54,9 @@ test.each([false, true])('awaitable SVG capture works with reused page=%s', asyn
     const execute = async (update: boolean): Promise<any[]> => {
       const page = await browser.newPage()
       try {
-        await page.route('**/*', (route) => route.fulfill({ body: html(reused, changed), contentType: 'text/html' }))
+        await page.route('**/*', (route) =>
+          route.fulfill({ body: html(reused, changed, format), contentType: 'text/html' }),
+        )
         if (!reused) {
           return [
             await runTest({
@@ -81,11 +90,11 @@ test.each([false, true])('awaitable SVG capture works with reused page=%s', asyn
     }
     const missing = await execute(false)
     expect(missing[0].status).toBe(TestState.Fail)
-    expect(missing[0].error).toContain('SVG screenshot is missing:')
+    expect(missing[0].error).toContain('screenshot is missing:')
     const result1 = await execute(true)
     expect(result1[0].status).toBe(TestState.Pass)
-    const fixture = join(directory, 'fixtures/about.svg')
-    const baseline = await readFile(fixture, 'utf8')
+    const fixture = join(directory, `fixtures/about.${format}`)
+    const baseline = await readFile(fixture)
     expect(baseline.length).toBeLessThan(100_000)
     const result2 = await execute(false)
     expect(result2[0].status).toBe(TestState.Pass)
@@ -94,11 +103,11 @@ test.each([false, true])('awaitable SVG capture works with reused page=%s', asyn
     changed = true
     const mismatch = await execute(false)
     expect(mismatch[0].status).toBe(TestState.Fail)
-    expect(mismatch[0].error).toContain('SVG screenshot differs:')
-    expect(await readFile(fixture, 'utf8')).toBe(baseline)
+    expect(mismatch[0].error).toContain('screenshot differs:')
+    expect(await readFile(fixture)).toEqual(baseline)
     const result4 = await execute(true)
     expect(result4[0].status).toBe(TestState.Pass)
-    expect(await readFile(fixture, 'utf8')).not.toBe(baseline)
+    expect(await readFile(fixture)).not.toEqual(baseline)
     const result5 = await execute(false)
     expect(result5[0].status).toBe(TestState.Pass)
   } finally {

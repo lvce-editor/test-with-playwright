@@ -153,9 +153,11 @@ When `--reuse-page` is enabled, `/tests/_all.html` should run the tests and writ
 With a screenshot-capable renderer and test-worker, capture an element at a specific point in a test:
 
 ```js
-await expect(Locator('.DialogContent')).toMatchScreenShot('about/dialog.chromium.svg')
+await expect(Locator('.DialogContent')).toMatchScreenShot('about/dialog.chromium.png')
 ```
 
-The URI is a relative `.svg` path within the test project's `fixtures` directory (beside `src`). Absolute paths, traversal and symbolic links are rejected. Missing elements, missing baselines and different screenshots fail the awaiting assertion with the locator or fixture path. Run `test-with-playwright --update-svg-screenshots` to create or replace fixtures; ordinary runs preserve baselines and save differing output beside them as `.actual`. The locator matcher supports both individual and reused pages. The existing post-test `--svg-screenshot-dir` mode still requires individual pages.
+The URI is a relative `.svg` or `.png` path within the test project's `fixtures` directory (beside `src`). Absolute paths, traversal and symbolic links are rejected. Missing elements, missing baselines and different screenshots fail the awaiting assertion with the locator or fixture path. Run `test-with-playwright --update-screenshots` to create or replace fixtures; ordinary runs preserve baselines and save differing output beside them as `.actual` for SVG or `.actual.png` for PNG. The locator matcher supports both individual and reused pages. The existing post-test `--svg-screenshot-dir` mode still requires individual pages.
 
 SVG capture retains rendered styles and inlines resources, dropping unused font definitions. Wait for stable application content before capturing; use separate fixtures per browser/platform when their rendering differs. Updates should be reviewed as visual changes before committing.
+
+PNG is supported for features that SVG conversion cannot reproduce, including CSS mask icons. PNG comparison is exact and requires a stable browser, viewport and font environment; keep separate baselines when these differ. `--update-svg-screenshots` remains an alias for the update option.
