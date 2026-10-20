@@ -20,6 +20,7 @@ test('missing PNG explains update mode and ordinary runs create no baseline', as
   const path = await createPath()
   await expect(compare(path, Buffer.from('image'), false)).rejects.toThrow('[SCREENSHOT_MISSING]')
   await expect(readFile(path)).rejects.toMatchObject({ code: 'ENOENT' })
+  expect(await readFile(`${path}.actual.png`)).toEqual(Buffer.from('image'))
 })
 
 test('creates and replaces a PNG only in update mode, accepting matching bytes', async () => {

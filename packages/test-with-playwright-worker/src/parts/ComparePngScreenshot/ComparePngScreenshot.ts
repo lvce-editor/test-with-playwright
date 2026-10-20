@@ -15,8 +15,10 @@ export const compare = async (path: string, actual: Buffer, update: boolean): Pr
     expected = await readFile(path)
   } catch (error) {
     if (IsEnoentError.isEnoentError(error)) {
+      await mkdir(dirname(path), { recursive: true })
+      await writeFile(actualPath, actual)
       throw new Error(
-        `[SCREENSHOT_MISSING] PNG screenshot is missing: ${path}. Run with --update-screenshots to create it.`,
+        `[SCREENSHOT_MISSING] PNG screenshot is missing: ${path}. Actual output: ${actualPath}. Run with --update-screenshots to create it.`,
       )
     }
     throw error
