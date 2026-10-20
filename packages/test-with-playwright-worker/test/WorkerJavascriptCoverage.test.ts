@@ -9,23 +9,6 @@ class MockCDPSession extends EventEmitter {
 
   readonly completedReplies = new Set<string>()
 
-  async waitForReply(method: string): Promise<void> {
-    if (this.completedReplies.has(method)) {
-      return
-    }
-    await new Promise<void>((resolve) => {
-      const listener = (completed: string): void => {
-        if (completed !== method) {
-        	return;
-        }
-
-        this.off('Mock.reply', listener)
-        resolve()
-      }
-      this.on('Mock.reply', listener)
-    })
-  }
-
   withheldMethod = ''
 
   errorMethod = ''
@@ -45,6 +28,23 @@ class MockCDPSession extends EventEmitter {
       url: 'http://localhost/aboutWorkerMain.js',
     },
   ]
+
+  async waitForReply(method: string): Promise<void> {
+    if (this.completedReplies.has(method)) {
+      return
+    }
+    await new Promise<void>((resolve) => {
+      const listener = (completed: string): void => {
+        if (completed !== method) {
+          return
+        }
+
+        this.off('Mock.reply', listener)
+        resolve()
+      }
+      this.on('Mock.reply', listener)
+    })
+  }
 
   async send(method: string, params: object = {}): Promise<any> {
     if (method === 'Target.sendMessageToTarget') {
