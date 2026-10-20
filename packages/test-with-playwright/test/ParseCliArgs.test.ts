@@ -100,3 +100,8 @@ test('parseCliArgs rejects invalid timeout', () => {
     new TypeError('expected --timeout to be a positive number'),
   )
 })
+
+test('parseCliArgs supports screenshot update alias including explicit disable', () => {
+  expect(ParseCliArgs.parseCliArgs(['--update-screenshots'])).toEqual({ updateSvgScreenshots: true })
+  expect(ParseCliArgs.parseCliArgs(['--no-update-screenshots'])).toEqual({ updateSvgScreenshots: false })
+})
