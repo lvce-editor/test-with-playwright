@@ -34,6 +34,7 @@ test('reused page reports results while a background request remains pending', a
       },
       page,
       port: 1234,
+      testPath: '.',
       timeout: 1000,
     })
     expect(backgroundRequested).toBe(true)

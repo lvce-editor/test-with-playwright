@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import type { Frame, JSHandle, Page } from '@playwright/test'
 import { VError } from '@lvce-editor/verror'
 import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
@@ -36,13 +36,16 @@ const getBrowserScript = (): Promise<string> => {
   return browserScriptCache.promise
 }
 
-const capture = async (page: Page, selector: string | undefined): Promise<string> => {
+export const capture = async (
+  page: Page | Frame,
+  selector: string | JSHandle<Element> | undefined,
+): Promise<string> => {
   const browserScript = await getBrowserScript()
   await page.evaluate(browserScript)
   return page.evaluate(async (selector) => {
     const api = (
       globalThis as typeof globalThis & {
-        SvgScreenshot?: { capture: (selector: string | undefined) => Promise<string> }
+        SvgScreenshot?: { capture: (selector: string | Element | undefined) => Promise<string> }
       }
     ).SvgScreenshot
     if (!api) {
@@ -84,16 +87,18 @@ export const captureSvgScreenshot = async ({
 }
 
 export const compareSvgScreenshot = async ({
+  fixturePath,
   options,
   svg,
   test,
 }: {
+  readonly fixturePath?: string
   readonly options: SvgScreenshotOptions
   readonly svg: string
   readonly test: string
 }): Promise<void> => {
   const formattedSvg = formatSvg(svg)
-  const snapshotPath = join(options.directory, getSnapshotName(test, options.name))
+  const snapshotPath = fixturePath || join(options.directory, getSnapshotName(test, options.name))
   const actualPath = `${snapshotPath}.actual`
   if (options.update) {
     await mkdir(options.directory, { recursive: true })

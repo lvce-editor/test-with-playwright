@@ -127,9 +127,6 @@ export const getOptions = ({ argv, config = {}, env }: Readonly<GetOptionsParams
   if (mergedOptions.reusePage && mergedOptions.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --svg-screenshot-dir is not supported with --reuse-page')
   }
-  if (mergedOptions.updateSvgScreenshots && !mergedOptions.svgScreenshotDir) {
-    throw new Error('[test-with-playwright] --update-svg-screenshots requires --svg-screenshot-dir')
-  }
   if (mergedOptions.svgScreenshotSelector && !mergedOptions.svgScreenshotDir) {
     throw new Error('[test-with-playwright] --svg-screenshot-selector requires --svg-screenshot-dir')
   }

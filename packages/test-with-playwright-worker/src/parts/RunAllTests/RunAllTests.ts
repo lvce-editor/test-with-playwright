@@ -77,6 +77,7 @@ export const runAllTests = async (
   coverageThreshold: number | undefined,
   traceRendererWorker: boolean,
   failOnConsoleMessages: boolean,
+  updateSvgScreenshots: boolean = false,
 ): Promise<void> => {
   Assert.string(extensionPath)
   Assert.string(testPath)
@@ -162,6 +163,8 @@ export const runAllTests = async (
         run: async () => {
           await RunTestsWithReusedPage.runTestsWithReusedPage({
             browser,
+            testPath,
+            updateSvgScreenshots,
             ...filterOption,
             failOnConsoleMessages,
             onFinalResult,
@@ -208,6 +211,7 @@ export const runAllTests = async (
         await RunTests.runTests({
           browser,
           failOnConsoleMessages,
+          updateSvgScreenshots,
           ...(createPage && { createPage }),
           ...filterOption,
           headless,

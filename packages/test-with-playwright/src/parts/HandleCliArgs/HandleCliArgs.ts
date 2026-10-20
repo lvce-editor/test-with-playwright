@@ -88,6 +88,7 @@ export const handleCliArgs = async ({ argv, commandMap, cwd, env }: Readonly<Han
     commandMap,
     coverage,
     failOnConsoleMessages,
+    updateSvgScreenshots,
     ...getCoverageOptions({ coverageInclude, coverageTarget, coverageThreshold }),
     cwd,
     ...(filter !== undefined && { filter }),

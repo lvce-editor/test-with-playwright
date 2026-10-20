@@ -27,6 +27,7 @@ interface RunAllTestsParams {
   timeout: number
   traceFocus?: boolean
   traceRendererWorker: boolean
+  updateSvgScreenshots?: boolean
 }
 
 export const runAllTests = async ({
@@ -49,6 +50,7 @@ export const runAllTests = async ({
   timeout,
   traceFocus,
   traceRendererWorker,
+  updateSvgScreenshots = false,
 }: Readonly<RunAllTestsParams>): Promise<void> => {
   // TODO use `using` once supported
   const path = fileURLToPath(testWorkerUri)
@@ -77,6 +79,7 @@ export const runAllTests = async ({
     coverageThreshold,
     traceRendererWorker,
     failOnConsoleMessages,
+    updateSvgScreenshots,
   )
   await rpc.dispose()
 }

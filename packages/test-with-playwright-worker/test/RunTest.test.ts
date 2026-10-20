@@ -22,6 +22,7 @@ const createPage = ({
         listener(value)
       }
     },
+    exposeBinding: async (): Promise<void> => {},
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testOverlay),
     off: jest.fn((event: string, listener: (value: any) => void) => listeners.get(event)?.delete(listener)),

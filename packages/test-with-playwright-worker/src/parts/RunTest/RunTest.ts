@@ -1,9 +1,10 @@
 import type { Page } from '@playwright/test'
-import { basename } from 'node:path'
+import { basename, dirname } from 'node:path'
 import type { SvgScreenshotOptions } from '../SvgScreenshotOptions/SvgScreenshotOptions.ts'
 import * as CaptureSvgScreenshot from '../CaptureSvgScreenshot/CaptureSvgScreenshot.ts'
 import * as GetTestState from '../GetTestState/GetTestState.ts'
 import * as PageMessages from '../PageMessages/PageMessages.ts'
+import * as ScreenshotMatcher from '../ScreenshotMatcher/ScreenshotMatcher.ts'
 import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -47,7 +48,9 @@ export const runTest = async ({
   timeout,
   traceFocus,
   traceRendererWorker,
+  updateSvgScreenshots = false,
 }: {
+  readonly updateSvgScreenshots?: boolean
   readonly browser?: string
   readonly test: string
   readonly page: Page
@@ -63,6 +66,7 @@ export const runTest = async ({
   const pageMessages = failOnConsoleMessages ? PageMessages.createPageMessages(page) : undefined
   let result: any
   try {
+    await ScreenshotMatcher.install(page, dirname(testSrc), updateSvgScreenshots)
     const url = getUrlFromTestFile(test, port, traceFocus ?? false, traceRendererWorker ?? false)
     await navigateToTest(page, url, browser)
     const testOverlay = page.locator('#TestOverlay')

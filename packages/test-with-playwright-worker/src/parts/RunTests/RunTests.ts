@@ -42,9 +42,11 @@ export const runTests = async ({
   testSrc,
   timeout,
   traceFocus,
+  updateSvgScreenshots = false,
 }: {
   readonly browser?: string
   readonly createPage?: () => Promise<TestPage>
+  readonly updateSvgScreenshots?: boolean
   readonly testSrc: string
   readonly tests: readonly string[]
   readonly filter?: string
@@ -79,6 +81,7 @@ export const runTests = async ({
         timeout,
         traceFocus: traceFocus ?? false,
         traceRendererWorker: rendererWorkerTraceDirectory !== undefined,
+        updateSvgScreenshots,
         ...(svgScreenshotOptions && { svgScreenshotOptions }),
       })
       if (rendererWorkerTraceDirectory) {
