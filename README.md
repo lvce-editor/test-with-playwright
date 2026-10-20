@@ -83,7 +83,7 @@ Precedence, from lowest to highest: built-in defaults, config, environment varia
 - `--trace-renderer-worker`: save renderer-worker command traces in `renderer-worker-traces/`
 - `--svg-screenshot-dir`: compare a self-contained SVG screenshot after each passing test with the browser-specific snapshot in this directory
 - `--svg-screenshot-selector`: capture only the first matching element, such as `.Explorer`; defaults to the application body
-- `--update-svg-screenshots`: create or update SVG screenshots in `--svg-screenshot-dir`
+- `--update-svg-screenshots`: create or update locator fixtures and SVG screenshots in `--svg-screenshot-dir`
 - `--electron-path`: path to an existing Electron app executable
 - `--electron-version`: Lvce release version override; by default Electron uses the installed `@lvce-editor/server` version
 - `--electron-cache-dir`: directory for downloaded Electron apps, defaults to `.test-with-playwright/electron`
@@ -147,3 +147,15 @@ When `--reuse-page` is enabled, `/tests/_all.html` should run the tests and writ
 
 - `ONLY_EXTENSION`
 - `TEST_PATH`
+
+### Awaitable locator screenshots
+
+With a screenshot-capable renderer and test-worker, capture an element at a specific point in a test:
+
+```js
+await expect(Locator('.DialogContent')).toMatchScreenShot('about/dialog.chromium.svg')
+```
+
+The URI is a relative `.svg` path within the test project's `fixtures` directory (beside `src`). Absolute paths, traversal and symbolic links are rejected. Missing elements, missing baselines and different screenshots fail the awaiting assertion with the locator or fixture path. Run `test-with-playwright --update-svg-screenshots` to create or replace fixtures; ordinary runs preserve baselines and save differing output beside them as `.actual`. The locator matcher supports both individual and reused pages. The existing post-test `--svg-screenshot-dir` mode still requires individual pages.
+
+SVG capture retains rendered styles and inlines resources, dropping unused font definitions. Wait for stable application content before capturing; use separate fixtures per browser/platform when their rendering differs. Updates should be reviewed as visual changes before committing.

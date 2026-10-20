@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test'
 import * as PageMessages from '../PageMessages/PageMessages.ts'
 import * as RendererWorkerTrace from '../RendererWorkerTrace/RendererWorkerTrace.ts'
+import * as ScreenshotMatcher from '../ScreenshotMatcher/ScreenshotMatcher.ts'
 import * as TestServerHost from '../TestServerHost/TestServerHost.ts'
 import * as TestState from '../TestState/TestState.ts'
 
@@ -149,9 +150,13 @@ export const runTestsWithReusedPage = async ({
   page,
   port,
   rendererWorkerTraceDirectory,
+  testPath,
   timeout,
   traceFocus,
+  updateSvgScreenshots = false,
 }: {
+  readonly testPath: string
+  readonly updateSvgScreenshots?: boolean
   readonly browser?: string
   readonly filter?: string
   readonly failOnConsoleMessages?: boolean
@@ -167,6 +172,7 @@ export const runTestsWithReusedPage = async ({
   const pageMessages = failOnConsoleMessages ? PageMessages.createPageMessages(page) : undefined
   let results: readonly TestResult[]
   try {
+    await ScreenshotMatcher.install(page, testPath, updateSvgScreenshots)
     const url = getAllTestsUrl(port, filter, traceFocus ?? false, rendererWorkerTraceDirectory !== undefined)
     await page.goto(url, {
       timeout,

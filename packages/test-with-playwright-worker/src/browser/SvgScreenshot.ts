@@ -152,7 +152,7 @@ const inlineSvgResources = async (svg: SVGSVGElement): Promise<void> => {
   await Promise.all(Array.from(svg.querySelectorAll('style'), inlineStyleResources))
 }
 
-export const capture = async (selector?: string): Promise<string> => {
+export const capture = async (selector?: string | Element): Promise<string> => {
   await document.fonts.ready
   const detached = detachTestUi()
   const freezeStyle = document.createElement('style')
@@ -165,9 +165,11 @@ export const capture = async (selector?: string): Promise<string> => {
   }`
   document.head.append(freezeStyle)
   try {
-    const target = selector ? document.querySelector(selector) : document.body
+    const target = typeof selector === 'string' ? document.querySelector(selector) : selector || document.body
     if (!target) {
-      throw new Error(`SVG screenshot selector did not match an element: ${selector}`)
+      throw new Error(
+        `SVG screenshot selector did not match an element: ${typeof selector === 'string' ? selector : '(detached target)'}`,
+      )
     }
     const root = document.documentElement
     const captureArea = selector

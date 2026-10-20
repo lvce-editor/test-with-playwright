@@ -254,13 +254,11 @@ test('getOptions rejects SVG screenshots with reused page', () => {
   ).toThrow(new Error('[test-with-playwright] --svg-screenshot-dir is not supported with --reuse-page'))
 })
 
-test('getOptions requires an SVG screenshot directory when updating', () => {
-  expect(() =>
-    GetOptions.getOptions({
-      argv: ['--update-svg-screenshots'],
-      env: {},
-    }),
-  ).toThrow(new Error('[test-with-playwright] --update-svg-screenshots requires --svg-screenshot-dir'))
+test('getOptions allows updating locator screenshots without a post-test directory', () => {
+  expect(GetOptions.getOptions({ argv: ['--update-svg-screenshots', '--reuse-page'], env: {} })).toMatchObject({
+    reusePage: true,
+    updateSvgScreenshots: true,
+  })
 })
 
 test('getOptions requires an SVG screenshot directory with a selector', () => {

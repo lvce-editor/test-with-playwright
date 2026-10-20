@@ -16,6 +16,7 @@ const createPage = (text: string): any => {
       }
     },
     evaluate: jest.fn(async (): Promise<object> => ({ text: undefined, timeline: undefined })),
+    exposeBinding: async (): Promise<void> => {},
     goto: jest.fn(async (): Promise<void> => {}),
     locator: jest.fn(() => testResults),
     off: jest.fn((event: string, listener: (value: any) => void) => listeners.get(event)?.delete(listener)),
@@ -68,6 +69,7 @@ test('runTestsWithReusedPage reports console messages as an aggregate failure', 
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -115,6 +117,7 @@ test('runTestsWithReusedPage navigates once and reports parsed results', async (
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
     traceFocus: true,
   })
@@ -169,6 +172,7 @@ test('runTestsWithReusedPage enables renderer worker tracing and requests export
     page,
     port: 1234,
     rendererWorkerTraceDirectory: '/tmp/renderer-worker-traces',
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -189,6 +193,7 @@ test('runTestsWithReusedPage reports invalid json as _all.html failure', async (
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -226,6 +231,7 @@ test.each([
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -245,6 +251,7 @@ test('runTestsWithReusedPage reports empty test results', async () => {
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -265,6 +272,7 @@ test('runTestsWithReusedPage stringifies non-error navigation failures', async (
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 
@@ -287,6 +295,7 @@ test('WebKit reused page waits for commit and reads completed results', async ()
     onResult,
     page,
     port: 1234,
+    testPath: '/test/e2e',
     timeout: 1000,
   })
 

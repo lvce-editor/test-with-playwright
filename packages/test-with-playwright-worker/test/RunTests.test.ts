@@ -12,6 +12,7 @@ const createTestPage = (state: string): TestPage => {
   return {
     dispose: jest.fn(async (): Promise<void> => {}),
     page: {
+      exposeBinding: async (): Promise<void> => {},
       goto: jest.fn(async (): Promise<void> => {
         if (navigated) throw new Error('previous renderer is unavailable')
         navigated = true
