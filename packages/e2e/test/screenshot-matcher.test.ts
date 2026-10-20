@@ -51,6 +51,7 @@ test.each([false, true])('awaitable SVG capture works with reused page=%s', asyn
         if (!reused) {
           return [
             await runTest({
+              browser: browserName,
               page,
               port: 3000,
               test: 'about.js',

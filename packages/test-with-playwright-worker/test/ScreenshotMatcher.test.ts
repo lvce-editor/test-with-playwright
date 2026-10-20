@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from '@jest/globals'
 import { mkdir, mkdtemp, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { resolveFixture } from '../src/parts/ScreenshotMatcher/ScreenshotMatcher.ts'
 
 const directories: string[] = []
@@ -27,7 +27,9 @@ test.each([
 })
 
 test('resolves nested fixture paths without creating them', async () => {
-  await expect(resolveFixture('/tmp/fixtures', 'about/dialog.svg')).resolves.toBe('/tmp/fixtures/about/dialog.svg')
+  await expect(resolveFixture('/tmp/fixtures', 'about/dialog.svg')).resolves.toBe(
+    resolve('/tmp/fixtures', 'about/dialog.svg'),
+  )
 })
 
 test('rejects symbolic links at the root, directory and file', async () => {
