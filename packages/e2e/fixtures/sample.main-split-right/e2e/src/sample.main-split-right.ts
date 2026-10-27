@@ -2,7 +2,7 @@ export const name = 'sample.main-split-right'
 
 export const skip = ['webkit']
 
-export const test = async ({ Editor, expect, FileSystem, Locator, Main, Workspace }) => {
+export const test = async ({ Editor, expect, FileSystem, Locator, Main, Workspace }: FixtureContext) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const leftUri = `${workspaceUrl}/left.txt`
   const rightUri = `${workspaceUrl}/right.txt`

@@ -1,6 +1,6 @@
 export const name = 'sample.about-dialog'
 
-export const test = async ({ About, expect, Locator }) => {
+export const test = async ({ About, expect, Locator }: FixtureContext) => {
   await About.show()
 
   const dialogContent = Locator('.DialogContent')

@@ -1,6 +1,6 @@
 export const name = 'sample.completion-provider'
 
-export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
+export const test = async ({ FileSystem, Main, Editor, Locator, expect }: FixtureContext) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(`${tmpDir}/test.xyz`, `Option`)

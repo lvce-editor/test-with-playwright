@@ -1,5 +1,5 @@
 export const name = 'sample.renderer-worker-trace'
-export const test = async ({ Locator, expect }) => {
+export const test = async ({ Locator, expect }: FixtureContext) => {
   const sideBar = Locator('.SideBar')
   await expect(sideBar).toBeVisible()
   await sideBar.click()

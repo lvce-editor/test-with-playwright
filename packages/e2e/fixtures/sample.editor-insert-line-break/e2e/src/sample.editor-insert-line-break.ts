@@ -2,7 +2,7 @@ export const name = 'sample.editor-insert-line-break'
 
 export const skip = ['webkit']
 
-export const test = async ({ Editor, FileSystem, Main, Workspace }) => {
+export const test = async ({ Editor, FileSystem, Main, Workspace }: FixtureContext) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const fileUri = `${workspaceUrl}/editor-insert-line-break.txt`
   await FileSystem.writeFile(fileUri, 'hello world\n')

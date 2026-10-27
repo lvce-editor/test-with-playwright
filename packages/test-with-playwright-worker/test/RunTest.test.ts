@@ -55,6 +55,10 @@ test('getUrlFromTestFile omits tracing options when disabled', () => {
   )
 })
 
+test.each(['example.js', 'example.ts'])('maps %s fixture modules to their HTML routes', (testFile) => {
+  expect(getUrlFromTestFile(testFile, 3000, false, false)).toBe('http://127.0.0.1:3000/tests/example.html')
+})
+
 test('navigateToTest waits for the DOM instead of network idle', async () => {
   const goto = jest.fn(async (_url: string, _options: object): Promise<void> => {})
   const page = {
