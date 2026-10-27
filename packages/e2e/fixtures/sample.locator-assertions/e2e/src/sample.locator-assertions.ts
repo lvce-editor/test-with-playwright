@@ -1,6 +1,6 @@
 export const name = 'sample.locator-assertions'
 
-export const test = async ({ expect, Locator }) => {
+export const test = async ({ expect, Locator }: FixtureContext) => {
   const sideBar = Locator('.SideBar')
   await expect(sideBar).toBeVisible()
   await expect(sideBar).toHaveCount(1)

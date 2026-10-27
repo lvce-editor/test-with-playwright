@@ -1,6 +1,6 @@
 export const name = 'sample.main-close-editors'
 
-export const test = async ({ expect, FileSystem, Locator, Main, Workspace }) => {
+export const test = async ({ expect, FileSystem, Locator, Main, Workspace }: FixtureContext) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const oneUri = `${workspaceUrl}/one.txt`
   const twoUri = `${workspaceUrl}/two.txt`

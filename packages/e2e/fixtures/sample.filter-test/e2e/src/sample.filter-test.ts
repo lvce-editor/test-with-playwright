@@ -1,6 +1,6 @@
 export const name = 'sample.filter-test'
 
-export const test = async ({ Locator, expect }) => {
+export const test = async ({ Locator, expect }: FixtureContext) => {
   const sideBar = Locator('.SideBar')
   await expect(sideBar).toBeVisible()
 }

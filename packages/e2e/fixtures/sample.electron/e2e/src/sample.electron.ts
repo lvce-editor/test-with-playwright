@@ -1,6 +1,6 @@
 export const name = 'sample.electron'
 
-export const test = async ({ Locator, expect }) => {
+export const test = async ({ Locator, expect }: FixtureContext) => {
   const sideBar = Locator('.SideBar:not(.SecondarySideBar)')
   await expect(sideBar).toBeVisible()
 }

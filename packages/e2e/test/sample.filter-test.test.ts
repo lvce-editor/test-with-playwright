@@ -15,7 +15,7 @@ test('sample.filter-test with filter=A', async (): Promise<void> => {
   const { exitCode, stdout } = await runFixture('sample.filter-test', ['--filter=A'])
   expect(exitCode).toBe(0)
   // With filter=A, only filter-test-A and sample.filter-test (which contains 'A' in a test file name? No) should run
-  // Actually, with filter=A, only filter-test-A.js should match (filter-test-A contains 'A')
+  // Actually, with filter=A, only filter-test-A.ts should match (filter-test-A contains 'A')
   // So only 1 test should pass
   expect(stdout).toMatch(oneTestPassedRegex)
 })
@@ -23,6 +23,6 @@ test('sample.filter-test with filter=A', async (): Promise<void> => {
 test('sample.filter-test with filter=B', async (): Promise<void> => {
   const { exitCode, stdout } = await runFixture('sample.filter-test', ['--filter=B'])
   expect(exitCode).toBe(0)
-  // With filter=B, only filter-test-B.js should match
+  // With filter=B, only filter-test-B.ts should match
   expect(stdout).toMatch(oneTestPassedRegex)
 })

@@ -1,8 +1,8 @@
-import { completionCount } from './_util.js'
+import { completionCount } from './_util.ts'
 
 export const name = 'sample.with-utility-file'
 
-export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
+export const test = async ({ FileSystem, Main, Editor, Locator, expect }: FixtureContext) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(`${tmpDir}/test.txt`, `Option`)

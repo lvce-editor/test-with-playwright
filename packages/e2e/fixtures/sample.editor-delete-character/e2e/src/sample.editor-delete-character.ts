@@ -2,7 +2,7 @@ export const name = 'sample.editor-delete-character'
 
 export const skip = ['webkit']
 
-export const test = async ({ Editor, FileSystem, Main, Workspace }) => {
+export const test = async ({ Editor, FileSystem, Main, Workspace }: FixtureContext) => {
   const workspaceUrl = await FileSystem.getTmpDir()
   const fileUri = `${workspaceUrl}/editor-delete-character.txt`
   await FileSystem.writeFile(fileUri, 'hello world\n')
