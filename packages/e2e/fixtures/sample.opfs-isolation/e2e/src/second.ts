@@ -2,6 +2,14 @@ export const name = 'second'
 
 export const test = async (): Promise<void> => {
   const databases = await indexedDB.databases()
+  if (!databases.some((database) => database.name === 'shared-profile-marker')) {
+    throw new Error('Chromium restarted instead of sharing its browser profile')
+  }
+  await new Promise<void>((resolve, reject) => {
+    const request = indexedDB.deleteDatabase('shared-profile-marker')
+    request.onsuccess = (): void => resolve()
+    request.onerror = (): void => reject(request.error)
+  })
   if (databases.some((database) => database.name === 'previous-scenario-handles')) {
     throw new Error('The previous scenario left its IndexedDB handles in this browser profile')
   }
