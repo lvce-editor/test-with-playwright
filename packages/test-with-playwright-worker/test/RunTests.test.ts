@@ -22,7 +22,7 @@ const createTestPage = (state: string): TestPage => {
   }
 }
 
-test('isolated pages preserve failures and dispose before the next scenario without retrying', async () => {
+test.each(['chromium', 'webkit'])('isolated %s pages preserve results without retries', async (browser) => {
   const first = createTestPage('fail')
   const second = createTestPage('pass')
   const third = createTestPage('skip')
@@ -40,7 +40,7 @@ test('isolated pages preserve failures and dispose before the next scenario with
   const onFinalResult = jest.fn(async (_result: any): Promise<void> => {})
 
   await runTests({
-    browser: 'webkit',
+    browser,
     createPage,
     failOnConsoleMessages: false,
     headless: true,
