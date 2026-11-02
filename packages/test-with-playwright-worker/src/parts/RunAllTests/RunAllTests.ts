@@ -184,8 +184,9 @@ export const runAllTests = async (
     const tests = await GetTests.getTests(testSrc)
     let initialBrowserAvailable = true
     // Keep OPFS handles and pending storage callbacks inside their scenario's browser profile.
+    // Page coverage owns its browser across navigation until the collector has stopped.
     const createPage =
-      browser === 'webkit' || browser === 'chromium'
+      browser === 'webkit' || (browser === 'chromium' && !coverage)
         ? async (): Promise<RunTests.TestPage> => {
             signal.throwIfAborted()
             if (initialBrowserAvailable) {
