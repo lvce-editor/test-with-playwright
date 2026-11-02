@@ -45,6 +45,11 @@ export interface ElectronRuntimeOptions {
   readonly type: 'electron'
 }
 
+const shouldIsolateBrowser = (browser: string, coverage: boolean): boolean => {
+  // Page coverage owns its browser across navigation until the collector has stopped.
+  return browser === 'webkit' || (browser === 'chromium' && !coverage)
+}
+
 /**
  * @param {string} extensionPath
  * @param {string} testPath
@@ -183,26 +188,26 @@ export const runAllTests = async (
     }
     const tests = await GetTests.getTests(testSrc)
     let initialBrowserAvailable = true
-    const createPage =
-      browser === 'webkit'
-        ? async (): Promise<RunTests.TestPage> => {
-            signal.throwIfAborted()
-            if (initialBrowserAvailable) {
-              initialBrowserAvailable = false
-              return { dispose, page }
-            }
-            const nextBrowser = await StartBrowser.startBrowser({ browser, headless, signal })
-            try {
-              if (traceRendererWorker) {
-                await nextBrowser.page.addInitScript(BrowserTraceTimeline.install)
-              }
-              return nextBrowser
-            } catch (error) {
-              await nextBrowser.dispose()
-              throw error
-            }
+    // Keep OPFS handles and pending storage callbacks inside their scenario's browser profile.
+    const createPage = shouldIsolateBrowser(browser, coverage)
+      ? async (): Promise<RunTests.TestPage> => {
+          signal.throwIfAborted()
+          if (initialBrowserAvailable) {
+            initialBrowserAvailable = false
+            return { dispose, page }
           }
-        : undefined
+          const nextBrowser = await StartBrowser.startBrowser({ browser, headless, signal })
+          try {
+            if (traceRendererWorker) {
+              await nextBrowser.page.addInitScript(BrowserTraceTimeline.install)
+            }
+            return nextBrowser
+          } catch (error) {
+            await nextBrowser.dispose()
+            throw error
+          }
+        }
+      : undefined
     await RunWithJavascriptCoverage.runWithJavascriptCoverage({
       coverage,
       cwd,
